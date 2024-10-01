@@ -1,0 +1,20 @@
+﻿using Microsoft.AspNetCore.SignalR;
+using System.Threading.Tasks;
+using Toci.Haia.Database.Persistence;
+
+public class FriendRequestHub : Hub
+{
+    private readonly ComedyDbContext _dbContext;
+
+    // Konstruktor, który wstrzykuje kontekst bazy danych
+    public FriendRequestHub(ComedyDbContext dbContext)
+    {
+        _dbContext = dbContext;
+    }
+
+    public async Task SendFriendRequest(string userId, string message)
+    {
+        // Wyślij powiadomienie o nowym zaproszeniu do użytkownika o danym userId
+        await Clients.User(userId).SendAsync("ReceiveFriendRequest", message);
+    }
+}

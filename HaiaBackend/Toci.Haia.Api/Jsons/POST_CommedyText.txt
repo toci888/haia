@@ -1,0 +1,14 @@
+﻿{
+  "id": 0,
+  "text": "gdzie lemiesz ?",
+  "author": "warrior",
+  "commentTimestamp": "2024-09-28T11:11:02.766Z",
+  "parentComedyText": "ale dowalil"
+}
+
+{
+  "id": 0,
+  "text": "ale lemiesz !",
+  "author": "warrior",
+  "commentTimestamp": "2024-09-28T11:42:19.505Z"
+}

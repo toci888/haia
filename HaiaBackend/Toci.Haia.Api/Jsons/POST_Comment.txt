@@ -1,0 +1,21 @@
+﻿{
+  "text": "sprzedam lemiesz",
+  "comedyTextId": 1,
+  "author": "warrior",
+  "snippet": "string",
+  "snippetAuthor": "seba",
+  "commentTimestamp": "2024-09-28T13:14:17.399Z",
+  "snippetTimestamp": "2024-09-28T13:14:17.399Z",
+  "gptJoke": ""
+}
+
+{
+  "text": "kupie lodowke",
+  "comedyTextId": 1,
+  "author": "tomek",
+  "snippet": "string",
+  "snippetAuthor": "seba",
+  "commentTimestamp": "2024-09-28T13:14:17.399Z",
+  "snippetTimestamp": "2024-09-28T13:14:17.399Z",
+  "gptJoke": ""
+}
