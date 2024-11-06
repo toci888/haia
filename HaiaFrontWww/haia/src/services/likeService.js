@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5117/api/Like';
+const API_URL = 'http://80.209.230.198:5117/api/Like';
 
 export const likeComment = async (like) => {
     try {
