@@ -51,4 +51,10 @@ namespace Toci.Haia.Database.Persistence
         public int FriendId { get; set; }
     }
 
+    public class ReactionDto
+    {
+        public int UserId { get; set; }           // ID of the user making the reaction
+        public string ReactionType { get; set; }   // Type of reaction (e.g., "like", "superlike", etc.)
+    }
+
 }

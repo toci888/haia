@@ -6,8 +6,33 @@ using System.Threading.Tasks;
 
 namespace Toci.Haia.Database.Persistence
 {
+    public class Joke
+    {
+        public int Id { get; set; }
+        public string Text { get; set; }
+        public ICollection<Comment> Comments { get; set; }
+        public ICollection<Reaction> Reactions { get; internal set; }
+    }
+
+    public class Reaction
+    {
+        public int Id { get; set; }
+        public string ReactionType { get; set; }
+        public int? JokeId { get; set; }
+        public Joke Joke { get; set; }
+        public int? CommentId { get; set; }
+        public Comment Comment { get; set; }
+        public int UserId { get; set; }
+    }
+
+
     public class Comment
     {
+        public int JokeId { get; set; }
+        public Joke Joke { get; set; }
+        public int UserId { get; set; }
+        public ICollection<Reaction> Reactions { get; set; }
+
         public int Id { get; set; }
         public string Text { get; set; }
         public string Author { get; set; }

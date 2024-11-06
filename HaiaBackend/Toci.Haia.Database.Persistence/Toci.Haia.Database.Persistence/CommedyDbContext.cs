@@ -16,14 +16,31 @@ namespace Toci.Haia.Database.Persistence
 
             base.OnConfiguring(optionsBuilder);
         }
+        public DbSet<Joke> Jokes { get; set; }
         public DbSet<Comment> Comments { get; set; }
-        public DbSet<ComedyText> ComedyTexts { get; set; }
+        public DbSet<Reaction> Reactions { get; set; }
         public DbSet<User> Users { get; set; }
+
+        public DbSet<ComedyText> ComedyTexts { get; set; }
+
         public DbSet<Like> Likes { get; set; }
         public DbSet<Friendship> Friendships { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Reaction>()
+                .HasOne(r => r.Joke)
+                .WithMany(j => j.Reactions)
+                .HasForeignKey(r => r.JokeId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Reaction>()
+                .HasOne(r => r.Comment)
+                .WithMany(c => c.Reactions)
+                .HasForeignKey(r => r.CommentId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+
             // Konfiguracja relacji jeden-do-wielu
             modelBuilder.Entity<ComedyText>()
                 .HasMany(ct => ct.Comments)
