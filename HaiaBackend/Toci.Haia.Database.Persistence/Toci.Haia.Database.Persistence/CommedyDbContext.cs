@@ -28,6 +28,54 @@ namespace Toci.Haia.Database.Persistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // Konfiguracja tabeli Joke
+            modelBuilder.Entity<Joke>()
+                .HasKey(j => j.Id);  // Ustawienie klucza głównego
+
+            modelBuilder.Entity<Joke>()
+                .Property(j => j.Text)
+                .IsRequired()
+                .HasMaxLength(500);  // Maksymalna długość dowcipu
+
+            modelBuilder.Entity<Joke>()
+                .HasMany(j => j.Reactions)      // Relacja jeden-do-wielu
+                .WithOne(r => r.Joke)            // Reakcja odnosi się do jednego dowcipu
+                .HasForeignKey(r => r.JokeId)    // Klucz obcy
+                .OnDelete(DeleteBehavior.Cascade);  // Usunięcie dowcipu usuwa też reakcje
+
+            // Konfiguracja tabeli Reaction
+            modelBuilder.Entity<Reaction>()
+                .HasKey(r => r.Id);  // Ustawienie klucza głównego
+
+            modelBuilder.Entity<Reaction>()
+                .Property(r => r.ReactionType)
+                .IsRequired()
+                .HasMaxLength(20);  // Maksymalna długość dla typu reakcji, np. "like", "superlike"
+
+            modelBuilder.Entity<Reaction>()
+                .HasOne(r => r.Joke)        // Każda reakcja jest na jeden dowcip
+                .WithMany(j => j.Reactions) // Dowcip może mieć wiele reakcji
+                .HasForeignKey(r => r.JokeId)
+                .OnDelete(DeleteBehavior.Cascade);  // Usunięcie dowcipu usuwa też reakcje
+
+            // Unikalne ograniczenie: Użytkownik może mieć tylko jedną reakcję na dowcip
+            modelBuilder.Entity<Reaction>()
+                .HasIndex(r => new { r.UserId, r.JokeId })
+                .IsUnique();
+
+            // Seedowanie danych przykładowych dla Joke
+            modelBuilder.Entity<Joke>().HasData(
+                new Joke { Id = 1, Text = "Dlaczego niebo jest niebieskie? Bo programista jeszcze nie skończył debugować!" },
+                new Joke { Id = 2, Text = "Dlaczego komputer był smutny? Bo miał zbyt dużo problemów!" }
+            );
+
+            // Seedowanie danych przykładowych dla Reaction
+            modelBuilder.Entity<Reaction>().HasData(
+                new Reaction { Id = 1, JokeId = 1, UserId = 1, ReactionType = "like" },
+                new Reaction { Id = 2, JokeId = 1, UserId = 2, ReactionType = "superlike" },
+                new Reaction { Id = 3, JokeId = 2, UserId = 1, ReactionType = "meh" }
+            );
+
             modelBuilder.Entity<Reaction>()
                 .HasOne(r => r.Joke)
                 .WithMany(j => j.Reactions)
