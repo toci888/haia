@@ -1,0 +1,15 @@
+.userItem {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    transition: background-color 0.2s;
+}
+
+.userItem:hover {
+    background-color: #e9f7ef;
+    cursor: pointer;
+}
+
+.username {
+    font-weight: bold;
+    color: #28a745;
+}

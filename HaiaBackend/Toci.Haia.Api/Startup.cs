@@ -17,7 +17,16 @@ namespace Toci.Haia.Database.Persistence
 
             //services.AddScoped<ICommentService, CommentService>();
 
-
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAllOrigins",
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin()
+                            .AllowAnyMethod()
+                            .AllowAnyHeader();
+                    });
+            });
 
             services.AddControllers();
         }

@@ -1,0 +1,15 @@
+.comedyTextItem {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    transition: background-color 0.2s;
+}
+
+.comedyTextItem:hover {
+    background-color: #f9f9f9;
+    cursor: pointer;
+}
+
+.textTitle {
+    font-weight: bold;
+    color: #007bff;
+}
