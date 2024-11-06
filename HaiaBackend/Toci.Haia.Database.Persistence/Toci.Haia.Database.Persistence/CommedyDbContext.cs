@@ -30,8 +30,8 @@ namespace Toci.Haia.Database.Persistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<User>()
-                .HasKey(u => u.Id);
+            //modelBuilder.Entity<User>()
+            //    .HasKey(u => u.Id);
 
             // Unikalny adres e-mail dla User
             modelBuilder.Entity<User>()
@@ -157,15 +157,15 @@ namespace Toci.Haia.Database.Persistence
                 .WithMany()
                 .HasForeignKey(f => f.FriendId);
 
-            modelBuilder.Entity<User>().HasData(
-            Enumerable.Range(1, 10).Select(i => new User
-            {
-                Id = i,
-                Username = $"User_{i}",
-                Email = $"user{i}@example.com",
-                PasswordHash = $"hash_user_{i}"
-            }).ToArray()
-        );
+        //    modelBuilder.Entity<User>().HasData(
+        //    Enumerable.Range(1, 10).Select(i => new User
+        //    {
+        //        Id = i,
+        //        Username = $"User_{i}",
+        //        Email = $"user{i}@example.com",
+        //        PasswordHash = $"hash_user_{i}"
+        //    }).ToArray()
+        //);
 
             // Seedowanie UserProfile
             modelBuilder.Entity<UserProfile>().HasData(
