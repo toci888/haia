@@ -16,10 +16,12 @@ namespace Toci.Haia.Database.Persistence
 
             base.OnConfiguring(optionsBuilder);
         }
+        public DbSet<User> Users { get; set; }
+        public DbSet<SocialLogin> SocialLogins { get; set; }
+
         public DbSet<Joke> Jokes { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Reaction> Reactions { get; set; }
-        public DbSet<User> Users { get; set; }
 
         public DbSet<ComedyText> ComedyTexts { get; set; }
 
@@ -28,6 +30,39 @@ namespace Toci.Haia.Database.Persistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<User>()
+                .HasKey(u => u.Id);
+
+            // Unikalny adres e-mail dla User
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
+
+            // Relacja jeden-do-wielu: User -> SocialLogins
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.SocialLogins)
+                .WithOne(s => s.User)
+                .HasForeignKey(s => s.UserId)
+                .OnDelete(DeleteBehavior.Cascade); // Usunięcie użytkownika usuwa logowania społecznościowe
+
+            // Konfiguracja tabeli SocialLogin
+            modelBuilder.Entity<SocialLogin>()
+                .HasKey(s => s.Id);
+
+            modelBuilder.Entity<SocialLogin>()
+                .Property(s => s.Provider)
+                .IsRequired()
+                .HasMaxLength(50);
+
+            modelBuilder.Entity<SocialLogin>()
+                .Property(s => s.ProviderUserId)
+                .IsRequired();
+
+            // Unikalne połączenie dostawcy i jego ID, aby uniknąć duplikacji
+            modelBuilder.Entity<SocialLogin>()
+                .HasIndex(s => new { s.Provider, s.ProviderUserId })
+                .IsUnique();
+
             // Konfiguracja tabeli Joke
             modelBuilder.Entity<Joke>()
                 .HasKey(j => j.Id);  // Ustawienie klucza głównego
@@ -190,6 +225,17 @@ namespace Toci.Haia.Database.Persistence
                     UserId = i,
                     FriendId = (i % 10) + 1 // Przykładowe przypisanie przyjaźni w kółko
                 }).ToArray()
+            );
+
+            modelBuilder.Entity<User>().HasData(
+                new User { Id = 1, Username = "user1", Email = "user1@example.com", PasswordHash = "hashed_password_1" },
+                new User { Id = 2, Username = "user2", Email = "user2@example.com", PasswordHash = "hashed_password_2" }
+            );
+
+            modelBuilder.Entity<SocialLogin>().HasData(
+                new SocialLogin { Id = 1, Provider = "Google", ProviderUserId = "google_user_1", UserId = 1 },
+                new SocialLogin { Id = 2, Provider = "Facebook", ProviderUserId = "facebook_user_1", UserId = 1 },
+                new SocialLogin { Id = 3, Provider = "GitHub", ProviderUserId = "github_user_2", UserId = 2 }
             );
         }
 

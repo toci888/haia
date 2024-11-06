@@ -30,5 +30,89 @@ public class UserController : ControllerBase
         return CreatedAtAction("GetUser", new { id = user.Id }, user);
     }
 
+    [HttpPost("register")]
+    public async Task<ActionResult<UserResponseDto>> RegisterUser(UserRegistrationDto registrationDto)
+    {
+        if (await _context.Users.AnyAsync(u => u.Email == registrationDto.Email))
+        {
+            return BadRequest("Użytkownik z podanym adresem e-mail już istnieje.");
+        }
+
+        var user = new User
+        {
+            Username = registrationDto.Username,
+            Email = registrationDto.Email,
+            PasswordHash = HashPassword(registrationDto.Password)  // Hashowanie hasła
+        };
+
+        _context.Users.Add(user);
+        await _context.SaveChangesAsync();
+
+        return Ok(new UserResponseDto
+        {
+            Id = user.Id,
+            Username = user.Username,
+            Email = user.Email,
+            SocialLogins = new List<SocialLoginDto>()
+        });
+    }
+
+    // Logowanie przez platformy społecznościowe
+    [HttpPost("social-login")]
+    public async Task<ActionResult<UserResponseDto>> SocialLogin(SocialLoginDto socialLoginDto)
+    {
+        var socialLogin = await _context.SocialLogins
+            .Include(sl => sl.User)
+            .FirstOrDefaultAsync(sl => sl.Provider == socialLoginDto.Provider && sl.ProviderUserId == socialLoginDto.ProviderUserId);
+
+        if (socialLogin == null)
+        {
+            return NotFound("Użytkownik nie jest połączony z podaną platformą logowania.");
+        }
+
+        var user = socialLogin.User;
+
+        return Ok(new UserResponseDto
+        {
+            Id = user.Id,
+            Username = user.Username,
+            Email = user.Email,
+            SocialLogins = await _context.SocialLogins
+                .Where(sl => sl.UserId == user.Id)
+                .Select(sl => new SocialLoginDto { Provider = sl.Provider, ProviderUserId = sl.ProviderUserId })
+                .ToListAsync()
+        });
+    }
+
+    // Pobierz szczegóły użytkownika
+    [HttpGet("{id}")]
+    public async Task<ActionResult<UserResponseDto>> GetUser(int id)
+    {
+        var user = await _context.Users
+            .Include(u => u.SocialLogins)
+            .FirstOrDefaultAsync(u => u.Id == id);
+
+        if (user == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(new UserResponseDto
+        {
+            Id = user.Id,
+            Username = user.Username,
+            Email = user.Email,
+            SocialLogins = user.SocialLogins
+                .Select(sl => new SocialLoginDto { Provider = sl.Provider, ProviderUserId = sl.ProviderUserId })
+                .ToList()
+        });
+    }
+
+    // Funkcja pomocnicza do hashowania hasła (przykładowa implementacja)
+    private string HashPassword(string password)
+    {
+        // Implementacja hashowania hasła (np. użycie BCrypt lub SHA256)
+        return password;  // Przykładowo zwracamy hasło bez hashowania (należy dodać właściwe hashowanie)
+    }
     // Other CRUD operations...
 }

@@ -2,10 +2,28 @@ import React from 'react';
 import ComedyTextList from './components/ComedyTextList';
 import UserList from './components/UserList';
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
+import Register from './components/Register';
+import SocialLogin from './components/SocialLogin';
+import UserProfile from './components/UserProfile';
+import './App.css';
+import JokeLandingPage from './components/JokeLandingPage';
 
 function App() {
     return (
         <div className="container mt-4">
+             <div className="container">
+            <h1>Portal Haia</h1>
+            <Register />
+            <hr />
+            <SocialLogin />
+            <hr />
+            <UserProfile />
+        </div>
+
+        <div className="App">
+            <JokeLandingPage />
+        </div>
+
             <h1 className="text-center mb-4">Comedy App</h1>
             <div className="row">
                 <div className="col-md-6">

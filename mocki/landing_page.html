@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Haia - Humor i Inteligencja</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Ogólne style */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+        }
+
+        /* Pasek nawigacyjny */
+        .navbar {
+            background-color: #333;
+        }
+        .navbar-brand {
+            font-size: 1.5em;
+            color: #ffcc00 !important;
+            font-weight: bold;
+        }
+        .navbar-nav .nav-link {
+            color: #f9f9f9 !important;
+        }
+        .navbar-nav .nav-link:hover {
+            color: #ffcc00 !important;
+        }
+
+        /* Sekcja główna */
+        .hero {
+            text-align: center;
+            padding: 80px 20px;
+            background-color: #ffcc00;
+            color: #333;
+        }
+        .hero h1 {
+            font-size: 3em;
+            font-weight: bold;
+        }
+        .hero p {
+            font-size: 1.2em;
+            margin: 20px 0;
+        }
+        .cta-button {
+            margin: 10px;
+            padding: 12px 30px;
+            font-size: 1.1em;
+            color: #333;
+            background-color: #fff;
+            border: 2px solid #333;
+            border-radius: 25px;
+        }
+        .cta-button:hover {
+            background-color: #333;
+            color: #fff;
+        }
+
+        /* Sekcja Funkcji */
+        .features {
+            padding: 60px 20px;
+            text-align: center;
+        }
+        .features h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+        .feature-item {
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .feature-item h3 {
+            font-size: 1.5em;
+            color: #333;
+        }
+        .feature-item p {
+            color: #666;
+        }
+
+        /* Stopka */
+        .footer {
+            background-color: #333;
+            color: #f9f9f9;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+        .footer a {
+            color: #ffcc00;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Pasek Nawigacyjny -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="#">Haia</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+                <li class="nav-item"><a class="nav-link" href="#jokes">Jokes</a></li>
+                <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Sekcja Główna (Hero) -->
+    <section id="home" class="hero">
+        <h1>Witaj w Haia!</h1>
+        <p>Twoja codzienna dawka śmiechu i inteligencji. Dołącz do naszej społeczności i baw się świetnie!</p>
+        <a href="#jokes" class="cta-button">Zobacz dowcipy</a>
+        <a href="#contact" class="cta-button">Skontaktuj się z nami</a>
+    </section>
+
+    <!-- Sekcja Funkcji -->
+    <section id="about" class="features">
+        <h2>Dlaczego Haia?</h2>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 feature-item">
+                    <h3>Śmieszne Dowcipy</h3>
+                    <p>Codziennie świeża dawka dowcipów, które poprawią Ci humor.</p>
+                </div>
+                <div class="col-md-4 feature-item">
+                    <h3>Reakcje i Komentarze</h3>
+                    <p>Daj znać co myślisz! Polubienia, superpolubienia, a może nie dla Ciebie?</p>
+                </div>
+                <div class="col-md-4 feature-item">
+                    <h3>Społeczność</h3>
+                    <p>Połącz się z innymi śmieszkami i dziel się najlepszymi dowcipami.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stopka -->
+    <footer class="footer">
+        <p>© 2023 Haia - Tworzone z pasją i humorem | <a href="#home">Wróć na górę</a></p>
+        <p>Śledź nas na: <a href="#">Facebook</a> | <a href="#">Instagram</a> | <a href="#">LinkedIn</a></p>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

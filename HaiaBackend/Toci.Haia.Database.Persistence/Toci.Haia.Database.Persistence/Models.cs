@@ -10,6 +10,7 @@ namespace Toci.Haia.Database.Persistence
     {
         public int Id { get; set; }
         public string Text { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public ICollection<Comment> Comments { get; set; }
         public ICollection<Reaction> Reactions { get; internal set; }
     }
@@ -80,7 +81,25 @@ namespace Toci.Haia.Database.Persistence
         public string PasswordHash { get; set; }
         public List<ComedyText> ComedyTexts { get; set; } = new List<ComedyText>();
         public List<Comment> Comments { get; set; } = new List<Comment>();
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime LastLogin { get; set; }
+
+        // Relacja z SocialLogin (opcjonalne logowanie przez zewnętrzne platformy)
+        public ICollection<SocialLogin> SocialLogins { get; set; }
     }
+
+    public class SocialLogin
+    {
+        public int Id { get; set; }
+        public string Provider { get; set; } // Platforma: Google, Facebook, Microsoft, GitHub, Apple, LinkedIn
+        public string ProviderUserId { get; set; } // Unikalny ID użytkownika przyznany przez dostawcę
+        public DateTime LinkedAt { get; set; } = DateTime.UtcNow; // Kiedy połączono konto
+
+        // Relacja z tabelą User
+        public int UserId { get; set; }
+        public User User { get; set; }
+    }
+
 
     public class UserProfile
     {

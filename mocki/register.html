@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rejestracja - Portal Haia</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Ogólne style */
+        body {
+            background-color: #f9f9f9;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Kontener rejestracji */
+        .registration-container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        /* Tytuł strony */
+        .registration-container h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        /* Przycisk rejestracji przez e-mail */
+        .email-register-btn {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            margin-top: 10px;
+        }
+
+        /* Przyciski logowania przez social media */
+        .social-login-btn {
+            width: 100%;
+            color: #fff;
+            margin: 5px 0;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .google { background-color: #DB4437; }
+        .facebook { background-color: #3b5998; }
+        .microsoft { background-color: #737373; }
+        .github { background-color: #333; }
+        .apple { background-color: #000; }
+        .linkedin { background-color: #0077b5; }
+    </style>
+</head>
+<body>
+
+    <div class="container registration-container">
+        <h2>Dołącz do Haia</h2>
+
+        <!-- Rejestracja przy użyciu adresu e-mail -->
+        <form id="registrationForm">
+            <div class="form-group">
+                <label for="email">Adres e-mail</label>
+                <input type="email" class="form-control" id="email" placeholder="Wprowadź swój adres e-mail" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Hasło</label>
+                <input type="password" class="form-control" id="password" placeholder="Wprowadź hasło" required>
+            </div>
+            <button type="submit" class="btn email-register-btn btn-block">Zarejestruj się</button>
+        </form>
+
+        <!-- Separator -->
+        <div class="text-center my-3">
+            <span>lub</span>
+        </div>
+
+        <!-- Logowanie przez Social Media -->
+        <button class="btn social-login-btn google">Zaloguj się przez Google</button>
+        <button class="btn social-login-btn facebook">Zaloguj się przez Facebook</button>
+        <button class="btn social-login-btn microsoft">Zaloguj się przez Microsoft</button>
+        <button class="btn social-login-btn github">Zaloguj się przez GitHub</button>
+        <button class="btn social-login-btn apple">Zaloguj się przez Apple</button>
+        <button class="btn social-login-btn linkedin">Zaloguj się przez LinkedIn</button>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -25,3 +25,20 @@ export const reactToComment = async (commentId, reactionType, userId) => {
     });
     return response.data;
 };
+
+export const registerUser = async (userData) => {
+    return await axios.post(`${API_URL}/register`, userData);
+};
+
+export const socialLogin = async (provider, providerUserId) => {
+    return await axios.post(`${API_URL}/social-login`, { provider, providerUserId });
+};
+
+export const getUserById = async (userId) => {
+    return await axios.get(`${API_URL}/${userId}`);
+};
+
+
+export const addJoke = async (jokeData) => {
+    return await axios.post(`${API_URL}/jokes`, jokeData);
+};

@@ -1,0 +1,63 @@
+/* Ogólne style strony */
+.landing-container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+
+h1 {
+    color: #ff6600;
+    font-weight: bold;
+}
+
+p {
+    color: #666;
+    font-size: 1.1em;
+}
+
+/* Formularz dodawania dowcipu */
+.joke-form-container {
+    margin-top: 20px;
+}
+
+.joke-form-container h2 {
+    color: #333;
+}
+
+textarea {
+    width: 100%;
+    height: 100px;
+    padding: 10px;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    resize: none;
+    margin-bottom: 10px;
+}
+
+button {
+    padding: 12px 20px;
+    font-size: 1em;
+    color: #fff;
+    background-color: #ff6600;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #e65c00;
+}
+
+/* Komunikaty */
+.message {
+    margin-top: 10px;
+    font-weight: bold;
+    color: #ff6600;
+}

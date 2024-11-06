@@ -57,4 +57,33 @@ namespace Toci.Haia.Database.Persistence
         public string ReactionType { get; set; }   // Type of reaction (e.g., "like", "superlike", etc.)
     }
 
+    public class UserRegistrationDto
+    {
+        public string Username { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
+    }
+
+    public class UserResponseDto
+    {
+        public int Id { get; set; }
+        public string Username { get; set; }
+        public string Email { get; set; }
+        public List<SocialLoginDto> SocialLogins { get; set; }
+    }
+
+    public class SocialLoginDto
+    {
+        public string Provider { get; set; }
+        public string ProviderUserId { get; set; }
+    }
+
+    public class JokeDto
+    {
+        public string Text { get; set; }
+
+        public string Author { get; set; }
+    }
+
+
 }
