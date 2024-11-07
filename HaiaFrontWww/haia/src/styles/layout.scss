@@ -1,0 +1,7 @@
+@import "variables";
+@import "utils";
+
+html, body {
+   font-size: toRem($base-font-size);
+   font-family: Arial, sans-serif;
+}

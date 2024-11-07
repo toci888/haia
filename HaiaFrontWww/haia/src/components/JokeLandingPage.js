@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { addJoke } from '../apiService';
-import './JokeLandingPage.css';
 
 const JokeLandingPage = () => {
     const [jokeText, setJokeText] = useState('');

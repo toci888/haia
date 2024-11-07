@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { getAllUsers } from '../services/userService';
-import styles from './styles/UserList.module.css';
 
 const UserList = () => {
     const [users, setUsers] = useState([]);
@@ -21,8 +20,8 @@ const UserList = () => {
     return (
         <ul className="list-group">
             {users.map((user) => (
-                <li key={user.id} className={`list-group-item ${styles.userItem}`}>
-                    <span className={styles.username}>{user.username}</span>
+                <li key={user.id} className="list-group-item userItem">
+                    <span className="username">{user.username}</span>
                 </li>
             ))}
         </ul>
