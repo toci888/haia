@@ -1,41 +1,75 @@
-.App {
-  text-align: center;
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+:root {
+  --backgroundColor: #4C1F7A;
+  --backgroundColor2: #EEEEEE;
+  --fontColor: #219B9D;
+  --secondfontColor: #394989;
+  --hoverColor: #FF8000;
+  --contrastColor:  #FF8000;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+html,
+body {
+  font-size: 16px;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.header__container {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: var(--backgroundColor);
+}
+
+.navbar__container {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.navbar__container .navbar__link {
+  text-decoration: none;
+  color: #fff;
+  padding: 10px 15px;
+  font-weight: bold;
+  background-color: var(--hoverColor);
+  border-radius: 15px;
+}
+
+.navbar__container .navbar__link:hover {
+  background-color: var(--fontColor);
+  /* color: var(--fontColor); */
+  border-radius: 15px;
+}
+
+.logo {
+  font-family: "Lobster Two", sans-serif;
+  margin-bottom: 0;
+  /* text-transform: lowercase; */
+  font-weight: 900;
+  font-size: 30px;
+  color: var(--contrastColor);
+}
+
+
+.home-body__container {
+  width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  justify-content: space-between;
+  /* background-color: var(--backgroundColor); */
+  background-color: var(--backgroundColor2);
+  padding-inline: 20px;
 }
 
-.App-link {
-  color: #61dafb;
-}
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
+/* stare */
 
 /* Ogólne style aplikacji */
 body {
@@ -128,3 +162,4 @@ button.social-button:hover {
   font-weight: bold;
   color: #ff6600;
 }
+

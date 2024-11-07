@@ -1,45 +1,34 @@
 import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import HomePage from './pages/HomePage';
+import LoginPage from './pages/LoginPage';
+import AboutUsPage from './pages/AboutUsPage';
+import './App.css';
+
 import ComedyTextList from './components/ComedyTextList';
 import UserList from './components/UserList';
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
 import Register from './components/Register';
 import SocialLogin from './components/SocialLogin';
 import UserProfile from './components/UserProfile';
-import './App.css';
 import JokeLandingPage from './components/JokeLandingPage';
 
 function App() {
     return (
-        <div className="container mt-4">
-             <div className="container">
-            <h1>Portal Haia</h1>
-            <Register />
-            <hr />
-            <SocialLogin />
-            <hr />
-            <UserProfile />
-        </div>
-
-        <div className="App">
-            <JokeLandingPage />
-        </div>
-
-            <h1 className="text-center mb-4">Comedy App</h1>
-            <div className="row">
-                <div className="col-md-6">
-                    <div className="card p-3 mb-4">
-                        <h2 className="text-primary">Comedy Texts</h2>
-                        <ComedyTextList />
-                    </div>
-                </div>
-                <div className="col-md-6">
-                    <div className="card p-3 mb-4">
-                        <h2 className="text-success">Users</h2>
-                        <UserList />
-                    </div>
-                </div>
+        <>
+            <div>
+                <BrowserRouter>
+                    <Routes>
+                        <Route path="/" element={<HomePage/>}/>
+                        <Route path="/about" element={<AboutUsPage/>}/>
+                        {/* <Route path="/community" element={<Community/>}/> */}
+                        {/* <Route path="/contact" element={<Contact/>}/> */}
+                        <Route path="/login" element={<LoginPage/>}/>
+                        {/* <Route path="/signin" element={<SignIn/>}/> */}
+                    </Routes>
+                </BrowserRouter>
             </div>
-        </div>
+        </>
     );
 }
 

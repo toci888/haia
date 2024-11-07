@@ -33,7 +33,7 @@ const JokeLandingPage = () => {
                         placeholder="Wpisz swój dowcip tutaj..."
                         required
                     />
-                    <button type="submit">Dodaj Dowcip</button>
+                    <button className="joke-form__button" type="submit">Dodaj Dowcip</button>
                 </form>
                 {message && <p className="message">{message}</p>}
             </div>

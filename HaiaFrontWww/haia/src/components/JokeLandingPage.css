@@ -40,18 +40,21 @@ textarea {
     margin-bottom: 10px;
 }
 
-button {
+.joke-form__button {
     padding: 12px 20px;
     font-size: 1em;
     color: #fff;
-    background-color: #ff6600;
+    background-color: #4C1F7A;
+    /* background-color: #ff6600; */
     border: none;
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s;
 }
 
-button:hover {
+.joke-form__button:hover {
+    /* background-color: #fff48f;
+    color: #394989; */
     background-color: #e65c00;
 }
 
