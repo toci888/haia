@@ -5,57 +5,11 @@
 @import "./styles/pages/JokeLandingPage.scss";
 @import "./styles/components/ComedyTextList.scss";
 @import "./styles/components/UserList.scss";
+@import "./styles/layout/Header.scss";
+@import "./styles/pages/HomePage.scss";
 
 
-.header__container {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 20px;
-  background-color: $primaryColor;
-}
-
-.navbar__container {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.navbar__container .navbar__link {
-  text-decoration: none;
-  color: $fontColor;
-  padding: 10px 15px;
-  font-weight: bold;
-  background-color: $contrastColor;
-  border-radius: 15px;
-}
-
-.navbar__container .navbar__link:hover {
-  background-color: $secondaryColor;
-  border-radius: 15px;
-}
-
-.logo {
-  font-family: "Lobster Two", sans-serif;
-  margin-bottom: 0;
-  font-weight: 900;
-  font-size: 30px;
-  color: $contrastColor;
-}
-
-
-.home-body__container {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  background-color: $backgroundColor;
-  padding-inline: 20px;
-}
-
-
-/* stare */
+/* z chatgpt */
 
 /* Ogólne style aplikacji */
 body {
@@ -69,15 +23,15 @@ body {
 .container {
   max-width: 600px;
   margin: 50px auto;
-  padding: 20px;
-  background-color: #ffffff;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  padding: toRem(20);
+  background-color: $backgroundColor2;
+  box-shadow: $box-shadow;
   border-radius: 8px;
   text-align: center;
 }
 
 h1 {
-  color: #ff6600;
+  color: $contrastColor;
   font-weight: bold;
   margin-bottom: 20px;
 }
@@ -99,7 +53,7 @@ input[type="text"], input[type="email"], input[type="password"] {
 }
 
 input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus {
-  border-color: #ff6600;
+  border-color: $contrastColor;
   outline: none;
 }
 
@@ -107,8 +61,8 @@ input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focu
 button {
   padding: 12px;
   font-size: 1em;
-  color: #fff;
-  background-color: #ff6600;
+  color: $fontColor;
+  background-color: $contrastColor;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -127,7 +81,7 @@ button.social-button {
   font-weight: bold;
   font-size: 0.9em;
   border-radius: 5px;
-  color: #fff;
+  color: $fontColor;
 }
 
 /* Kolory dla poszczególnych przycisków social media */
@@ -146,6 +100,6 @@ button.social-button:hover {
 .message {
   margin: 10px 0;
   font-weight: bold;
-  color: #ff6600;
+  color: $contrastColor;
 }
 

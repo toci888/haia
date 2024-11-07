@@ -2,6 +2,7 @@ import Header from "../layout/Header";
 import JokeLandingPage from "../components/JokeLandingPage";
 import ComedyTextList from "../components/ComedyTextList";
 import UserList from "../components/UserList";
+import Joke from "../components/Joke";
 
 function HomePage() {
   return (
@@ -9,10 +10,9 @@ function HomePage() {
       <Header />
 
             <div className="home-body__container">
-                <div className="App">
+                <div>
                     <JokeLandingPage />
                 </div>
-
                 <h1 className="text-center mb-4">Comedy App</h1>
                 <div className="row">
                     <div className="col-md-6">
