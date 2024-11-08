@@ -28,6 +28,8 @@ namespace Toci.Haia.Database.Persistence
                     });
             });
 
+            services.AddSignalR();
+
             services.AddControllers();
         }
 
