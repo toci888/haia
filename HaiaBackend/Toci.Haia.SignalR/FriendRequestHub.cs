@@ -17,4 +17,10 @@ public class FriendRequestHub : Hub
         // Wyślij powiadomienie o nowym zaproszeniu do użytkownika o danym userId
         await Clients.User(userId).SendAsync("ReceiveFriendRequest", message);
     }
+
+    public async Task SendFriendInviteNotification(int recipientUserId, string inviterName)
+    {
+        // Wysyłanie powiadomienia do konkretnego użytkownika po jego Id
+        await Clients.User(recipientUserId.ToString()).SendAsync("ReceiveFriendInvite", inviterName);
+    }
 }

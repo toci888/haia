@@ -4,18 +4,60 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Toci.Haia.Database.Persistence;
+using Microsoft.AspNetCore.SignalR;
 
-namespace YourNamespace.Controllers
+namespace Toci.Haia.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class FriendshipController : ControllerBase
     {
         private readonly ComedyDbContext _context;
+        private readonly IHubContext<FriendRequestHub> _hubContext;
 
-        public FriendshipController(ComedyDbContext context)
+        public FriendshipController(ComedyDbContext context, IHubContext<FriendRequestHub> hubContext)
         {
             _context = context;
+            _hubContext = hubContext;
+        }
+
+        [HttpPost("invite")]
+        public async Task<IActionResult> SendFriendInvite([FromBody] CreateFriendshipDto createFriendshipDto)
+        {
+            if (createFriendshipDto.UserId == createFriendshipDto.FriendId)
+            {
+                return BadRequest("User cannot be friends with themselves.");
+            }
+
+            // Check if the friendship already exists
+            var existingFriendship = await _context.Friendships
+                .FirstOrDefaultAsync(f =>
+                    (f.UserId == createFriendshipDto.UserId && f.FriendId == createFriendshipDto.FriendId) ||
+                    (f.UserId == createFriendshipDto.FriendId && f.FriendId == createFriendshipDto.UserId));
+
+            if (existingFriendship != null)
+            {
+                return Conflict("Friendship already exists.");
+            }
+
+            // Create a new friendship invitation in the database
+            var friendship = new Friendship
+            {
+                UserId = createFriendshipDto.UserId,
+                FriendId = createFriendshipDto.FriendId
+            };
+            _context.Friendships.Add(friendship);
+            await _context.SaveChangesAsync();
+
+            // Send a notification to the friend (recipient)
+            var inviter = await _context.Users.FindAsync(createFriendshipDto.UserId);
+            if (inviter != null)
+            {
+                await _hubContext.Clients.User(createFriendshipDto.FriendId.ToString())
+                    .SendAsync("ReceiveFriendInvite", createFriendshipDto.FriendId, inviter.Username);
+            }
+
+            return Ok("Friendship invitation sent.");
         }
 
         // GET: api/Friendship/user/{userId}
