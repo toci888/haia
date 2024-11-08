@@ -7,6 +7,7 @@ import SocialLogin from './components/SocialLogin';
 import UserProfile from './components/UserProfile';
 import './App.css';
 import JokeLandingPage from './components/JokeLandingPage';
+import FriendInviteNotifier from './FriendInviteNotifier';
 
 function App() {
     return (
@@ -23,6 +24,8 @@ function App() {
         <div className="App">
             <JokeLandingPage />
         </div>
+
+        <FriendInviteNotifier/>
 
             <h1 className="text-center mb-4">Comedy App</h1>
             <div className="row">
