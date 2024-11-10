@@ -12,6 +12,14 @@ public class FriendRequestHub : Hub
         _dbContext = dbContext;
     }
 
+
+
+    public override async Task OnDisconnectedAsync(Exception exception)
+    {
+        //_connectedUsers.TryRemove(Context.ConnectionId, out string userId);
+        await base.OnDisconnectedAsync(exception);
+    }
+
     public async Task SendFriendRequest(string userId, string message)
     {
         // Wyślij powiadomienie o nowym zaproszeniu do użytkownika o danym userId
