@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
 import axios from 'axios';
+import { appSelector } from '../store/Store';
 
 const CommentScreen = () => {
+  const { user: { currentUser } } = appSelector(s => s);
   const [comments, setComments] = useState([]); // Lista komentarzy
   const [newComment, setNewComment] = useState(''); // Nowy komentarz
   const [likedComments, setLikedComments] = useState({}); // Komentarze polubione
@@ -63,6 +65,11 @@ const CommentScreen = () => {
 
   return (
     <View style={styles.container}>
+      <View>
+        {currentUser && (
+          <Text>Witaj {currentUser.login}</Text>
+        )}
+      </View>
       <FlatList
         data={comments}
         renderItem={renderComment}
