@@ -21,16 +21,64 @@ namespace Toci.Haia.Database.Persistence
 
         public DbSet<Joke> Jokes { get; set; }
         public DbSet<GptJoke> GptJokes { get; set; }
+        public DbSet<UserGroup> UserGroups { get; set; }
+        public DbSet<GroupPost> Posts { get; set; } // Dodane posty
+        public DbSet<Category> Categories { get; set; } // Dodane kategorie
+        public DbSet<PostInteraction> PostInteractions { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Reaction> Reactions { get; set; }
 
         public DbSet<ComedyText> ComedyTexts { get; set; }
+        public DbSet<UserCategoryPreference> UserCategoryPreferences { get; set; }
 
         public DbSet<Like> Likes { get; set; }
         public DbSet<Friendship> Friendships { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<UserCategoryPreference>()
+                .HasOne(ucp => ucp.User);
+                //.WithMany(u => u.UserCategoryPreferences)
+                //.HasForeignKey(ucp => ucp.UserId);
+
+                modelBuilder.Entity<UserCategoryPreference>()
+                    .HasOne(ucp => ucp.Category);
+                //.WithMany(c => c.UserCategoryPreferences)
+                //.HasForeignKey(ucp => ucp.CategoryId);
+
+            modelBuilder.Entity<UserGroup>()
+                .HasMany(g => g.Posts)
+                .WithOne(p => p.Group)
+                .HasForeignKey(p => p.GroupId);
+
+            modelBuilder.Entity<Category>()
+                .HasMany(c => c.Posts);
+                //.WithOne(p => p.CategoryId)
+                //.HasForeignKey(p => p.CategoryId);
+
+
+            modelBuilder.Entity<Category>().HasData(
+                new Category { Id = 1, Name = "Satyra" },
+                new Category { Id = 2, Name = "Parodia" },
+                new Category { Id = 3, Name = "Ironia" },
+                new Category { Id = 4, Name = "Humor czarny" },
+                new Category { Id = 5, Name = "Humor absurdalny" },
+                new Category { Id = 6, Name = "Słowna gra" },
+                new Category { Id = 7, Name = "Karykatura" },
+                new Category { Id = 8, Name = "Humor polityczny" }
+            );
+
+
+            // Definicje relacji i kluczy obcych
+            modelBuilder.Entity<UserGroup>()
+                .HasMany(g => g.Posts)
+                .WithOne(p => p.Group)
+                .HasForeignKey(p => p.GroupId);
+
+            modelBuilder.Entity<UserGroup>()
+                .HasMany(g => g.Users);
+                //.WithMany(u => u.use);
+
             //modelBuilder.Entity<User>()
             //    .HasKey(u => u.Id);
 

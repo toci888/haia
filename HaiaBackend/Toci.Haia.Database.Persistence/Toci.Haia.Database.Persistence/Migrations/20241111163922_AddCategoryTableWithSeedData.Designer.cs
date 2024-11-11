@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Toci.Haia.Database.Persistence;
@@ -11,9 +12,11 @@ using Toci.Haia.Database.Persistence;
 namespace Toci.Haia.Database.Persistence.Migrations
 {
     [DbContext(typeof(ComedyDbContext))]
-    partial class ComedyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241111163922_AddCategoryTableWithSeedData")]
+    partial class AddCategoryTableWithSeedData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -120,70 +123,70 @@ namespace Toci.Haia.Database.Persistence.Migrations
                         {
                             Id = 1,
                             Author = "Author_1",
-                            CommentTimestamp = new DateTime(2024, 11, 11, 16, 47, 28, 578, DateTimeKind.Utc).AddTicks(9185),
+                            CommentTimestamp = new DateTime(2024, 11, 11, 16, 39, 22, 154, DateTimeKind.Utc).AddTicks(5079),
                             Text = "Sample Comedy Text 1"
                         },
                         new
                         {
                             Id = 2,
                             Author = "Author_2",
-                            CommentTimestamp = new DateTime(2024, 11, 11, 16, 47, 28, 578, DateTimeKind.Utc).AddTicks(9188),
+                            CommentTimestamp = new DateTime(2024, 11, 11, 16, 39, 22, 154, DateTimeKind.Utc).AddTicks(5084),
                             Text = "Sample Comedy Text 2"
                         },
                         new
                         {
                             Id = 3,
                             Author = "Author_3",
-                            CommentTimestamp = new DateTime(2024, 11, 11, 16, 47, 28, 578, DateTimeKind.Utc).AddTicks(9189),
+                            CommentTimestamp = new DateTime(2024, 11, 11, 16, 39, 22, 154, DateTimeKind.Utc).AddTicks(5087),
                             Text = "Sample Comedy Text 3"
                         },
                         new
                         {
                             Id = 4,
                             Author = "Author_4",
-                            CommentTimestamp = new DateTime(2024, 11, 11, 16, 47, 28, 578, DateTimeKind.Utc).AddTicks(9191),
+                            CommentTimestamp = new DateTime(2024, 11, 11, 16, 39, 22, 154, DateTimeKind.Utc).AddTicks(5088),
                             Text = "Sample Comedy Text 4"
                         },
                         new
                         {
                             Id = 5,
                             Author = "Author_5",
-                            CommentTimestamp = new DateTime(2024, 11, 11, 16, 47, 28, 578, DateTimeKind.Utc).AddTicks(9193),
+                            CommentTimestamp = new DateTime(2024, 11, 11, 16, 39, 22, 154, DateTimeKind.Utc).AddTicks(5090),
                             Text = "Sample Comedy Text 5"
                         },
                         new
                         {
                             Id = 6,
                             Author = "Author_6",
-                            CommentTimestamp = new DateTime(2024, 11, 11, 16, 47, 28, 578, DateTimeKind.Utc).AddTicks(9194),
+                            CommentTimestamp = new DateTime(2024, 11, 11, 16, 39, 22, 154, DateTimeKind.Utc).AddTicks(5110),
                             Text = "Sample Comedy Text 6"
                         },
                         new
                         {
                             Id = 7,
                             Author = "Author_7",
-                            CommentTimestamp = new DateTime(2024, 11, 11, 16, 47, 28, 578, DateTimeKind.Utc).AddTicks(9195),
+                            CommentTimestamp = new DateTime(2024, 11, 11, 16, 39, 22, 154, DateTimeKind.Utc).AddTicks(5112),
                             Text = "Sample Comedy Text 7"
                         },
                         new
                         {
                             Id = 8,
                             Author = "Author_8",
-                            CommentTimestamp = new DateTime(2024, 11, 11, 16, 47, 28, 578, DateTimeKind.Utc).AddTicks(9196),
+                            CommentTimestamp = new DateTime(2024, 11, 11, 16, 39, 22, 154, DateTimeKind.Utc).AddTicks(5113),
                             Text = "Sample Comedy Text 8"
                         },
                         new
                         {
                             Id = 9,
                             Author = "Author_9",
-                            CommentTimestamp = new DateTime(2024, 11, 11, 16, 47, 28, 578, DateTimeKind.Utc).AddTicks(9198),
+                            CommentTimestamp = new DateTime(2024, 11, 11, 16, 39, 22, 154, DateTimeKind.Utc).AddTicks(5115),
                             Text = "Sample Comedy Text 9"
                         },
                         new
                         {
                             Id = 10,
                             Author = "Author_10",
-                            CommentTimestamp = new DateTime(2024, 11, 11, 16, 47, 28, 578, DateTimeKind.Utc).AddTicks(9205),
+                            CommentTimestamp = new DateTime(2024, 11, 11, 16, 39, 22, 154, DateTimeKind.Utc).AddTicks(5117),
                             Text = "Sample Comedy Text 10"
                         });
                 });
@@ -242,7 +245,7 @@ namespace Toci.Haia.Database.Persistence.Migrations
                             Id = 1,
                             Author = "Commenter_1",
                             CommentId = 0,
-                            CommentTimestamp = new DateTime(2024, 11, 11, 16, 47, 28, 578, DateTimeKind.Utc).AddTicks(9246),
+                            CommentTimestamp = new DateTime(2024, 11, 11, 16, 39, 22, 154, DateTimeKind.Utc).AddTicks(5583),
                             JokeId = 0,
                             Text = "Sample Comment 1",
                             UserId = 0
@@ -252,7 +255,7 @@ namespace Toci.Haia.Database.Persistence.Migrations
                             Id = 2,
                             Author = "Commenter_2",
                             CommentId = 0,
-                            CommentTimestamp = new DateTime(2024, 11, 11, 16, 47, 28, 578, DateTimeKind.Utc).AddTicks(9249),
+                            CommentTimestamp = new DateTime(2024, 11, 11, 16, 39, 22, 154, DateTimeKind.Utc).AddTicks(5587),
                             JokeId = 0,
                             Text = "Sample Comment 2",
                             UserId = 0
@@ -262,7 +265,7 @@ namespace Toci.Haia.Database.Persistence.Migrations
                             Id = 3,
                             Author = "Commenter_3",
                             CommentId = 0,
-                            CommentTimestamp = new DateTime(2024, 11, 11, 16, 47, 28, 578, DateTimeKind.Utc).AddTicks(9251),
+                            CommentTimestamp = new DateTime(2024, 11, 11, 16, 39, 22, 154, DateTimeKind.Utc).AddTicks(5589),
                             JokeId = 0,
                             Text = "Sample Comment 3",
                             UserId = 0
@@ -272,7 +275,7 @@ namespace Toci.Haia.Database.Persistence.Migrations
                             Id = 4,
                             Author = "Commenter_4",
                             CommentId = 0,
-                            CommentTimestamp = new DateTime(2024, 11, 11, 16, 47, 28, 578, DateTimeKind.Utc).AddTicks(9253),
+                            CommentTimestamp = new DateTime(2024, 11, 11, 16, 39, 22, 154, DateTimeKind.Utc).AddTicks(5590),
                             JokeId = 0,
                             Text = "Sample Comment 4",
                             UserId = 0
@@ -282,7 +285,7 @@ namespace Toci.Haia.Database.Persistence.Migrations
                             Id = 5,
                             Author = "Commenter_5",
                             CommentId = 0,
-                            CommentTimestamp = new DateTime(2024, 11, 11, 16, 47, 28, 578, DateTimeKind.Utc).AddTicks(9255),
+                            CommentTimestamp = new DateTime(2024, 11, 11, 16, 39, 22, 154, DateTimeKind.Utc).AddTicks(5592),
                             JokeId = 0,
                             Text = "Sample Comment 5",
                             UserId = 0
@@ -292,7 +295,7 @@ namespace Toci.Haia.Database.Persistence.Migrations
                             Id = 6,
                             Author = "Commenter_6",
                             CommentId = 0,
-                            CommentTimestamp = new DateTime(2024, 11, 11, 16, 47, 28, 578, DateTimeKind.Utc).AddTicks(9256),
+                            CommentTimestamp = new DateTime(2024, 11, 11, 16, 39, 22, 154, DateTimeKind.Utc).AddTicks(5594),
                             JokeId = 0,
                             Text = "Sample Comment 6",
                             UserId = 0
@@ -302,7 +305,7 @@ namespace Toci.Haia.Database.Persistence.Migrations
                             Id = 7,
                             Author = "Commenter_7",
                             CommentId = 0,
-                            CommentTimestamp = new DateTime(2024, 11, 11, 16, 47, 28, 578, DateTimeKind.Utc).AddTicks(9257),
+                            CommentTimestamp = new DateTime(2024, 11, 11, 16, 39, 22, 154, DateTimeKind.Utc).AddTicks(5595),
                             JokeId = 0,
                             Text = "Sample Comment 7",
                             UserId = 0
@@ -312,7 +315,7 @@ namespace Toci.Haia.Database.Persistence.Migrations
                             Id = 8,
                             Author = "Commenter_8",
                             CommentId = 0,
-                            CommentTimestamp = new DateTime(2024, 11, 11, 16, 47, 28, 578, DateTimeKind.Utc).AddTicks(9258),
+                            CommentTimestamp = new DateTime(2024, 11, 11, 16, 39, 22, 154, DateTimeKind.Utc).AddTicks(5597),
                             JokeId = 0,
                             Text = "Sample Comment 8",
                             UserId = 0
@@ -322,7 +325,7 @@ namespace Toci.Haia.Database.Persistence.Migrations
                             Id = 9,
                             Author = "Commenter_9",
                             CommentId = 0,
-                            CommentTimestamp = new DateTime(2024, 11, 11, 16, 47, 28, 578, DateTimeKind.Utc).AddTicks(9260),
+                            CommentTimestamp = new DateTime(2024, 11, 11, 16, 39, 22, 154, DateTimeKind.Utc).AddTicks(5598),
                             JokeId = 0,
                             Text = "Sample Comment 9",
                             UserId = 0
@@ -332,7 +335,7 @@ namespace Toci.Haia.Database.Persistence.Migrations
                             Id = 10,
                             Author = "Commenter_10",
                             CommentId = 0,
-                            CommentTimestamp = new DateTime(2024, 11, 11, 16, 47, 28, 578, DateTimeKind.Utc).AddTicks(9261),
+                            CommentTimestamp = new DateTime(2024, 11, 11, 16, 39, 22, 154, DateTimeKind.Utc).AddTicks(5601),
                             JokeId = 0,
                             Text = "Sample Comment 10",
                             UserId = 0
@@ -522,14 +525,14 @@ namespace Toci.Haia.Database.Persistence.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2024, 11, 11, 16, 47, 28, 578, DateTimeKind.Utc).AddTicks(1136),
+                            CreatedAt = new DateTime(2024, 11, 11, 16, 39, 22, 152, DateTimeKind.Utc).AddTicks(4582),
                             Text = "Dlaczego niebo jest niebieskie? Bo programista jeszcze nie skończył debugować!",
                             UserId = 0
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2024, 11, 11, 16, 47, 28, 578, DateTimeKind.Utc).AddTicks(1139),
+                            CreatedAt = new DateTime(2024, 11, 11, 16, 39, 22, 152, DateTimeKind.Utc).AddTicks(4585),
                             Text = "Dlaczego komputer był smutny? Bo miał zbyt dużo problemów!",
                             UserId = 0
                         });
@@ -745,7 +748,7 @@ namespace Toci.Haia.Database.Persistence.Migrations
                         new
                         {
                             Id = 1,
-                            LinkedAt = new DateTime(2024, 11, 11, 16, 47, 28, 578, DateTimeKind.Utc).AddTicks(9382),
+                            LinkedAt = new DateTime(2024, 11, 11, 16, 39, 22, 154, DateTimeKind.Utc).AddTicks(5800),
                             Provider = "Google",
                             ProviderUserId = "google_user_1",
                             UserId = 1
@@ -753,7 +756,7 @@ namespace Toci.Haia.Database.Persistence.Migrations
                         new
                         {
                             Id = 2,
-                            LinkedAt = new DateTime(2024, 11, 11, 16, 47, 28, 578, DateTimeKind.Utc).AddTicks(9384),
+                            LinkedAt = new DateTime(2024, 11, 11, 16, 39, 22, 154, DateTimeKind.Utc).AddTicks(5801),
                             Provider = "Facebook",
                             ProviderUserId = "facebook_user_1",
                             UserId = 1
@@ -761,7 +764,7 @@ namespace Toci.Haia.Database.Persistence.Migrations
                         new
                         {
                             Id = 3,
-                            LinkedAt = new DateTime(2024, 11, 11, 16, 47, 28, 578, DateTimeKind.Utc).AddTicks(9385),
+                            LinkedAt = new DateTime(2024, 11, 11, 16, 39, 22, 154, DateTimeKind.Utc).AddTicks(5803),
                             Provider = "GitHub",
                             ProviderUserId = "github_user_2",
                             UserId = 2
@@ -810,7 +813,7 @@ namespace Toci.Haia.Database.Persistence.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2024, 11, 11, 16, 47, 28, 578, DateTimeKind.Utc).AddTicks(9364),
+                            CreatedAt = new DateTime(2024, 11, 11, 16, 39, 22, 154, DateTimeKind.Utc).AddTicks(5755),
                             Email = "user1@example.com",
                             LastLogin = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             PasswordHash = "hashed_password_1",
@@ -819,38 +822,12 @@ namespace Toci.Haia.Database.Persistence.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2024, 11, 11, 16, 47, 28, 578, DateTimeKind.Utc).AddTicks(9366),
+                            CreatedAt = new DateTime(2024, 11, 11, 16, 39, 22, 154, DateTimeKind.Utc).AddTicks(5758),
                             Email = "user2@example.com",
                             LastLogin = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             PasswordHash = "hashed_password_2",
                             Username = "user2"
                         });
-                });
-
-            modelBuilder.Entity("Toci.Haia.Database.Persistence.UserCategoryPreference", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("ReactionCount")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserCategoryPreferences");
                 });
 
             modelBuilder.Entity("Toci.Haia.Database.Persistence.UserGroup", b =>
@@ -1139,30 +1116,9 @@ namespace Toci.Haia.Database.Persistence.Migrations
                         .HasForeignKey("UserGroupId");
                 });
 
-            modelBuilder.Entity("Toci.Haia.Database.Persistence.UserCategoryPreference", b =>
-                {
-                    b.HasOne("Toci.Haia.Database.Persistence.Category", "Category")
-                        .WithMany("UserCategoryPreferences")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Toci.Haia.Database.Persistence.User", "User")
-                        .WithMany("UserCategoryPreferences")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Toci.Haia.Database.Persistence.Category", b =>
                 {
                     b.Navigation("Posts");
-
-                    b.Navigation("UserCategoryPreferences");
                 });
 
             modelBuilder.Entity("Toci.Haia.Database.Persistence.ComedyText", b =>
@@ -1196,8 +1152,6 @@ namespace Toci.Haia.Database.Persistence.Migrations
                     b.Navigation("Comments");
 
                     b.Navigation("SocialLogins");
-
-                    b.Navigation("UserCategoryPreferences");
                 });
 
             modelBuilder.Entity("Toci.Haia.Database.Persistence.UserGroup", b =>

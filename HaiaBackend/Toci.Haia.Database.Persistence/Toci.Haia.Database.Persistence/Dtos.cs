@@ -110,5 +110,56 @@ namespace Toci.Haia.Database.Persistence
         public UserDto User { get; set; }
     }
 
+    // UserGroupDto.cs
+    public class UserGroupDto
+    {
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public List<int> UserIds { get; set; } // Lista ID użytkowników
+    }
+
+    // UserGroupResponseDto.cs
+    public class UserGroupResponseDto
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public List<string> UserNames { get; set; } // Lista nazw użytkowników
+    }
+
+    // PostDto.cs
+    public class PostDto
+    {
+        public int UserId { get; set; }
+        public int CategoryId { get; set; }
+        public string Content { get; set; }
+    }
+
+    // PostResponseDto.cs
+    public class PostResponseDto
+    {
+        public int Id { get; set; }
+        public int GroupId { get; set; }
+        public int UserId { get; set; }
+        public string UserName { get; set; }
+        public string Content { get; set; }
+        public DateTime CreatedAt { get; set; }
+    }
+
+    public class PostInteractionDto
+    {
+        public int PostId { get; set; }
+        public int UserId { get; set; }
+        public int TimeSpentMilliseconds { get; set; }
+        public int CategoryId { get; set; }
+    }
+
+    // UserReactionDto.cs
+    public class UserReactionDto
+    {
+        public int UserId { get; set; }
+        public int CategoryId { get; set; }
+        public bool IsPositive { get; set; } // True jeśli reakcja jest pozytywna, False jeśli negatywna
+    }
 
 }
