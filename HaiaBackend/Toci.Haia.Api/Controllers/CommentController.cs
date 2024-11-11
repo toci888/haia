@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Toci.Haia.Api;
 using Toci.Haia.ChatGPT;
 using Toci.Haia.Database.Persistence;
 
@@ -131,10 +132,12 @@ public class CommentController : ControllerBase
 
         var joke = await _chatGptService.GenerateJokeAsync(comment.Text);
         var commentDto = _mapper.Map<CommentDto>(comment);
-        commentDto.GptJoke = joke;
+        
 
-        _mapper.Map(commentDto, comment);
-        _context.Entry(comment).State = EntityState.Modified;
+
+        GptJoke gptJoke = new GptJoke() { JokeText = joke, ReferenceId  = comment.Id, ReferenceKind = Util.ReferenceKindComment, RequestingUserId = comment.UserId, UserId = comment.UserId };
+
+        _context.GptJokes.Add(gptJoke);
 
         try
         {
@@ -142,17 +145,10 @@ public class CommentController : ControllerBase
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!CommentExists(id))
-            {
-                return NotFound();
-            }
-            else
-            {
-                throw;
-            }
+           
         }
 
-        return Ok(commentDto);
+        return Ok(gptJoke);
     }
 
     [HttpGet("{id}/likes")]

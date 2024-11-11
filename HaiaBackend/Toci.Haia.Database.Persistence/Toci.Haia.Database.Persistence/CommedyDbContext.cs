@@ -16,20 +16,82 @@ namespace Toci.Haia.Database.Persistence
 
             base.OnConfiguring(optionsBuilder);
         }
+        public DbSet<ChatRoom> ChatRooms { get; set; }
+        public DbSet<ChatMessage> ChatMessages { get; set; }
+
         public DbSet<User> Users { get; set; }
         public DbSet<SocialLogin> SocialLogins { get; set; }
 
         public DbSet<Joke> Jokes { get; set; }
+        public DbSet<GptJoke> GptJokes { get; set; }
+        public DbSet<UserGroup> UserGroups { get; set; }
+        public DbSet<GroupPost> Posts { get; set; } // Dodane posty
+        public DbSet<Category> Categories { get; set; } // Dodane kategorie
+        public DbSet<PostInteraction> PostInteractions { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Reaction> Reactions { get; set; }
 
         public DbSet<ComedyText> ComedyTexts { get; set; }
+        public DbSet<UserCategoryPreference> UserCategoryPreferences { get; set; }
 
         public DbSet<Like> Likes { get; set; }
         public DbSet<Friendship> Friendships { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<ChatRoom>()
+                .HasMany(cr => cr.Messages)
+                .WithOne(cm => cm.ChatRoom)
+                .HasForeignKey(cm => cm.ChatRoomId);
+
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Messages)
+                .WithOne(cm => cm.User)
+                .HasForeignKey(cm => cm.UserId);
+
+            modelBuilder.Entity<UserCategoryPreference>()
+                .HasOne(ucp => ucp.User);
+                //.WithMany(u => u.UserCategoryPreferences)
+                //.HasForeignKey(ucp => ucp.UserId);
+
+                modelBuilder.Entity<UserCategoryPreference>()
+                    .HasOne(ucp => ucp.Category);
+                //.WithMany(c => c.UserCategoryPreferences)
+                //.HasForeignKey(ucp => ucp.CategoryId);
+
+            modelBuilder.Entity<UserGroup>()
+                .HasMany(g => g.Posts)
+                .WithOne(p => p.Group)
+                .HasForeignKey(p => p.GroupId);
+
+            modelBuilder.Entity<Category>()
+                .HasMany(c => c.Posts);
+                //.WithOne(p => p.CategoryId)
+                //.HasForeignKey(p => p.CategoryId);
+
+
+            modelBuilder.Entity<Category>().HasData(
+                new Category { Id = 1, Name = "Satyra" },
+                new Category { Id = 2, Name = "Parodia" },
+                new Category { Id = 3, Name = "Ironia" },
+                new Category { Id = 4, Name = "Humor czarny" },
+                new Category { Id = 5, Name = "Humor absurdalny" },
+                new Category { Id = 6, Name = "Słowna gra" },
+                new Category { Id = 7, Name = "Karykatura" },
+                new Category { Id = 8, Name = "Humor polityczny" }
+            );
+
+
+            // Definicje relacji i kluczy obcych
+            modelBuilder.Entity<UserGroup>()
+                .HasMany(g => g.Posts)
+                .WithOne(p => p.Group)
+                .HasForeignKey(p => p.GroupId);
+
+            modelBuilder.Entity<UserGroup>()
+                .HasMany(g => g.Users);
+                //.WithMany(u => u.use);
+
             //modelBuilder.Entity<User>()
             //    .HasKey(u => u.Id);
 
@@ -73,10 +135,10 @@ namespace Toci.Haia.Database.Persistence
                 .HasMaxLength(500);  // Maksymalna długość dowcipu
 
             modelBuilder.Entity<Joke>()
-                .HasMany(j => j.Reactions)      // Relacja jeden-do-wielu
-                .WithOne(r => r.Joke)            // Reakcja odnosi się do jednego dowcipu
-                .HasForeignKey(r => r.JokeId)    // Klucz obcy
-                .OnDelete(DeleteBehavior.Cascade);  // Usunięcie dowcipu usuwa też reakcje
+                .HasMany(j => j.Reactions);      // Relacja jeden-do-wielu
+                //.WithOne(r => r.Joke)            // Reakcja odnosi się do jednego dowcipu
+                //.HasForeignKey(r => r.JokeId)    // Klucz obcy
+                //.OnDelete(DeleteBehavior.Cascade);  // Usunięcie dowcipu usuwa też reakcje
 
             // Konfiguracja tabeli Reaction
             modelBuilder.Entity<Reaction>()
@@ -87,11 +149,11 @@ namespace Toci.Haia.Database.Persistence
                 .IsRequired()
                 .HasMaxLength(20);  // Maksymalna długość dla typu reakcji, np. "like", "superlike"
 
-            modelBuilder.Entity<Reaction>()
-                .HasOne(r => r.Joke)        // Każda reakcja jest na jeden dowcip
-                .WithMany(j => j.Reactions) // Dowcip może mieć wiele reakcji
-                .HasForeignKey(r => r.JokeId)
-                .OnDelete(DeleteBehavior.Cascade);  // Usunięcie dowcipu usuwa też reakcje
+            //modelBuilder.Entity<Reaction>()
+            //    //.HasOne(r => r.Joke)        // Każda reakcja jest na jeden dowcip
+            //    //.WithMany(j => j.Reactions) // Dowcip może mieć wiele reakcji
+            //    .HasForeignKey(r => r.JokeId)
+            //    .OnDelete(DeleteBehavior.Cascade);  // Usunięcie dowcipu usuwa też reakcje
 
             // Unikalne ograniczenie: Użytkownik może mieć tylko jedną reakcję na dowcip
             modelBuilder.Entity<Reaction>()
@@ -111,11 +173,11 @@ namespace Toci.Haia.Database.Persistence
                 new Reaction { Id = 3, JokeId = 2, UserId = 1, ReactionType = "meh" }
             );
 
-            modelBuilder.Entity<Reaction>()
-                .HasOne(r => r.Joke)
-                .WithMany(j => j.Reactions)
-                .HasForeignKey(r => r.JokeId)
-                .OnDelete(DeleteBehavior.Cascade);
+            //modelBuilder.Entity<Reaction>()
+            //    .HasOne(r => r.Joke)
+            //    .WithMany(j => j.Reactions)
+            //    .HasForeignKey(r => r.JokeId)
+            //    .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Reaction>()
                 .HasOne(r => r.Comment)
@@ -124,11 +186,7 @@ namespace Toci.Haia.Database.Persistence
                 .OnDelete(DeleteBehavior.Cascade);
 
 
-            // Konfiguracja relacji jeden-do-wielu
-            modelBuilder.Entity<ComedyText>()
-                .HasMany(ct => ct.Comments)
-                .WithOne(c => c.ComedyText)
-                .HasForeignKey(c => c.ComedyTextId);
+    
 
             modelBuilder.Entity<ComedyText>()
         .HasOne(ct => ct.ChildComedyText)       // ComedyText ma jedno ChildComedyText
@@ -197,13 +255,9 @@ namespace Toci.Haia.Database.Persistence
                     Id = i,
                     Text = $"Sample Comment {i}",
                     Author = $"Commenter_{i}",
-                    Snippet = $"Snippet {i}",
-                    SnippetAuthor = $"SnippetAuthor_{i}",
+              
                     CommentTimestamp = DateTime.UtcNow,
-                    SnippetTimestamp = DateTime.UtcNow,
-                    ComedyTextId = i,
-                    GptJoke = $"Generated Joke {i}",
-                    ParentCommentId = null
+         
                 }).ToArray()
             );
 

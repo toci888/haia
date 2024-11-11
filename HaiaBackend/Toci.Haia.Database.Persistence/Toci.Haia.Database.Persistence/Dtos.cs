@@ -26,15 +26,12 @@ namespace Toci.Haia.Database.Persistence
     {
         public int Id { get; set; }
 
-        public int ComedyTextId { get; set; }
+        public int CommentId { get; set; }
+        public int JokeId { get; set; }
+        public int UserId { get; set; }
         public string Text { get; set; }
         public string Author { get; set; }
-        public string Snippet { get; set; }
-        public string SnippetAuthor { get; set; }
         public DateTime CommentTimestamp { get; set; }
-        public DateTime SnippetTimestamp { get; set; }
-
-        public string GptJoke { get; set; }
     }
 
     public class LikeDTO
@@ -92,8 +89,16 @@ namespace Toci.Haia.Database.Persistence
         public string ProviderUserId { get; set; }
     }
 
+    public class UserDto
+    {
+        public int Id { get; set; }
+        public string Username { get; set; }
+        public string Email { get; set; }
+    }
+
     public class JokeDto
     {
+        public int JokeId { get; set; }
         public string Text { get; set; }
 
         public string Author { get; set; }
@@ -101,7 +106,60 @@ namespace Toci.Haia.Database.Persistence
         public DateTime CreatedAt { get; set; }
 
         public int UserId { get; set; }
+
+        public UserDto User { get; set; }
     }
 
+    // UserGroupDto.cs
+    public class UserGroupDto
+    {
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public List<int> UserIds { get; set; } // Lista ID użytkowników
+    }
+
+    // UserGroupResponseDto.cs
+    public class UserGroupResponseDto
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public List<string> UserNames { get; set; } // Lista nazw użytkowników
+    }
+
+    // PostDto.cs
+    public class PostDto
+    {
+        public int UserId { get; set; }
+        public int CategoryId { get; set; }
+        public string Content { get; set; }
+    }
+
+    // PostResponseDto.cs
+    public class PostResponseDto
+    {
+        public int Id { get; set; }
+        public int GroupId { get; set; }
+        public int UserId { get; set; }
+        public string UserName { get; set; }
+        public string Content { get; set; }
+        public DateTime CreatedAt { get; set; }
+    }
+
+    public class PostInteractionDto
+    {
+        public int PostId { get; set; }
+        public int UserId { get; set; }
+        public int TimeSpentMilliseconds { get; set; }
+        public int CategoryId { get; set; }
+    }
+
+    // UserReactionDto.cs
+    public class UserReactionDto
+    {
+        public int UserId { get; set; }
+        public int CategoryId { get; set; }
+        public bool IsPositive { get; set; } // True jeśli reakcja jest pozytywna, False jeśli negatywna
+    }
 
 }
