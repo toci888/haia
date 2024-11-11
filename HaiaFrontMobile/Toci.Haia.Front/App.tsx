@@ -7,7 +7,7 @@ import FacebookScreen from './Facebook';
 import CommentScreen from './Comment';
 import MainScreen from './Main';
 
-import AllCommentsScreen from './screens/AllCommentsScreen';
+import HomeSuggestedPostsScreen from './screens/HomeSuggestedPostsScreen';
 import MostLikedJokesScreen from './screens/MostLikedJokesScreen';
 import FriendRequestsScreen from './screens/FriendRequestsScreen';
 import LiveStreamScreen from './screens/LiveStreamScreen';
@@ -33,9 +33,9 @@ function MyTabs() {
     >
       <Tab.Screen
         name="AllComments"
-        component={AllCommentsScreen}
+        component={HomeSuggestedPostsScreen}
         options={{
-          tabBarLabel: 'Wszystkie Komentarze',
+          tabBarLabel: 'New Posts',
           tabBarIcon: ({ color }) => <Icon name="chatbox-ellipses-outline" color={color} size={24} />,
         }}
       />

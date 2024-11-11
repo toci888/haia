@@ -3,12 +3,12 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList } from 'r
 import axios, { AxiosError } from 'axios';
 import { appSelector } from '../store/Store';
 import { Card, Text as PaperText, Avatar, Chip } from 'react-native-paper';
-import { Joke } from '../domains/models/Joke';
+import { Post } from '../domains/models/Post';
 
 
 const CommentScreen = () => {
   const { user: { currentUser } } = appSelector(s => s);
-  const [suggestedPosts, setSuggestedPosts] = useState<Joke[]>([]);
+  const [suggestedPosts, setSuggestedPosts] = useState<Post[]>([]);
   const [comments, setComments] = useState<{postId: number, comment: string; }[]>([]);
   const [likedComments, setLikedComments] = useState({}); // Komentarze polubione
 
@@ -132,7 +132,7 @@ const CommentScreen = () => {
       </View>
       {suggestedPosts.length > 0 && (
         <>
-          {suggestedPosts.map((post: Joke) => (
+          {suggestedPosts.map((post: Post) => (
             <Card key={post.id} style={styles.card}>
               <Card.Title
                 title={post.group.name}

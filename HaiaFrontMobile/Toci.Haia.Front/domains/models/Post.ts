@@ -1,4 +1,4 @@
-export interface Joke {
+export interface Post {
   id: number;
   groupId: number;
   userId: number;
