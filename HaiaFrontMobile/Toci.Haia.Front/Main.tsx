@@ -3,9 +3,14 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Button, ActivityIndicator } from 'react-native';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
+import { appDispatch, appSelector } from './store/Store';
+import { mockUser1, mockUser2 } from './common/mocks/mockUser';
+import { userAction } from './store/user/userSlice';
 
 
 export default function MainScreen() {
+  const dispatch = appDispatch();
+  const { user: { currentUser } } = appSelector(s => s);
   const navigation = useNavigation();
 
   const [joke, setJoke] = useState('');
@@ -53,9 +58,23 @@ export default function MainScreen() {
     console.log('Button 3 Pressed');
   };
 
+  const changeUser = () => {
+    const userId = currentUser.id;
+    dispatch(userAction.setUser(userId == 1 ? mockUser2 : mockUser1));
+  }
+
   return (
     
     <View style={styles.container}>
+      <View>
+        <Button
+          title="Change user"
+          onPress={changeUser}
+        />
+          {currentUser && (
+            <Text>Witaj {currentUser.login}</Text>
+          )}
+        </View>
       <Text style={styles.title}>{joke}</Text>
       {loading ? (
         <ActivityIndicator size="large" color="#0000ff" />
