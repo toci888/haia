@@ -11,6 +11,8 @@ import AllCommentsScreen from './screens/AllCommentsScreen';
 import MostLikedJokesScreen from './screens/MostLikedJokesScreen';
 import FriendRequestsScreen from './screens/FriendRequestsScreen';
 import LiveStreamScreen from './screens/LiveStreamScreen';
+import { Provider } from 'react-redux';
+import { setupStore } from './store/Store';
 
 // Create a Stack Navigator
 const Stack = createNativeStackNavigator();
@@ -69,12 +71,15 @@ function MyTabs() {
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Main">
-      <Stack.Screen name="Home" component={MyTabs} options={{ headerShown: false }} />
-      
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Provider store={setupStore({})}>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Main">
+        <Stack.Screen name="Home" component={MyTabs} options={{ headerShown: false }} />
+        
+        </Stack.Navigator>
+      </NavigationContainer>
+
+    </Provider>
   );
 
 //   <Stack.Screen 

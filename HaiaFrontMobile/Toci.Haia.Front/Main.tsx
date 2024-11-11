@@ -37,6 +37,7 @@ export default function MainScreen() {
       console.error('Error fetching the joke:', error);
       setJoke('Failed to fetch a joke');
     }
+
     setLoading(false);
   };
 
@@ -64,7 +65,6 @@ export default function MainScreen() {
   }
 
   return (
-    
     <View style={styles.container}>
       <View>
         <Button

@@ -1,4 +1,4 @@
-import { User } from "../../domains/global/models/User";
+import { User } from "../../domains/models/global/User";
 
 export const mockUser1: User = {
   id: 1,

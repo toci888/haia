@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { User } from '../../domains/global/models/User';
+import { User } from '../../domains/models/global/User';
 import { mockUser1 } from '../../common/mocks/mockUser';
 
 interface UserState {
