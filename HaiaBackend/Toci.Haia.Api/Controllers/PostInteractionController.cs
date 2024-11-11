@@ -35,7 +35,10 @@ public class PostInteractionController : ControllerBase
         var suggestedPosts = await _context.Posts
             .Where(p => topCategories.Contains(p.CategoryId) &&
                         !_context.PostInteractions.Any(pi => pi.UserId == userId && pi.PostId == p.Id))
-            .Take(5)
+            .Include(gr => gr.Group)
+            .Include(us => us.User)
+            .Include(cat => cat.Category)
+            .Take(20)
             .ToListAsync();
 
         return suggestedPosts;

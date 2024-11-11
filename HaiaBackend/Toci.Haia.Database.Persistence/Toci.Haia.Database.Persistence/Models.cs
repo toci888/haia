@@ -178,7 +178,7 @@ namespace Toci.Haia.Database.Persistence
 
         // Relacja do użytkowników
         public List<User> Users { get; set; } = new List<User>();
-        public List<GroupPost> Posts { get; set; } = new List<GroupPost>(); // Dodane posty
+        //public List<GroupPost> Posts { get; set; } = new List<GroupPost>(); // Dodane posty
     }
 
     // Post.cs
@@ -193,6 +193,8 @@ namespace Toci.Haia.Database.Persistence
         // Relacje
         public UserGroup Group { get; set; }
         public User User { get; set; }
+
+        public Category Category { get; set; }
 
         public int CategoryId { get; set; }
     }
@@ -218,7 +220,7 @@ namespace Toci.Haia.Database.Persistence
         public string Name { get; set; }
 
         // Relacja z postami
-        public List<GroupPost> Posts { get; set; } = new List<GroupPost>();
+        //public List<GroupPost> Posts { get; set; } = new List<GroupPost>();
 
         public List<UserCategoryPreference> UserCategoryPreferences { get; set; }
     }
