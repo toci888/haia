@@ -81,17 +81,19 @@ namespace Toci.Haia.Database.Persistence
     {
         public int JokeId { get; set; }
         public int CommentId { get; set; }
-        public Joke Joke { get; set; }
+        //public Joke Joke { get; set; }
         public int UserId { get; set; }
         public ICollection<Reaction> Reactions { get; set; }
 
         public int Id { get; set; }
         public string Text { get; set; }
-        public string Author { get; set; }
+        //public string Author { get; set; }
 
         public DateTime CommentTimestamp { get; set; }
 
         public ICollection<Comment> Replies { get; set; }
+
+        public int GroupPostId { get; set; }
     }
 
     public class ComedyText
@@ -196,6 +198,8 @@ namespace Toci.Haia.Database.Persistence
 
         public Category Category { get; set; }
 
+        public List<Comment> Comments { get; set; }
+
         public int CategoryId { get; set; }
     }
 
@@ -210,6 +214,7 @@ namespace Toci.Haia.Database.Persistence
         public DateTime InteractionDate { get; set; } = DateTime.UtcNow;
 
         public User User { get; set; }
+        
         public GroupPost Post { get; set; }
     }
 

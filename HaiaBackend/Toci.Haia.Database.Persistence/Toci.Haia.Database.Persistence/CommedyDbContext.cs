@@ -254,7 +254,7 @@ namespace Toci.Haia.Database.Persistence
                 {
                     Id = i,
                     Text = $"Sample Comment {i}",
-                    Author = $"Commenter_{i}",
+                   // Author = $"Commenter_{i}",
               
                     CommentTimestamp = DateTime.UtcNow,
          

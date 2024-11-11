@@ -38,6 +38,7 @@ public class PostInteractionController : ControllerBase
             .Include(gr => gr.Group)
             .Include(us => us.User)
             .Include(cat => cat.Category)
+            .Include(comm => comm.Comments)
             .Take(20)
             .ToListAsync();
 
