@@ -29,7 +29,7 @@ public class ChatHub : Hub
         await Clients.All.SendAsync("ReceiveComedyTexts", comedyTexts);
     }
 
-    public async Task SendMessage(int roomId, int userId, string message)
+    public async Task SendMessageEx(int roomId, int userId, string message)
     {
         var chatMessage = new ChatMessage
         {
