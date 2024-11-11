@@ -126,6 +126,7 @@ namespace Toci.Haia.Database.Persistence
         // Relacja z SocialLogin (opcjonalne logowanie przez zewnętrzne platformy)
         public ICollection<SocialLogin> SocialLogins { get; set; }
         public List<UserCategoryPreference> UserCategoryPreferences { get; set; }
+        public List<ChatMessage> Messages { get; set; } = new List<ChatMessage>();
     }
 
     public class SocialLogin
@@ -251,5 +252,28 @@ namespace Toci.Haia.Database.Persistence
         public Category Category { get; set; }
     }
 
+    // ChatRoom.cs
+    public class ChatRoom
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } // Nazwa pokoju
+
+        // Relacja z wiadomościami
+        public List<ChatMessage> Messages { get; set; } = new List<ChatMessage>();
+    }
+
+    // ChatMessage.cs
+    public class ChatMessage
+    {
+        public int Id { get; set; }
+        public int ChatRoomId { get; set; } // Klucz obcy do pokoju czatu
+        public int UserId { get; set; } // Klucz obcy do użytkownika wysyłającego wiadomość
+        public string Content { get; set; } // Treść wiadomości
+        public DateTime Timestamp { get; set; } = DateTime.UtcNow; // Czas wysłania
+
+        // Relacje
+        public ChatRoom ChatRoom { get; set; }
+        public User User { get; set; }
+    }
 
 }

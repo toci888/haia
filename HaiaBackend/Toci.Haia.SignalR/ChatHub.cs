@@ -28,4 +28,33 @@ public class ChatHub : Hub
         // Wysyłamy listę tekstów do wszystkich klientów
         await Clients.All.SendAsync("ReceiveComedyTexts", comedyTexts);
     }
+
+    public async Task SendMessage(int roomId, int userId, string message)
+    {
+        var chatMessage = new ChatMessage
+        {
+            ChatRoomId = roomId,
+            UserId = userId,
+            Content = message,
+            Timestamp = DateTime.UtcNow
+        };
+
+        _dbContext.ChatMessages.Add(chatMessage);
+        await _dbContext.SaveChangesAsync();
+
+        // Wysyła wiadomość do wszystkich użytkowników w pokoju
+        await Clients.Group(roomId.ToString()).SendAsync("ReceiveMessage", userId, message, chatMessage.Timestamp);
+    }
+
+    // Dołączanie do pokoju
+    public async Task JoinRoom(int roomId)
+    {
+        await Groups.AddToGroupAsync(Context.ConnectionId, roomId.ToString());
+    }
+
+    // Opuszczanie pokoju
+    public async Task LeaveRoom(int roomId)
+    {
+        await Groups.RemoveFromGroupAsync(Context.ConnectionId, roomId.ToString());
+    }
 }

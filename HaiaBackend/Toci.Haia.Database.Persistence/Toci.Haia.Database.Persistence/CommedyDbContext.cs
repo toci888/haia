@@ -16,6 +16,9 @@ namespace Toci.Haia.Database.Persistence
 
             base.OnConfiguring(optionsBuilder);
         }
+        public DbSet<ChatRoom> ChatRooms { get; set; }
+        public DbSet<ChatMessage> ChatMessages { get; set; }
+
         public DbSet<User> Users { get; set; }
         public DbSet<SocialLogin> SocialLogins { get; set; }
 
@@ -36,6 +39,16 @@ namespace Toci.Haia.Database.Persistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<ChatRoom>()
+                .HasMany(cr => cr.Messages)
+                .WithOne(cm => cm.ChatRoom)
+                .HasForeignKey(cm => cm.ChatRoomId);
+
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Messages)
+                .WithOne(cm => cm.User)
+                .HasForeignKey(cm => cm.UserId);
+
             modelBuilder.Entity<UserCategoryPreference>()
                 .HasOne(ucp => ucp.User);
                 //.WithMany(u => u.UserCategoryPreferences)
