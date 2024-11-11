@@ -9,25 +9,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Toci.Haia.Database.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdatedUserSeedData : Migration
+    public partial class Init8 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "Jokes",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Text = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Jokes", x => x.Id);
-                });
-
             migrationBuilder.CreateTable(
                 name: "UserProfile",
                 columns: table => new
@@ -109,6 +95,27 @@ namespace Toci.Haia.Database.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Jokes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Text = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UserId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Jokes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Jokes_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SocialLogins",
                 columns: table => new
                 {
@@ -137,16 +144,12 @@ namespace Toci.Haia.Database.Persistence.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     JokeId = table.Column<int>(type: "integer", nullable: false),
+                    CommentId = table.Column<int>(type: "integer", nullable: false),
                     UserId = table.Column<int>(type: "integer", nullable: false),
                     Text = table.Column<string>(type: "text", nullable: false),
                     Author = table.Column<string>(type: "text", nullable: false),
-                    Snippet = table.Column<string>(type: "text", nullable: false),
-                    SnippetAuthor = table.Column<string>(type: "text", nullable: false),
                     CommentTimestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    SnippetTimestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ComedyTextId = table.Column<int>(type: "integer", nullable: false),
-                    GptJoke = table.Column<string>(type: "text", nullable: false),
-                    ParentCommentId = table.Column<int>(type: "integer", nullable: true),
+                    ComedyTextId = table.Column<int>(type: "integer", nullable: true),
                     ComedyTextId1 = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
@@ -156,18 +159,18 @@ namespace Toci.Haia.Database.Persistence.Migrations
                         name: "FK_Comments_ComedyTexts_ComedyTextId",
                         column: x => x.ComedyTextId,
                         principalTable: "ComedyTexts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Comments_ComedyTexts_ComedyTextId1",
                         column: x => x.ComedyTextId1,
                         principalTable: "ComedyTexts",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Comments_Comments_ParentCommentId",
-                        column: x => x.ParentCommentId,
+                        name: "FK_Comments_Comments_CommentId",
+                        column: x => x.CommentId,
                         principalTable: "Comments",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Comments_Jokes_JokeId",
                         column: x => x.JokeId,
@@ -241,40 +244,57 @@ namespace Toci.Haia.Database.Persistence.Migrations
                 columns: new[] { "Id", "Author", "ChildTextId", "CommentTimestamp", "ParentTextId", "Text", "UserId" },
                 values: new object[,]
                 {
-                    { 1, "Author_1", null, new DateTime(2024, 11, 6, 15, 51, 36, 393, DateTimeKind.Utc).AddTicks(9954), null, "Sample Comedy Text 1", null },
-                    { 2, "Author_2", null, new DateTime(2024, 11, 6, 15, 51, 36, 393, DateTimeKind.Utc).AddTicks(9963), null, "Sample Comedy Text 2", null },
-                    { 3, "Author_3", null, new DateTime(2024, 11, 6, 15, 51, 36, 393, DateTimeKind.Utc).AddTicks(9965), null, "Sample Comedy Text 3", null },
-                    { 4, "Author_4", null, new DateTime(2024, 11, 6, 15, 51, 36, 393, DateTimeKind.Utc).AddTicks(9967), null, "Sample Comedy Text 4", null },
-                    { 5, "Author_5", null, new DateTime(2024, 11, 6, 15, 51, 36, 393, DateTimeKind.Utc).AddTicks(9969), null, "Sample Comedy Text 5", null },
-                    { 6, "Author_6", null, new DateTime(2024, 11, 6, 15, 51, 36, 393, DateTimeKind.Utc).AddTicks(9971), null, "Sample Comedy Text 6", null },
-                    { 7, "Author_7", null, new DateTime(2024, 11, 6, 15, 51, 36, 393, DateTimeKind.Utc).AddTicks(9973), null, "Sample Comedy Text 7", null },
-                    { 8, "Author_8", null, new DateTime(2024, 11, 6, 15, 51, 36, 393, DateTimeKind.Utc).AddTicks(9975), null, "Sample Comedy Text 8", null },
-                    { 9, "Author_9", null, new DateTime(2024, 11, 6, 15, 51, 36, 393, DateTimeKind.Utc).AddTicks(9976), null, "Sample Comedy Text 9", null },
-                    { 10, "Author_10", null, new DateTime(2024, 11, 6, 15, 51, 36, 393, DateTimeKind.Utc).AddTicks(9979), null, "Sample Comedy Text 10", null }
+                    { 1, "Author_1", null, new DateTime(2024, 11, 11, 13, 59, 13, 210, DateTimeKind.Utc).AddTicks(2765), null, "Sample Comedy Text 1", null },
+                    { 2, "Author_2", null, new DateTime(2024, 11, 11, 13, 59, 13, 210, DateTimeKind.Utc).AddTicks(2769), null, "Sample Comedy Text 2", null },
+                    { 3, "Author_3", null, new DateTime(2024, 11, 11, 13, 59, 13, 210, DateTimeKind.Utc).AddTicks(2770), null, "Sample Comedy Text 3", null },
+                    { 4, "Author_4", null, new DateTime(2024, 11, 11, 13, 59, 13, 210, DateTimeKind.Utc).AddTicks(2772), null, "Sample Comedy Text 4", null },
+                    { 5, "Author_5", null, new DateTime(2024, 11, 11, 13, 59, 13, 210, DateTimeKind.Utc).AddTicks(2773), null, "Sample Comedy Text 5", null },
+                    { 6, "Author_6", null, new DateTime(2024, 11, 11, 13, 59, 13, 210, DateTimeKind.Utc).AddTicks(2774), null, "Sample Comedy Text 6", null },
+                    { 7, "Author_7", null, new DateTime(2024, 11, 11, 13, 59, 13, 210, DateTimeKind.Utc).AddTicks(2776), null, "Sample Comedy Text 7", null },
+                    { 8, "Author_8", null, new DateTime(2024, 11, 11, 13, 59, 13, 210, DateTimeKind.Utc).AddTicks(2777), null, "Sample Comedy Text 8", null },
+                    { 9, "Author_9", null, new DateTime(2024, 11, 11, 13, 59, 13, 210, DateTimeKind.Utc).AddTicks(2778), null, "Sample Comedy Text 9", null },
+                    { 10, "Author_10", null, new DateTime(2024, 11, 11, 13, 59, 13, 210, DateTimeKind.Utc).AddTicks(2780), null, "Sample Comedy Text 10", null }
                 });
 
-            migrationBuilder.InsertData(
-                table: "Friendships",
-                columns: new[] { "Id", "FriendId", "UserId" },
-                values: new object[,]
-                {
-                    { 3, 4, 3 },
-                    { 4, 5, 4 },
-                    { 5, 6, 5 },
-                    { 6, 7, 6 },
-                    { 7, 8, 7 },
-                    { 8, 9, 8 },
-                    { 9, 10, 9 }
-                });
+            //migrationBuilder.InsertData(
+            //    table: "Comments",
+            //    columns: new[] { "Id", "Author", "ComedyTextId", "ComedyTextId1", "CommentId", "CommentTimestamp", "JokeId", "Text", "UserId" },
+            //    values: new object[,]
+            //    {
+            //        { 1, "Commenter_1", null, null, 0, new DateTime(2024, 11, 11, 13, 59, 13, 210, DateTimeKind.Utc).AddTicks(2810), 0, "Sample Comment 1", 0 },
+            //        { 2, "Commenter_2", null, null, 0, new DateTime(2024, 11, 11, 13, 59, 13, 210, DateTimeKind.Utc).AddTicks(2813), 0, "Sample Comment 2", 0 },
+            //        { 3, "Commenter_3", null, null, 0, new DateTime(2024, 11, 11, 13, 59, 13, 210, DateTimeKind.Utc).AddTicks(2815), 0, "Sample Comment 3", 0 },
+            //        { 4, "Commenter_4", null, null, 0, new DateTime(2024, 11, 11, 13, 59, 13, 210, DateTimeKind.Utc).AddTicks(2816), 0, "Sample Comment 4", 0 },
+            //        { 5, "Commenter_5", null, null, 0, new DateTime(2024, 11, 11, 13, 59, 13, 210, DateTimeKind.Utc).AddTicks(2818), 0, "Sample Comment 5", 0 },
+            //        { 6, "Commenter_6", null, null, 0, new DateTime(2024, 11, 11, 13, 59, 13, 210, DateTimeKind.Utc).AddTicks(2819), 0, "Sample Comment 6", 0 },
+            //        { 7, "Commenter_7", null, null, 0, new DateTime(2024, 11, 11, 13, 59, 13, 210, DateTimeKind.Utc).AddTicks(2820), 0, "Sample Comment 7", 0 },
+            //        { 8, "Commenter_8", null, null, 0, new DateTime(2024, 11, 11, 13, 59, 13, 210, DateTimeKind.Utc).AddTicks(2828), 0, "Sample Comment 8", 0 },
+            //        { 9, "Commenter_9", null, null, 0, new DateTime(2024, 11, 11, 13, 59, 13, 210, DateTimeKind.Utc).AddTicks(2829), 0, "Sample Comment 9", 0 },
+            //        { 10, "Commenter_10", null, null, 0, new DateTime(2024, 11, 11, 13, 59, 13, 210, DateTimeKind.Utc).AddTicks(2830), 0, "Sample Comment 10", 0 }
+            //    });
 
-            migrationBuilder.InsertData(
-                table: "Jokes",
-                columns: new[] { "Id", "CreatedAt", "Text" },
-                values: new object[,]
-                {
-                    { 1, new DateTime(2024, 11, 6, 15, 51, 36, 388, DateTimeKind.Utc).AddTicks(7413), "Dlaczego niebo jest niebieskie? Bo programista jeszcze nie skończył debugować!" },
-                    { 2, new DateTime(2024, 11, 6, 15, 51, 36, 388, DateTimeKind.Utc).AddTicks(7420), "Dlaczego komputer był smutny? Bo miał zbyt dużo problemów!" }
-                });
+            //migrationBuilder.InsertData(
+            //    table: "Friendships",
+            //    columns: new[] { "Id", "FriendId", "UserId" },
+            //    values: new object[,]
+            //    {
+            //        { 3, 4, 3 },
+            //        { 4, 5, 4 },
+            //        { 5, 6, 5 },
+            //        { 6, 7, 6 },
+            //        { 7, 8, 7 },
+            //        { 8, 9, 8 },
+            //        { 9, 10, 9 }
+            //    });
+
+            //migrationBuilder.InsertData(
+            //    table: "Jokes",
+            //    columns: new[] { "Id", "CreatedAt", "Text", "UserId" },
+            //    values: new object[,]
+            //    {
+            //        { 1, new DateTime(2024, 11, 11, 13, 59, 13, 209, DateTimeKind.Utc).AddTicks(6480), "Dlaczego niebo jest niebieskie? Bo programista jeszcze nie skończył debugować!", 0 },
+            //        { 2, new DateTime(2024, 11, 11, 13, 59, 13, 209, DateTimeKind.Utc).AddTicks(6483), "Dlaczego komputer był smutny? Bo miał zbyt dużo problemów!", 0 }
+            //    });
 
             migrationBuilder.InsertData(
                 table: "UserProfile",
@@ -298,72 +318,55 @@ namespace Toci.Haia.Database.Persistence.Migrations
                 columns: new[] { "Id", "CreatedAt", "Email", "LastLogin", "PasswordHash", "Username" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2024, 11, 6, 15, 51, 36, 394, DateTimeKind.Utc).AddTicks(420), "user1@example.com", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "hashed_password_1", "user1" },
-                    { 2, new DateTime(2024, 11, 6, 15, 51, 36, 394, DateTimeKind.Utc).AddTicks(426), "user2@example.com", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "hashed_password_2", "user2" }
+                    { 1, new DateTime(2024, 11, 11, 13, 59, 13, 210, DateTimeKind.Utc).AddTicks(2909), "user1@example.com", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "hashed_password_1", "user1" },
+                    { 2, new DateTime(2024, 11, 11, 13, 59, 13, 210, DateTimeKind.Utc).AddTicks(2911), "user2@example.com", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "hashed_password_2", "user2" }
                 });
 
-            migrationBuilder.InsertData(
-                table: "Comments",
-                columns: new[] { "Id", "Author", "ComedyTextId", "ComedyTextId1", "CommentTimestamp", "GptJoke", "JokeId", "ParentCommentId", "Snippet", "SnippetAuthor", "SnippetTimestamp", "Text", "UserId" },
-                values: new object[,]
-                {
-                    { 1, "Commenter_1", 1, null, new DateTime(2024, 11, 6, 15, 51, 36, 394, DateTimeKind.Utc).AddTicks(66), "Generated Joke 1", 0, null, "Snippet 1", "SnippetAuthor_1", new DateTime(2024, 11, 6, 15, 51, 36, 394, DateTimeKind.Utc).AddTicks(68), "Sample Comment 1", 0 },
-                    { 2, "Commenter_2", 2, null, new DateTime(2024, 11, 6, 15, 51, 36, 394, DateTimeKind.Utc).AddTicks(78), "Generated Joke 2", 0, null, "Snippet 2", "SnippetAuthor_2", new DateTime(2024, 11, 6, 15, 51, 36, 394, DateTimeKind.Utc).AddTicks(79), "Sample Comment 2", 0 },
-                    { 3, "Commenter_3", 3, null, new DateTime(2024, 11, 6, 15, 51, 36, 394, DateTimeKind.Utc).AddTicks(85), "Generated Joke 3", 0, null, "Snippet 3", "SnippetAuthor_3", new DateTime(2024, 11, 6, 15, 51, 36, 394, DateTimeKind.Utc).AddTicks(86), "Sample Comment 3", 0 },
-                    { 4, "Commenter_4", 4, null, new DateTime(2024, 11, 6, 15, 51, 36, 394, DateTimeKind.Utc).AddTicks(90), "Generated Joke 4", 0, null, "Snippet 4", "SnippetAuthor_4", new DateTime(2024, 11, 6, 15, 51, 36, 394, DateTimeKind.Utc).AddTicks(90), "Sample Comment 4", 0 },
-                    { 5, "Commenter_5", 5, null, new DateTime(2024, 11, 6, 15, 51, 36, 394, DateTimeKind.Utc).AddTicks(115), "Generated Joke 5", 0, null, "Snippet 5", "SnippetAuthor_5", new DateTime(2024, 11, 6, 15, 51, 36, 394, DateTimeKind.Utc).AddTicks(115), "Sample Comment 5", 0 },
-                    { 6, "Commenter_6", 6, null, new DateTime(2024, 11, 6, 15, 51, 36, 394, DateTimeKind.Utc).AddTicks(120), "Generated Joke 6", 0, null, "Snippet 6", "SnippetAuthor_6", new DateTime(2024, 11, 6, 15, 51, 36, 394, DateTimeKind.Utc).AddTicks(120), "Sample Comment 6", 0 },
-                    { 7, "Commenter_7", 7, null, new DateTime(2024, 11, 6, 15, 51, 36, 394, DateTimeKind.Utc).AddTicks(124), "Generated Joke 7", 0, null, "Snippet 7", "SnippetAuthor_7", new DateTime(2024, 11, 6, 15, 51, 36, 394, DateTimeKind.Utc).AddTicks(124), "Sample Comment 7", 0 },
-                    { 8, "Commenter_8", 8, null, new DateTime(2024, 11, 6, 15, 51, 36, 394, DateTimeKind.Utc).AddTicks(128), "Generated Joke 8", 0, null, "Snippet 8", "SnippetAuthor_8", new DateTime(2024, 11, 6, 15, 51, 36, 394, DateTimeKind.Utc).AddTicks(128), "Sample Comment 8", 0 },
-                    { 9, "Commenter_9", 9, null, new DateTime(2024, 11, 6, 15, 51, 36, 394, DateTimeKind.Utc).AddTicks(132), "Generated Joke 9", 0, null, "Snippet 9", "SnippetAuthor_9", new DateTime(2024, 11, 6, 15, 51, 36, 394, DateTimeKind.Utc).AddTicks(132), "Sample Comment 9", 0 },
-                    { 10, "Commenter_10", 10, null, new DateTime(2024, 11, 6, 15, 51, 36, 394, DateTimeKind.Utc).AddTicks(137), "Generated Joke 10", 0, null, "Snippet 10", "SnippetAuthor_10", new DateTime(2024, 11, 6, 15, 51, 36, 394, DateTimeKind.Utc).AddTicks(138), "Sample Comment 10", 0 }
-                });
+            //migrationBuilder.InsertData(
+            //    table: "Friendships",
+            //    columns: new[] { "Id", "FriendId", "UserId" },
+            //    values: new object[,]
+            //    {
+            //        { 1, 2, 1 },
+            //        { 2, 3, 2 },
+            //        { 10, 1, 10 }
+            //    });
 
-            migrationBuilder.InsertData(
-                table: "Friendships",
-                columns: new[] { "Id", "FriendId", "UserId" },
-                values: new object[,]
-                {
-                    { 1, 2, 1 },
-                    { 2, 3, 2 },
-                    { 10, 1, 10 }
-                });
+            //migrationBuilder.InsertData(
+            //    table: "Likes",
+            //    columns: new[] { "Id", "CommentId", "UserId" },
+            //    values: new object[,]
+            //    {
+            //        { 1, 1, 1 },
+            //        { 2, 2, 2 },
+            //        { 3, 3, 3 },
+            //        { 4, 4, 4 },
+            //        { 5, 5, 5 },
+            //        { 6, 6, 6 },
+            //        { 7, 7, 7 },
+            //        { 8, 8, 8 },
+            //        { 9, 9, 9 },
+            //        { 10, 10, 10 }
+            //    });
 
-            migrationBuilder.InsertData(
-                table: "Reactions",
-                columns: new[] { "Id", "CommentId", "JokeId", "ReactionType", "UserId" },
-                values: new object[,]
-                {
-                    { 1, null, 1, "like", 1 },
-                    { 2, null, 1, "superlike", 2 },
-                    { 3, null, 2, "meh", 1 }
-                });
+            //migrationBuilder.InsertData(
+            //    table: "Reactions",
+            //    columns: new[] { "Id", "CommentId", "JokeId", "ReactionType", "UserId" },
+            //    values: new object[,]
+            //    {
+            //        { 1, null, 1, "like", 1 },
+            //        { 2, null, 1, "superlike", 2 },
+            //        { 3, null, 2, "meh", 1 }
+            //    });
 
             migrationBuilder.InsertData(
                 table: "SocialLogins",
                 columns: new[] { "Id", "LinkedAt", "Provider", "ProviderUserId", "UserId" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2024, 11, 6, 15, 51, 36, 394, DateTimeKind.Utc).AddTicks(466), "Google", "google_user_1", 1 },
-                    { 2, new DateTime(2024, 11, 6, 15, 51, 36, 394, DateTimeKind.Utc).AddTicks(476), "Facebook", "facebook_user_1", 1 },
-                    { 3, new DateTime(2024, 11, 6, 15, 51, 36, 394, DateTimeKind.Utc).AddTicks(477), "GitHub", "github_user_2", 2 }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Likes",
-                columns: new[] { "Id", "CommentId", "UserId" },
-                values: new object[,]
-                {
-                    { 1, 1, 1 },
-                    { 2, 2, 2 },
-                    { 3, 3, 3 },
-                    { 4, 4, 4 },
-                    { 5, 5, 5 },
-                    { 6, 6, 6 },
-                    { 7, 7, 7 },
-                    { 8, 8, 8 },
-                    { 9, 9, 9 },
-                    { 10, 10, 10 }
+                    { 1, new DateTime(2024, 11, 11, 13, 59, 13, 210, DateTimeKind.Utc).AddTicks(2928), "Google", "google_user_1", 1 },
+                    { 2, new DateTime(2024, 11, 11, 13, 59, 13, 210, DateTimeKind.Utc).AddTicks(2930), "Facebook", "facebook_user_1", 1 },
+                    { 3, new DateTime(2024, 11, 11, 13, 59, 13, 210, DateTimeKind.Utc).AddTicks(2931), "GitHub", "github_user_2", 2 }
                 });
 
             migrationBuilder.CreateIndex(
@@ -382,14 +385,14 @@ namespace Toci.Haia.Database.Persistence.Migrations
                 column: "ComedyTextId1");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Comments_CommentId",
+                table: "Comments",
+                column: "CommentId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Comments_JokeId",
                 table: "Comments",
                 column: "JokeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Comments_ParentCommentId",
-                table: "Comments",
-                column: "ParentCommentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_UserId",
@@ -404,6 +407,11 @@ namespace Toci.Haia.Database.Persistence.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Friendships_UserId",
                 table: "Friendships",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Jokes_UserId",
+                table: "Jokes",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(

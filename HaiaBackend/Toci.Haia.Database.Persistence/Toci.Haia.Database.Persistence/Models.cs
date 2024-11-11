@@ -16,6 +16,26 @@ namespace Toci.Haia.Database.Persistence
 
         public ICollection<Comment> Comments { get; set; }
         public ICollection<Reaction> Reactions { get; internal set; }
+
+        public User User { get; set; }
+    }
+
+    public class GptJoke
+    {
+        public int Id { get; set; }
+
+        public int ReferenceId { get; set; }
+
+        public int ReferenceKind { get; set; }
+
+        public string JokeText { get; set; }
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public int UserId { get; set; }
+        public int RequestingUserId { get; set; }
+
+        public User User { get; set; }
     }
 
     public class Reaction
@@ -23,14 +43,13 @@ namespace Toci.Haia.Database.Persistence
         public int Id { get; set; }
         public string ReactionType { get; set; }
         public int? JokeId { get; set; }
-        public Joke Joke { get; set; }
+       //public Joke Joke { get; set; }
         public int? CommentId { get; set; }
         public Comment Comment { get; set; }
         public int UserId { get; set; }
     }
 
-
-    public class Comment
+    public class CommedyTextComment
     {
         public int JokeId { get; set; }
         public Joke Joke { get; set; }
@@ -48,12 +67,28 @@ namespace Toci.Haia.Database.Persistence
         // Powiązanie z ComedyText
         public int ComedyTextId { get; set; }
 
-        public string GptJoke { get; set; }
         public ComedyText ComedyText { get; set; }
 
         // Łańcuchowanie – referencja do "rodzica" i "dziecka"
         public int? ParentCommentId { get; set; }
         public Comment ParentComment { get; set; }
+
+        public ICollection<Comment> Replies { get; set; }
+    }
+
+    public class Comment
+    {
+        public int JokeId { get; set; }
+        public int CommentId { get; set; }
+        public Joke Joke { get; set; }
+        public int UserId { get; set; }
+        public ICollection<Reaction> Reactions { get; set; }
+
+        public int Id { get; set; }
+        public string Text { get; set; }
+        public string Author { get; set; }
+
+        public DateTime CommentTimestamp { get; set; }
 
         public ICollection<Comment> Replies { get; set; }
     }

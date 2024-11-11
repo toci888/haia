@@ -20,6 +20,7 @@ namespace Toci.Haia.Database.Persistence
         public DbSet<SocialLogin> SocialLogins { get; set; }
 
         public DbSet<Joke> Jokes { get; set; }
+        public DbSet<GptJoke> GptJokes { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Reaction> Reactions { get; set; }
 
@@ -73,10 +74,10 @@ namespace Toci.Haia.Database.Persistence
                 .HasMaxLength(500);  // Maksymalna długość dowcipu
 
             modelBuilder.Entity<Joke>()
-                .HasMany(j => j.Reactions)      // Relacja jeden-do-wielu
-                .WithOne(r => r.Joke)            // Reakcja odnosi się do jednego dowcipu
-                .HasForeignKey(r => r.JokeId)    // Klucz obcy
-                .OnDelete(DeleteBehavior.Cascade);  // Usunięcie dowcipu usuwa też reakcje
+                .HasMany(j => j.Reactions);      // Relacja jeden-do-wielu
+                //.WithOne(r => r.Joke)            // Reakcja odnosi się do jednego dowcipu
+                //.HasForeignKey(r => r.JokeId)    // Klucz obcy
+                //.OnDelete(DeleteBehavior.Cascade);  // Usunięcie dowcipu usuwa też reakcje
 
             // Konfiguracja tabeli Reaction
             modelBuilder.Entity<Reaction>()
@@ -87,11 +88,11 @@ namespace Toci.Haia.Database.Persistence
                 .IsRequired()
                 .HasMaxLength(20);  // Maksymalna długość dla typu reakcji, np. "like", "superlike"
 
-            modelBuilder.Entity<Reaction>()
-                .HasOne(r => r.Joke)        // Każda reakcja jest na jeden dowcip
-                .WithMany(j => j.Reactions) // Dowcip może mieć wiele reakcji
-                .HasForeignKey(r => r.JokeId)
-                .OnDelete(DeleteBehavior.Cascade);  // Usunięcie dowcipu usuwa też reakcje
+            //modelBuilder.Entity<Reaction>()
+            //    //.HasOne(r => r.Joke)        // Każda reakcja jest na jeden dowcip
+            //    //.WithMany(j => j.Reactions) // Dowcip może mieć wiele reakcji
+            //    .HasForeignKey(r => r.JokeId)
+            //    .OnDelete(DeleteBehavior.Cascade);  // Usunięcie dowcipu usuwa też reakcje
 
             // Unikalne ograniczenie: Użytkownik może mieć tylko jedną reakcję na dowcip
             modelBuilder.Entity<Reaction>()
@@ -111,11 +112,11 @@ namespace Toci.Haia.Database.Persistence
                 new Reaction { Id = 3, JokeId = 2, UserId = 1, ReactionType = "meh" }
             );
 
-            modelBuilder.Entity<Reaction>()
-                .HasOne(r => r.Joke)
-                .WithMany(j => j.Reactions)
-                .HasForeignKey(r => r.JokeId)
-                .OnDelete(DeleteBehavior.Cascade);
+            //modelBuilder.Entity<Reaction>()
+            //    .HasOne(r => r.Joke)
+            //    .WithMany(j => j.Reactions)
+            //    .HasForeignKey(r => r.JokeId)
+            //    .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Reaction>()
                 .HasOne(r => r.Comment)
@@ -124,11 +125,7 @@ namespace Toci.Haia.Database.Persistence
                 .OnDelete(DeleteBehavior.Cascade);
 
 
-            // Konfiguracja relacji jeden-do-wielu
-            modelBuilder.Entity<ComedyText>()
-                .HasMany(ct => ct.Comments)
-                .WithOne(c => c.ComedyText)
-                .HasForeignKey(c => c.ComedyTextId);
+    
 
             modelBuilder.Entity<ComedyText>()
         .HasOne(ct => ct.ChildComedyText)       // ComedyText ma jedno ChildComedyText
@@ -197,13 +194,9 @@ namespace Toci.Haia.Database.Persistence
                     Id = i,
                     Text = $"Sample Comment {i}",
                     Author = $"Commenter_{i}",
-                    Snippet = $"Snippet {i}",
-                    SnippetAuthor = $"SnippetAuthor_{i}",
+              
                     CommentTimestamp = DateTime.UtcNow,
-                    SnippetTimestamp = DateTime.UtcNow,
-                    ComedyTextId = i,
-                    GptJoke = $"Generated Joke {i}",
-                    ParentCommentId = null
+         
                 }).ToArray()
             );
 
