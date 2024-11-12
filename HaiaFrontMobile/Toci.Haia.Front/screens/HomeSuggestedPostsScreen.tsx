@@ -4,9 +4,13 @@ import axios, { AxiosError } from 'axios';
 import { appSelector } from '../store/Store';
 import { Card, Text as PaperText, Avatar, Chip } from 'react-native-paper';
 import { Post } from '../domains/models/Post';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 
 const CommentScreen = () => {
+  console.log(34);
+  const navigation = useNavigation();
+  const route = useRoute();
   const { user: { currentUser } } = appSelector(s => s);
   const [suggestedPosts, setSuggestedPosts] = useState<Post[]>([]);
   const [comments, setComments] = useState<{postId: number, comment: string; }[]>([]);
@@ -59,8 +63,9 @@ const CommentScreen = () => {
 
   useEffect(() => {
     // fetchComments();
+    console.log(3);
     fetchSuggestedPosts();
-  }, []);
+  }, [route]);
 
   // Komponent renderujący komentarz
   // const renderComment = ({ item }) => (
@@ -87,6 +92,7 @@ const CommentScreen = () => {
 
     try {
       const response = await axios.post('http://80.209.230.198:5117/api/Comment', {
+        postId: nowPost.id,
         "userId": nowPost.user.id,
         "text": comments.find(c => c.postId === id)?.comment,
         // "author": "string",
@@ -141,6 +147,7 @@ const CommentScreen = () => {
               />
               <Card.Content>
                 <Text style={styles.jokeContent}>{post.content}</Text>
+                <Text style={styles.jokeContent}>{post.id}</Text>
                 <View style={styles.infoContainer}>
                   <Chip style={styles.categoryChip}>{post.category?.name}</Chip>
                   <Text style={styles.dateText}>{new Date(post.createdAt).toLocaleDateString()}</Text>
@@ -240,31 +247,10 @@ const styles = StyleSheet.create({
 
 
   // post card
-  card: {
-    margin: 10,
-    borderRadius: 10,
-    backgroundColor: '#fff',
-    elevation: 4,
-  },
-  jokeContent: {
-    marginTop: 10,
-    fontSize: 16,
-    color: '#333',
-    fontWeight: '400',
-  },
-  infoContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: 10,
-  },
-  categoryChip: {
-    backgroundColor: '#f5f5f5',
-  },
-  dateText: {
-    fontSize: 12,
-    color: '#888',
-  },
+
+
+
+
 
 
   //comments styles

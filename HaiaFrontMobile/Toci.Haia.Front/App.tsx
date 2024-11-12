@@ -7,12 +7,12 @@ import FacebookScreen from './Facebook';
 import CommentScreen from './Comment';
 import MainScreen from './Main';
 
-import HomeSuggestedPostsScreen from './screens/HomeSuggestedPostsScreen';
 import MostLikedJokesScreen from './screens/MostLikedJokesScreen';
 import FriendRequestsScreen from './screens/FriendRequestsScreen';
 import LiveStreamScreen from './screens/LiveStreamScreen';
 import { Provider } from 'react-redux';
 import { setupStore } from './store/Store';
+import HomeScreen from './screens/HomeScreen/HomeScreen';
 
 // Create a Stack Navigator
 const Stack = createNativeStackNavigator();
@@ -22,7 +22,7 @@ const Tab = createMaterialTopTabNavigator();
 function MyTabs() {
   return (
     <Tab.Navigator
-      initialRouteName="AllComments"
+      initialRouteName="Home"
       tabBarOptions={{
         activeTintColor: '#fff',
         style: { backgroundColor: '#6200ee' },
@@ -32,10 +32,10 @@ function MyTabs() {
       }}
     >
       <Tab.Screen
-        name="AllComments"
-        component={HomeSuggestedPostsScreen}
+        name="Home"
+        component={HomeScreen}
         options={{
-          tabBarLabel: 'New Posts',
+          tabBarLabel: 'Home',
           tabBarIcon: ({ color }) => <Icon name="chatbox-ellipses-outline" color={color} size={24} />,
         }}
       />
@@ -74,7 +74,7 @@ export default function App() {
     <Provider store={setupStore({})}>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Main">
-        <Stack.Screen name="Home" component={MyTabs} options={{ headerShown: false }} />
+        <Stack.Screen name="Base" component={MyTabs} options={{ headerShown: false }} />
         
         </Stack.Navigator>
       </NavigationContainer>

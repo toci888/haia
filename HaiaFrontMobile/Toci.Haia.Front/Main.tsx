@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Button, ActivityIndicator } from 'react-native';
 import axios from 'axios';
-import { useNavigation } from '@react-navigation/native';
 import { appDispatch, appSelector } from './store/Store';
 import { mockUser1, mockUser2 } from './common/mocks/mockUser';
 import { userAction } from './store/user/userSlice';
@@ -11,7 +10,6 @@ import { userAction } from './store/user/userSlice';
 export default function MainScreen() {
   const dispatch = appDispatch();
   const { user: { currentUser } } = appSelector(s => s);
-  const navigation = useNavigation();
 
   const [joke, setJoke] = useState('');
   const [loading, setLoading] = useState(false);
