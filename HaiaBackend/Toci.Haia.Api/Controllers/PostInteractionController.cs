@@ -39,6 +39,7 @@ public class PostInteractionController : ControllerBase
             .Include(us => us.User)
             .Include(cat => cat.Category)
             .Include(comm => comm.Comments)
+            .Include(r => r.Reactions)
             .Take(20)
             .ToListAsync();
 
@@ -49,6 +50,7 @@ public class PostInteractionController : ControllerBase
             .Include(us => us.User)
             .Include(cat => cat.Category)
             .Include(comm => comm.Comments)
+            .Include(r => r.Reactions)
             .Take(20)
             .ToListAsync();
 
@@ -73,11 +75,15 @@ public class PostInteractionController : ControllerBase
 
         result.Id = joke.Id;
         result.UserId = joke.UserId;
+        
         result.Reactions = joke.Reactions;
         result.Comments = joke.Comments;
         result.User = joke.User;
         result.CreatedAt = joke.CreatedAt;
         result.Content = joke.Text;
+        result.Comments = joke.Comments;
+        result.Reactions = joke.Reactions;
+        result.JokeId = joke.Id;
 
         return result;
     }
@@ -93,6 +99,9 @@ public class PostInteractionController : ControllerBase
         result.User = post.User;
         result.CreatedAt = post.CreatedAt;
         result.Content = post.Content;
+        result.Comments = post.Comments;
+        result.Reactions = post.Reactions;
+        
 
         return result;
     }
