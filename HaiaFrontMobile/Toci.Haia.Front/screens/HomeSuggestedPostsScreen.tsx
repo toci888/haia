@@ -135,14 +135,14 @@ const CommentScreen = () => {
           {suggestedPosts.map((post: Post) => (
             <Card key={post.id} style={styles.card}>
               <Card.Title
-                title={post.group.name}
-                subtitle={`Author: ${post.user.username} - ${post.group.description}`}
+                title={post.group?.name}
+                subtitle={`Author: ${post.user.username} - ${post.group?.description}`}
                 left={(props) => <Avatar.Icon {...props} icon="account-circle" />}
               />
               <Card.Content>
                 <Text style={styles.jokeContent}>{post.content}</Text>
                 <View style={styles.infoContainer}>
-                  <Chip style={styles.categoryChip}>{post.category.name}</Chip>
+                  <Chip style={styles.categoryChip}>{post.category?.name}</Chip>
                   <Text style={styles.dateText}>{new Date(post.createdAt).toLocaleDateString()}</Text>
                 </View>
               </Card.Content>
