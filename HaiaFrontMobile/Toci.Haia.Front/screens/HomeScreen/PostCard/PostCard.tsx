@@ -1,14 +1,17 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Avatar, Card, Chip } from "react-native-paper";
 import { View, StyleSheet, Text } from "react-native";
 import { Post } from "../../../domains/models/Post";
 import PostCardCommentForm from "./PostCardCommentForm/PostCardCommentForm";
+import PostCardComments from "./PostCardComments/PostCardComments";
 
 type PostCardProps = {
   post: Post;
 }
 
 const PostCard = ({ post }: PostCardProps) => {
+  const [showedComments, setShowedComments] = useState(false);
+
   return(
     <Card key={post.id} style={styles.card}>
       <Card.Title
@@ -24,16 +27,14 @@ const PostCard = ({ post }: PostCardProps) => {
           <Text style={styles.dateText}>{new Date(post.createdAt).toLocaleDateString()}</Text>
         </View>
       </Card.Content>
+      <View>
+      <Text style={styles.showCommentsText} onPress={() => setShowedComments(p => !p)}>
+        Show comments for post
+      </Text>
+      </View>
+      {showedComments && <PostCardComments postId={post.id} />}
       <PostCardCommentForm post={post} />
-      {/* <View style={styles.commentsContainer}>
-        {comments
-            .filter((c) => c.postId === post.id) // Filtrujemy komentarze dla danego posta
-            .map((comment) => (
-                <Text key={comment.id} style={styles.commentText}>
-                    {comment.comment}
-                </Text>
-            ))}
-      </View> */}
+
     </Card>
   )
 }
@@ -56,6 +57,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
     fontWeight: '400',
+  },
+  showCommentsText : {
+    marginTop: 20,
+    width: 150,
+    padding: 5,
+    marginLeft: 10,
+    fontSize: 15,
+    color: '#333',
+    fontWeight: '600',
+    borderRadius: 10,
+    height: 30,
+    backgroundColor: '#5425',
   },
   categoryChip: {
     backgroundColor: '#f5f5f5',
