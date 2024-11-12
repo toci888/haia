@@ -15,10 +15,14 @@ namespace Toci.Haia.Database.Persistence
 
         public int UserId { get; set; }
 
+        public int CategoryId { get; set; }
+
         public ICollection<Comment> Comments { get; set; }
-        public ICollection<Reaction> Reactions { get; internal set; }
+        public ICollection<Reaction> Reactions { get; set; }
 
         public User User { get; set; }
+
+        public Category Category { get; set; }
     }
 
     public class GptJoke
@@ -48,6 +52,10 @@ namespace Toci.Haia.Database.Persistence
         public int? CommentId { get; set; }
         public Comment Comment { get; set; }
         public int UserId { get; set; }
+
+        public User User { get; set; }
+
+        public int GroupPostId { get; set; }
     }
 
     public class CommedyTextComment
@@ -200,7 +208,11 @@ namespace Toci.Haia.Database.Persistence
 
         public List<Comment> Comments { get; set; }
 
+        public List<Reaction> Reactions { get; set; }
+
         public int CategoryId { get; set; }
+
+        public int GroupPostId { get; set; }
     }
 
     // PostInteraction.cs
