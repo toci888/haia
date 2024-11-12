@@ -200,7 +200,7 @@ namespace YourNamespace.Controllers
         }
 
         // POST: api/UserGroup/{groupId}/posts
-        [HttpPost("{groupId}/posts")]
+        [HttpPost("{groupId}/groupposts")]
         public async Task<ActionResult<PostResponseDto>> CreatePostGroup(int groupId, PostDto postDto)
         {
             var group = await _context.UserGroups.FindAsync(groupId);

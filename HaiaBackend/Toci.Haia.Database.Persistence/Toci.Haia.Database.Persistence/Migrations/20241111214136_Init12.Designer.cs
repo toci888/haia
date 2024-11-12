@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Toci.Haia.Database.Persistence;
@@ -11,9 +12,11 @@ using Toci.Haia.Database.Persistence;
 namespace Toci.Haia.Database.Persistence.Migrations
 {
     [DbContext(typeof(ComedyDbContext))]
-    partial class ComedyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241111214136_Init12")]
+    partial class Init12
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

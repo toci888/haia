@@ -56,16 +56,16 @@ namespace Toci.Haia.Database.Persistence
 
                 modelBuilder.Entity<UserCategoryPreference>()
                     .HasOne(ucp => ucp.Category);
-                //.WithMany(c => c.UserCategoryPreferences)
-                //.HasForeignKey(ucp => ucp.CategoryId);
+            //.WithMany(c => c.UserCategoryPreferences)
+            //.HasForeignKey(ucp => ucp.CategoryId);
 
-            modelBuilder.Entity<UserGroup>()
-                .HasMany(g => g.Posts)
-                .WithOne(p => p.Group)
-                .HasForeignKey(p => p.GroupId);
+            modelBuilder.Entity<UserGroup>();
+                //.HasMany(g => g.Posts)
+                //.WithOne(p => p.Group)
+                //.HasForeignKey(p => p.GroupId);
 
-            modelBuilder.Entity<Category>()
-                .HasMany(c => c.Posts);
+            modelBuilder.Entity<Category>();
+                //.HasMany(c => c.Posts);
                 //.WithOne(p => p.CategoryId)
                 //.HasForeignKey(p => p.CategoryId);
 
@@ -83,10 +83,10 @@ namespace Toci.Haia.Database.Persistence
 
 
             // Definicje relacji i kluczy obcych
-            modelBuilder.Entity<UserGroup>()
-                .HasMany(g => g.Posts)
-                .WithOne(p => p.Group)
-                .HasForeignKey(p => p.GroupId);
+            modelBuilder.Entity<UserGroup>();
+                //.HasMany(g => g.Posts)
+                //.WithOne(p => p.Group)
+                //.HasForeignKey(p => p.GroupId);
 
             modelBuilder.Entity<UserGroup>()
                 .HasMany(g => g.Users);
@@ -254,7 +254,7 @@ namespace Toci.Haia.Database.Persistence
                 {
                     Id = i,
                     Text = $"Sample Comment {i}",
-                    Author = $"Commenter_{i}",
+                   // Author = $"Commenter_{i}",
               
                     CommentTimestamp = DateTime.UtcNow,
          
