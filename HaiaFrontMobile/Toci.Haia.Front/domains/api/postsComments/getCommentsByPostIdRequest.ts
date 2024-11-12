@@ -9,7 +9,7 @@ interface GetCommentsByPostIdRequestRsDto {
 export const getCommentsByPostIdRequest = async (postId: number): Promise<GetCommentsByPostIdRequestRsDto> => {
   try {
     const response = await axios.get(`${env.baseUrl}${endpoints.getCommentsByPostId(postId)}`);
-    console.log(response);
+    // console.log(response);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {

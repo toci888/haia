@@ -20,16 +20,24 @@ const HomeScreen = () => {
     }
   };
 
+  const handleRefreshPage = () => {
+    console.log("handleRefreshPage")
+    fetchSuggestedPosts();
+  }
+
   useEffect(() => {
     fetchSuggestedPosts();
   }, [route]);
 
   return(
     <View style={styles.container}>
-      <View>
+      <View style={{ flexDirection: 'row' }}>
         {currentUser && (
           <Text>Witaj {currentUser.login}</Text>
         )}
+        <View>
+          <Text style={styles.refreshButton} onPress={handleRefreshPage}>Refresh page</Text>
+        </View>
       </View>
       <View>
         {Posts.length > 0 && 
@@ -47,6 +55,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f5f5f5',
     padding: 10,
+  },
+  refreshButton: {
+    backgroundColor: '#28a745',
+    padding: 10,
+    borderRadius: 10,
+    margin: 10,
+    width: 90,
   },
 });
 

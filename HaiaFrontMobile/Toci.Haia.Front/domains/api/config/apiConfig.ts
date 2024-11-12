@@ -1,6 +1,6 @@
 export const endpoints = {
   getPosts: (userId: number) => `PostInteraction/suggested/${userId}`,
-  addCommentToPost: (userId: number) => `comments/${userId}`,
+  addCommentToPost: `Comment`,
   getCommentsByPostId: (postId: number) => `Comment/postComments/${postId}`,
 }
 

@@ -1,7 +1,6 @@
 import axios from "axios";
 import { env } from "../../../env/env.dev";
 import { endpoints } from "../config/apiConfig";
-import { Post } from "../../models/Post";
 
 interface addCommentToPostRequestRqDto {
   userId: number, 
@@ -11,9 +10,9 @@ interface addCommentToPostRequestRqDto {
 
 export const addCommentToPostRequest = async ({ userId, content, postId }: addCommentToPostRequestRqDto): Promise<number> => {
   try {
-    const response = await axios.post(`${env.baseUrl}${endpoints.getPosts(userId)}`, {
-      postId: userId,
-      userId: postId,
+    const response = await axios.post(`${env.baseUrl}${endpoints.addCommentToPost}`, {
+      postId: postId,
+      userId: userId,
       text: content,
     });
     console.log(response);
