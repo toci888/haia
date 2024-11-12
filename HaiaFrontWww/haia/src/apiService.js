@@ -40,7 +40,7 @@ export const getUserById = async (userId) => {
 
 
 export const addJoke = async (jokeData) => {
-    return await axios.post(`${API_URL}/jokes`, jokeData);
+    return await axios.post(`${API_URL}/Jokes`, jokeData);
 };
 
 // Funkcja pomocnicza do obsługi zapytań GET

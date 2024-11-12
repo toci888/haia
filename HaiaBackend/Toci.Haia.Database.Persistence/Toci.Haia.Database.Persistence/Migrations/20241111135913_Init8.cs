@@ -319,7 +319,8 @@ namespace Toci.Haia.Database.Persistence.Migrations
                 values: new object[,]
                 {
                     { 1, new DateTime(2024, 11, 11, 13, 59, 13, 210, DateTimeKind.Utc).AddTicks(2909), "user1@example.com", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "hashed_password_1", "user1" },
-                    { 2, new DateTime(2024, 11, 11, 13, 59, 13, 210, DateTimeKind.Utc).AddTicks(2911), "user2@example.com", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "hashed_password_2", "user2" }
+                    { 2, new DateTime(2024, 11, 11, 13, 59, 13, 210, DateTimeKind.Utc).AddTicks(2911), "user2@example.com", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "hashed_password_2", "user2" },
+                    { 3, new DateTime(2024, 11, 11, 13, 59, 13, 210, DateTimeKind.Utc).AddTicks(2911), "user3@example.com", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "hashed_password_3", "user3" }
                 });
 
             //migrationBuilder.InsertData(

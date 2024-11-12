@@ -10,7 +10,15 @@ const JokeLandingPage = () => {
         e.preventDefault();
 
         try {
-            const response = await addJoke({ text: jokeText, author: "warrior" });
+            const response = await addJoke({ "categoryId": 8,
+  "text": jokeText,
+  "author": "ghostrider",
+  "userId": 1,
+  "user": {
+    "id": 1,
+    "username": "warrior",
+    "email": "string"
+  } });
             setMessage("Dodano dowcip!");
             setJokeText('');
         } catch (error) {
