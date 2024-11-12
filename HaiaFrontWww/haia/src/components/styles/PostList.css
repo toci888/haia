@@ -1,4 +1,5 @@
 /* PostList.css */
+
 .post-list {
     display: flex;
     flex-direction: column;
@@ -24,24 +25,39 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 10px;
-    border-bottom: 1px solid #e0e0e0;
-    padding-bottom: 8px;
   }
   
   .post-username {
     font-weight: bold;
     color: #333;
-    font-size: 1rem;
   }
   
   .post-date {
     color: #888;
-    font-size: 0.9rem;
   }
   
   .post-content {
     color: #555;
     font-size: 1rem;
     line-height: 1.6;
+  }
+  
+  .post-reactions {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+  }
+  
+  .post-reactions span {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: transform 0.1s;
+  }
+  
+  .post-reactions span:hover {
+    transform: scale(1.1);
   }
   
