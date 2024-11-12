@@ -104,7 +104,10 @@ export const apiGet = async (endpoint) => {
   };
   
   export const getCommentsByPost = async (postId) => {
-    const response = await fetch(`${API_URL}/Comment/post/${postId}`);
+    const response = await fetch(`${API_URL}/Comment/postComments/${postId}`);
+
+    console.log(response);
+
     return await response.json();
   };
 
