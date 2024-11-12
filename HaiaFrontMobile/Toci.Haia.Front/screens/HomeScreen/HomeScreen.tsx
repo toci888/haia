@@ -21,7 +21,6 @@ const HomeScreen = () => {
   };
 
   useEffect(() => {
-    console.log(3);
     fetchSuggestedPosts();
   }, [route]);
 
@@ -32,13 +31,13 @@ const HomeScreen = () => {
           <Text>Witaj {currentUser.login}</Text>
         )}
       </View>
-      {Posts.length > 0 && (
-        <>
-          {Posts.map((post: Post) => (
+      <View>
+        {Posts.length > 0 && 
+          Posts.map((post: Post) => (
             <PostCard key={post.id} post={post} />
-          ))}
-        </>
-      )}
+          ))
+        }
+      </View>
     </View>
   );
 };

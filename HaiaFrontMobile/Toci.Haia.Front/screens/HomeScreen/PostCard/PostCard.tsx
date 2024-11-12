@@ -1,7 +1,8 @@
 import React from "react";
 import { Avatar, Card, Chip } from "react-native-paper";
-import { View, StyleSheet, Text, TextInput, TouchableOpacity } from "react-native";
+import { View, StyleSheet, Text } from "react-native";
 import { Post } from "../../../domains/models/Post";
+import PostCardCommentForm from "./PostCardCommentForm/PostCardCommentForm";
 
 type PostCardProps = {
   post: Post;
@@ -24,6 +25,7 @@ const PostCard = ({ post }: PostCardProps) => {
           <Text style={styles.dateText}>{new Date(post.createdAt).toLocaleDateString()}</Text>
         </View>
       </Card.Content>
+      <PostCardCommentForm post={post} />
       {/* <View style={styles.commentsContainer}>
         {comments
             .filter((c) => c.postId === post.id) // Filtrujemy komentarze dla danego posta
@@ -33,20 +35,7 @@ const PostCard = ({ post }: PostCardProps) => {
                 </Text>
             ))}
       </View> */}
-      {/* <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Add a comment..."
-          value={comments.find((c) => c.postId === post.id)?.comment ?? ""}
-          onChangeText={(e) => handleSetNewComment(post.id, e)}
-        />
-        <TouchableOpacity
-          style={styles.submitButton}
-          onPress={() => handleSubmitComment(post.id)}
-        >
-          <Text style={styles.submitButtonText}>Submit</Text>
-        </TouchableOpacity>
-      </View> */}
+
     </Card>
   )
 }
