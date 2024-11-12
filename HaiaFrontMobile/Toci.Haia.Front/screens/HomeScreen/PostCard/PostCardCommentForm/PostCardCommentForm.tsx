@@ -4,7 +4,6 @@ import { Post } from "../../../../domains/models/Post";
 import { addCommentToPostRequest } from "../../../../domains/api/postsComments/addCommentToPostRequest";
 import { appSelector } from "../../../../store/Store";
 
-
 type PostCardCommentFormProps = {
   post: Post;
 }
@@ -13,11 +12,8 @@ const PostCardCommentForm = ({ post }: PostCardCommentFormProps) => {
   const [comments, setComments] = useState<string>("");
   const { user: { currentUser } } = appSelector(s => s);
 
-  const handleSetNewComment = (id: number, text: string) => {
-    console.log(id);
-    console.log(text);
+  const handleSetNewComment = (text: string) => {
     setComments(text);
-    
   }
 
   const handleSubmitComment = async (id: number) => {
@@ -32,15 +28,15 @@ const PostCardCommentForm = ({ post }: PostCardCommentFormProps) => {
     if (resp !== -1) {
       console.log('handleSubmitComment, Works');
     }
-
   }
+
   return (
     <View style={styles.inputContainer}>
       <TextInput
         style={styles.input}
         placeholder="Add a comment..."
         value={comments}
-        onChangeText={(e) => handleSetNewComment(post.id, e)}
+        onChangeText={(e) => handleSetNewComment(e)}
       />
       <TouchableOpacity
         style={styles.submitButton}
@@ -51,6 +47,13 @@ const PostCardCommentForm = ({ post }: PostCardCommentFormProps) => {
     </View>
   );
 };
+
+{/* <FlatList
+  data={comments}
+  renderItem={renderComment}
+  keyExtractor={(item) => item.id.toString()}
+  contentContainerStyle={styles.commentList}
+/> */}
 
 const styles = StyleSheet.create({
   inputContainer: {

@@ -5,9 +5,10 @@ import axios from 'axios';
 import { appDispatch, appSelector } from './store/Store';
 import { mockUser1, mockUser2 } from './common/mocks/mockUser';
 import { userAction } from './store/user/userSlice';
-
+import { useNavigation } from '@react-navigation/native';
 
 export default function MainScreen() {
+  const navigation = useNavigation();
   const dispatch = appDispatch();
   const { user: { currentUser } } = appSelector(s => s);
 
@@ -19,9 +20,7 @@ export default function MainScreen() {
     try {
       const response = await axios.post(
         'http://192.168.191.47:7113/api/Comment/2/generate-joke',
-        {
-         
-        },
+        {},
         {
           headers: {
             'Content-Type': 'application/json',
@@ -41,24 +40,11 @@ export default function MainScreen() {
 
   // Funkcje, które będą obsługiwać kliknięcia przycisków
   const handleButton1Press = () => {
-
-    console.log("Kurwa xd");
-
     fetchJoke();
-
-    console.log('Button 1 Pressed');
-  };
-
-  const handleButton2Press = () => {
-    console.log('Button 2 Pressed');
-  };
-
-  const handleButton3Press = () => {
-    console.log('Button 3 Pressed');
   };
 
   const changeUser = () => {
-    const userId = currentUser.id;
+    const userId = currentUser!.id;
     dispatch(userAction.setUser(userId == 1 ? mockUser2 : mockUser1));
   }
 
@@ -80,8 +66,6 @@ export default function MainScreen() {
         <Text style={styles.jokeText}>{joke || 'Press the button to generate a joke'}</Text>
       )}
       
-
-
       <TouchableOpacity style={styles.button} onPress={handleButton1Press}>
         <Text style={styles.buttonText}>sprzedam lemiesz</Text>
       </TouchableOpacity>
@@ -96,7 +80,7 @@ export default function MainScreen() {
 
       <Button
         title="Go to Facebook Login"
-        onPress={() => navigation.navigate('Facebook')} // Navigate to Facebook Screen
+        onPress={() => navigation.navigate('FriendRequests')}
       />
     </View>
   );
@@ -106,8 +90,8 @@ export default function MainScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center', // Ustawienie w pionie na środku
-    alignItems: 'center', // Ustawienie w poziomie na środku
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: '#f5f5f5',
   },
   title: {
@@ -121,17 +105,17 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   button: {
-    width: '80%', // Szerokość przycisków
-    padding: 20, // Padding dla większych przycisków
-    backgroundColor: '#007bff', // Kolor przycisków
-    borderRadius: 10, // Zaokrąglenie rogów przycisków
-    marginVertical: 10, // Odstęp między przyciskami
-    alignItems: 'center', // Wyrównanie tekstu w środku
+    width: '80%',
+    padding: 20,
+    backgroundColor: '#007bff',
+    borderRadius: 10,
+    marginVertical: 10,
+    alignItems: 'center',
   },
   buttonText: {
-    color: '#fff', // Kolor tekstu
-    fontSize: 18, // Wielkość tekstu
-    fontWeight: 'bold', // Styl tekstu
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
 

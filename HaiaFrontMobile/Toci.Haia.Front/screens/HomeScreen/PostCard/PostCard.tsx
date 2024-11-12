@@ -9,7 +9,6 @@ type PostCardProps = {
 }
 
 const PostCard = ({ post }: PostCardProps) => {
-
   return(
     <Card key={post.id} style={styles.card}>
       <Card.Title
@@ -35,7 +34,6 @@ const PostCard = ({ post }: PostCardProps) => {
                 </Text>
             ))}
       </View> */}
-
     </Card>
   )
 }

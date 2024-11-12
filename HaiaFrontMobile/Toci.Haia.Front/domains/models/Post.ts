@@ -1,24 +1,18 @@
+import { Category } from "./Category";
+import { Group } from "./Group";
+
 export interface Post {
   id: number;
-  groupId: number;
+  createdAt: string;
+  content: string;
   userId: number;
   user: {
     id: number;
     username: string;
   }
-  content: string;
-  createdAt: string;
-  group: {
-    id: number;
-    name: string;
-    description: string;
-  }
+  groupId: number;
+  group: Group;
   categoryId: number;
-  category: {
-    id: number;
-    name: string;
-  }
-  comments: {
-    
-  }
+  category: Category;
+  comments: any[];
 }
