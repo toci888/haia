@@ -62,10 +62,22 @@ namespace Toci.Haia.Database.Persistence
     }
 
 
+    
     public class ReactionDto
     {
-        public int UserId { get; set; }           // ID of the user making the reaction
-        public string ReactionType { get; set; }   // Type of reaction (e.g., "like", "superlike", etc.)
+        public string ReactionType { get; set; } // Typ reakcji, np. "Like", "Love"
+        public int? JokeId { get; set; } // ID żartu, jeśli reakcja dotyczy żartu
+        public int? CommentId { get; set; } // ID komentarza, jeśli reakcja dotyczy komentarza
+        public int UserId { get; set; } // ID użytkownika tworzącego reakcję
+    }
+
+    public class ReactionResponseDto
+    {
+        public int Id { get; set; }
+        public string ReactionType { get; set; }
+        public int? JokeId { get; set; }
+        public int? CommentId { get; set; }
+        public int UserId { get; set; }
     }
 
     public class UserRegistrationDto
