@@ -99,6 +99,7 @@ namespace Toci.Haia.Database.Persistence
     public class JokeDto
     {
         public int JokeId { get; set; }
+        public int CategoryId { get; set; }
         public string Text { get; set; }
 
         public string Author { get; set; }
@@ -162,4 +163,30 @@ namespace Toci.Haia.Database.Persistence
         public bool IsPositive { get; set; } // True jeśli reakcja jest pozytywna, False jeśli negatywna
     }
 
+
+    public class PostJokeDto
+    {
+        public int Id { get; set; }
+        public string Text { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public int UserId { get; set; }
+
+        public int CategoryId { get; set; }
+
+        public ICollection<Comment> Comments { get; set; }
+        public ICollection<Reaction> Reactions { get; set; }
+
+        public User User { get; set; }
+
+        public Category Category { get; set; }
+
+        public int GroupId { get; set; }
+
+        public int JokeId { get; set; }
+        public string Content { get; set; }
+
+        // Relacje
+        public UserGroup Group { get; set; }
+    }
 }

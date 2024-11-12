@@ -15,10 +15,14 @@ namespace Toci.Haia.Database.Persistence
 
         public int UserId { get; set; }
 
+        public int CategoryId { get; set; }
+
         public ICollection<Comment> Comments { get; set; }
         public ICollection<Reaction> Reactions { get; internal set; }
 
         public User User { get; set; }
+
+        public Category Category { get; set; }
     }
 
     public class GptJoke

@@ -14,13 +14,13 @@ public class PostInteractionController : ControllerBase
         _context = context;
     }
     [HttpGet("suggested/{userId}")]
-    public async Task<ActionResult<IEnumerable<GroupPost>>> GetSuggestedPostsApi(int userId)
+    public async Task<ActionResult<IEnumerable<PostJokeDto>>> GetSuggestedPostsApi(int userId)
     {
         var suggestedPosts = await GetSuggestedPosts(userId);
         return Ok(suggestedPosts);
     }
 
-    protected async Task<List<GroupPost>> GetSuggestedPosts(int userId)
+    protected async Task<List<PostJokeDto>> GetSuggestedPosts(int userId)
     {
         // Pobierz ostatnie posty, na których użytkownik spędził najwięcej czasu
         var topCategories = await _context.PostInteractions
@@ -42,9 +42,60 @@ public class PostInteractionController : ControllerBase
             .Take(20)
             .ToListAsync();
 
-        return suggestedPosts;
+        var suggestedJokes = await _context.Jokes
+            .Where(p => topCategories.Contains(p.CategoryId) &&
+                        !_context.PostInteractions.Any(pi => pi.UserId == userId && pi.PostId == p.Id))
+            
+            .Include(us => us.User)
+            .Include(cat => cat.Category)
+            .Include(comm => comm.Comments)
+            .Take(20)
+            .ToListAsync();
+
+        List<PostJokeDto> result = new List<PostJokeDto>();
+
+        foreach (var element in suggestedJokes)
+        {
+            result.Add(MapJokeToDto(element));
+        }
+
+        foreach (var element in suggestedPosts)
+        {
+            result.Add(MapJokeToDto(element));
+        }
+
+        return result.OrderBy(m => m.CreatedAt).ToList();
     }
 
+    protected PostJokeDto MapJokeToDto(Joke joke)
+    {
+        var result = new PostJokeDto();
+
+        result.Id = joke.Id;
+        result.UserId = joke.UserId;
+        result.Reactions = joke.Reactions;
+        result.Comments = joke.Comments;
+        result.User = joke.User;
+        result.CreatedAt = joke.CreatedAt;
+        result.Content = joke.Text;
+
+        return result;
+    }
+
+    protected PostJokeDto MapJokeToDto(GroupPost post)
+    {
+        var result = new PostJokeDto();
+
+        result.Id = post.Id;
+        result.UserId = post.UserId;
+        //result.Reactions = post.Reactions;
+        result.Comments = post.Comments;
+        result.User = post.User;
+        result.CreatedAt = post.CreatedAt;
+        result.Content = post.Content;
+
+        return result;
+    }
 
     // POST: api/PostInteraction
     [HttpPost]
