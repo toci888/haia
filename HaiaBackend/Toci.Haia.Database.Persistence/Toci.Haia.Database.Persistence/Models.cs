@@ -102,6 +102,14 @@ namespace Toci.Haia.Database.Persistence
         public ICollection<Comment> Replies { get; set; }
 
         public int GroupPostId { get; set; }
+
+        public int PostId { get; set; } // Klucz obcy do posta
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow; // Data stworzenia komentarza
+
+        // Relacje
+        public Post Post { get; set; }
+        public User User { get; set; }
     }
 
     public class ComedyText

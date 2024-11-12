@@ -92,6 +92,22 @@ export const apiGet = async (endpoint) => {
     await fetch(`${API_URL}/${endpoint}`, { method: "DELETE" });
   };
 
+  export const createComment = async (data) => {
+    const response = await fetch(`${API_URL}/Comment`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    return await response.json();
+  };
+  
+  export const getCommentsByPost = async (postId) => {
+    const response = await fetch(`${API_URL}/Comment/post/${postId}`);
+    return await response.json();
+  };
+
   export const getUserGroups = () => apiGet("UserGroup");
 export const getUserGroupById = (id) => apiGet(`UserGroup/${id}`);
 export const createUserGroup = (data) => apiPost("UserGroup", data);

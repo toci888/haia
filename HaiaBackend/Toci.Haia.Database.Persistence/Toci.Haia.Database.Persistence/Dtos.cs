@@ -27,6 +27,7 @@ namespace Toci.Haia.Database.Persistence
         public int Id { get; set; }
 
         public int CommentId { get; set; }
+        public int PostId { get; set; } // ID posta, do którego dodawany jest komentarz
         public int JokeId { get; set; }
         public int UserId { get; set; }
         public string Text { get; set; }
@@ -203,4 +204,16 @@ namespace Toci.Haia.Database.Persistence
         // Relacje
         public UserGroup Group { get; set; }
     }
+
+    // CommentResponseDto.cs
+    public class CommentResponseDto
+    {
+        public int Id { get; set; }
+        public int PostId { get; set; }
+        public int UserId { get; set; }
+        public string UserName { get; set; } // Nazwa użytkownika (opcjonalnie)
+        public string Content { get; set; }
+        public DateTime CreatedAt { get; set; }
+    }
+
 }

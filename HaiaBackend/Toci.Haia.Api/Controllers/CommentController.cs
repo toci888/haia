@@ -162,4 +162,26 @@ public class CommentController : ControllerBase
     {
         return _context.Comments.Any(e => e.Id == id);
     }
+
+    [HttpGet("post/{postId}")]
+    public async Task<ActionResult<IEnumerable<CommentResponseDto>>> GetCommentsByPost(int postId)
+    {
+        var comments = await _context.Comments
+            .Where(c => c.PostId == postId)
+            .Include(c => c.User) // Łączenie z tabelą User, aby uzyskać dane użytkownika
+            .Select(c => new CommentResponseDto
+            {
+                Id = c.Id,
+                PostId = c.PostId,
+                UserId = c.UserId,
+                UserName = c.User.Username, // Zakładamy, że User ma pole Username
+                Content = c.Text,
+                CreatedAt = c.CreatedAt
+            })
+            .ToListAsync();
+
+        return Ok(comments);
+    }
+
+   
 }
