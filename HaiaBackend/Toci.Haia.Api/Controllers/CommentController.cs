@@ -22,11 +22,24 @@ public class CommentController : ControllerBase
 
     // GET: api/Comment
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<CommentDto>>> GetComments()
+    public async Task<ActionResult<IEnumerable<Comment>>> GetComments()
     {
-        var comments = await _context.Comments.ToListAsync();
-        var commentDtos = _mapper.Map<List<CommentDto>>(comments);
-        return Ok(commentDtos);
+        var comments = await _context.Comments
+            .Include(u => u.User)
+            .ToListAsync();
+
+        //var commentDtos = _mapper.Map<List<CommentDto>>(comments);
+        return Ok(comments);
+    }
+
+    [HttpGet("postComments/{postId}/")]
+    public async Task<ActionResult<IEnumerable<Comment>>> GetCommentsForPost(int postId)
+    {
+        var comments = await _context.Comments.Where(c => c.PostId == postId)
+            .Include(u => u.User)
+            .ToListAsync();
+       // var commentDtos = _mapper.Map<List<CommentDto>>(comments);
+        return Ok(comments);
     }
 
     // GET: api/Comment/5
@@ -46,7 +59,7 @@ public class CommentController : ControllerBase
 
     // POST: api/Comment
     [HttpPost]
-    public async Task<ActionResult<CommentDto>> CreateComment([FromBody] CommentDto commentDto)
+    public async Task<ActionResult<Comment>> CreateComment([FromBody] CommentDto commentDto)
     {
         if (!ModelState.IsValid)
         {
@@ -57,8 +70,10 @@ public class CommentController : ControllerBase
         _context.Comments.Add(comment);
         await _context.SaveChangesAsync();
 
-        var createdCommentDto = _mapper.Map<CommentDto>(comment);
-        return CreatedAtAction(nameof(GetComment), new { id = comment.Id }, createdCommentDto);
+        comment.User = _context.Users.FirstOrDefault(u => u.Id == commentDto.UserId);
+
+       // var createdCommentDto = _mapper.Map<CommentDto>(comment);
+        return CreatedAtAction(nameof(GetComment), new { id = comment.Id }, comment);
     }
 
     // PUT: api/Comment/5

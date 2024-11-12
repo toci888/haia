@@ -137,7 +137,7 @@ namespace Toci.Haia.Database.Persistence
         public string Email { get; set; }
         public string PasswordHash { get; set; }
         public List<ComedyText> ComedyTexts { get; set; } = new List<ComedyText>();
-        public List<Comment> Comments { get; set; } = new List<Comment>();
+       // public List<Comment> Comments { get; set; } = new List<Comment>();
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime LastLogin { get; set; }
 

@@ -34,7 +34,8 @@ public class JokesController : ControllerBase
         var joke = new Joke
         {
             Text = jokeDto.Text,
-            UserId = jokeDto.UserId
+            UserId = jokeDto.UserId,
+            CategoryId = jokeDto.CategoryId
         };
 
         _context.Jokes.Add(joke);
