@@ -7,10 +7,12 @@ import SocialLogin from './components/SocialLogin';
 import UserProfile from './components/UserProfile';
 import './App.css';
 import JokeLandingPage from './components/JokeLandingPage';
-import FriendInviteNotifier from './FriendInviteNotifier';
+import SuggestedPosts from './components/SuggestedPosts';
+//import FriendInviteNotifier from './FriendInviteNotifier';
 
 function App() {
     return (
+        
         <div className="container mt-4">
              <div className="container">
             <h1>Portal Haia</h1>
@@ -25,7 +27,13 @@ function App() {
             <JokeLandingPage />
         </div>
 
-        <FriendInviteNotifier/>
+        <div>
+      <h1>Portal HAIA</h1>
+      <SuggestedPosts />
+    </div>
+
+
+        {/* <FriendInviteNotifier/> */}
 
             <h1 className="text-center mb-4">Comedy App</h1>
             <div className="row">
