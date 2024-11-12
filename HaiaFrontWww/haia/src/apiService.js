@@ -10,6 +10,20 @@ export const addComment = async (jokeId, commentText) => {
     return response.data;
 };
 
+export const createReaction = async (data) => {
+
+console.log(data);
+
+  const response = await fetch(`${API_URL}/Reaction`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  return await response.json();
+};
+
 export const reactToJoke = async (jokeId, reactionType, userId) => {
     const response = await axios.post(`${API_URL}/jokes/${jokeId}/react`, {
         reactionType,

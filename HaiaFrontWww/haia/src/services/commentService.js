@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api/Comment';
+const API_URL = 'http://localhost:5117/api/Comment';
 
 export const getAllComments = async () => {
     try {
