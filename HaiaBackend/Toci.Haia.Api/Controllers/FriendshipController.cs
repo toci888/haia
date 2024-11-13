@@ -21,6 +21,96 @@ namespace Toci.Haia.Api.Controllers
             _hubContext = hubContext;
         }
 
+        // GET: api/Friendship/invitations/{userId}
+        [HttpGet("invitations/{userId}")]
+        public async Task<ActionResult<IEnumerable<FriendshipDto>>> GetPendingInvitations(int userId)
+        {
+            var invitations = await _context.Friendships
+                .Where(f => f.UserId == userId && !f.IsAccepted) // Zaproszenia, które nie zostały zaakceptowane
+                .Include(f => f.User)
+                .Select(f => new FriendshipDto
+                {
+                    Id = f.Id,
+                    UserId = f.UserId,
+                    FriendId = f.FriendId,
+                    UserName = f.User.Username
+                })
+                .ToListAsync();
+
+            return Ok(invitations);
+        }
+
+        // POST: api/Friendship/accept/{friendshipId}
+        [HttpPost("accept/{friendshipId}")]
+        public async Task<IActionResult> AcceptInvitation(int friendshipId)
+        {
+            var friendship = await _context.Friendships.FindAsync(friendshipId);
+
+            if (friendship == null)
+            {
+                return NotFound("Zaproszenie nie istnieje.");
+            }
+
+            if (friendship.IsAccepted)
+            {
+                return BadRequest("Zaproszenie zostało już zaakceptowane.");
+            }
+
+            friendship.IsAccepted = true;
+            await _context.SaveChangesAsync();
+
+            return Ok("Zaproszenie zostało zaakceptowane.");
+        }
+
+        // DELETE: api/Friendship/reject/{friendshipId}
+        [HttpDelete("reject/{friendshipId}")]
+        public async Task<IActionResult> RejectInvitation(int friendshipId)
+        {
+            var friendship = await _context.Friendships.FindAsync(friendshipId);
+
+            if (friendship == null)
+            {
+                return NotFound("Zaproszenie nie istnieje.");
+            }
+
+            if (friendship.IsAccepted)
+            {
+                return BadRequest("Nie można odrzucić zaproszenia, które zostało już zaakceptowane.");
+            }
+
+            _context.Friendships.Remove(friendship);
+            await _context.SaveChangesAsync();
+
+            return Ok("Zaproszenie zostało odrzucone.");
+        }
+
+        // Metoda do wyszukiwania użytkowników z filtrowaniem po nazwisku i imieniu
+        // GET: api/Friendship/search-users?query=John
+        [HttpGet("search-users")]
+        public async Task<ActionResult<IEnumerable<UserDto>>> SearchUsers(string query = "")
+        {
+            var usersQuery = _context.Users.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(query))
+            {
+                // Filtrowanie po imieniu lub nazwisku
+                usersQuery = usersQuery.Where(u =>
+                    EF.Functions.Like(u.Username, $"%{query}%") ||
+                    EF.Functions.Like(u.Email, $"%{query}%"));
+            }
+
+            var users = await usersQuery
+                .Select(u => new UserDto
+                {
+                    Id = u.Id,
+                    Username = u.Username,
+                    Email = u.Email
+                })
+                .ToListAsync();
+
+            return Ok(users);
+        }
+
         [HttpPost("invite")]
         public async Task<IActionResult> SendFriendInvite([FromBody] CreateFriendshipDto createFriendshipDto)
         {
