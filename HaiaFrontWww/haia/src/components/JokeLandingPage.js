@@ -18,13 +18,12 @@ const JokeLandingPage = () => {
 
      useEffect(() => {
 
-        console.log('ja pierdole u e');
 
         const handlegetJokes = async (e) => {
             //e.preventDefault();
         
             const jokes = await getJokes();
-        console.log(jokes.data, 'doopa');
+
         setJokes(jokes.data);
            // return jokes.data;
         }
