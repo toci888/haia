@@ -12,6 +12,58 @@ public class UserCategoryPreferenceController : ControllerBase
     {
         _context = context;
     }
+
+    // GET: api/UserPreferences
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<UserPreferencesDto>>> GetUserPreferences()
+    {
+        var preferences = await _context.UserPreferences
+            .Select(up => new UserPreferencesDto
+            {
+                Id = up.Id,
+                UserId = up.UserId,
+                CategoryId = up.CategoryId,
+                PreferenceLevel = up.PreferenceLevel
+            })
+            .ToListAsync();
+
+        return Ok(preferences);
+    }
+
+    // POST: api/UserPreferences
+    [HttpPost]
+    public async Task<ActionResult<UserPreferencesDto>> CreateUserPreference(UserPreferencesDto preferencesDto)
+    {
+        var preference = new UserPreferences
+        {
+            UserId = preferencesDto.UserId,
+            CategoryId = preferencesDto.CategoryId,
+            PreferenceLevel = preferencesDto.PreferenceLevel
+        };
+
+        _context.UserPreferences.Add(preference);
+        await _context.SaveChangesAsync();
+
+        preferencesDto.Id = preference.Id;
+        return CreatedAtAction(nameof(GetUserPreferences), new { id = preference.Id }, preferencesDto);
+    }
+
+    // DELETE: api/UserPreferences/{id}
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteUserPreference(int id)
+    {
+        var preference = await _context.UserPreferences.FindAsync(id);
+        if (preference == null)
+        {
+            return NotFound();
+        }
+
+        _context.UserPreferences.Remove(preference);
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
+
     // GET: api/UserCategoryPreference/TopCategories/{userId}
     [HttpGet("TopCategories/{userId}")]
     public async Task<ActionResult<IEnumerable<Category>>> GetTopCategories(int userId)

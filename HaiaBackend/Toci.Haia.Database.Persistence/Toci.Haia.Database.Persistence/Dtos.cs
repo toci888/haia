@@ -35,6 +35,13 @@ namespace Toci.Haia.Database.Persistence
         public DateTime CommentTimestamp { get; set; }
     }
 
+    public class UserPreferencesDto
+    {
+        public int Id { get; set; }
+        public int UserId { get; set; }
+        public int CategoryId { get; set; }
+        public int PreferenceLevel { get; set; } // Poziom preferencji dla kategorii humoru
+    }
     public class LikeDTO
     {
         public int Id { get; set; }
@@ -107,6 +114,8 @@ namespace Toci.Haia.Database.Persistence
         public int Id { get; set; }
         public string Username { get; set; }
         public string Email { get; set; }
+        public DateTime DateOfBirth { get; set; }
+        public string EducationLevel { get; set; }
     }
 
     public class JokeDto

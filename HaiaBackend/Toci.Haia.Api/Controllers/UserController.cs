@@ -48,22 +48,24 @@ public class UserController : ControllerBase
         });
     }
 
-    // GET: api/user
+    // GET: api/User
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+    public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers()
     {
-        return await _context.Users.ToListAsync();
+        var users = await _context.Users
+            .Select(u => new UserDto
+            {
+                Id = u.Id,
+                Username = u.Username,
+                Email = u.Email,
+                DateOfBirth = u.DateOfBirth,
+                EducationLevel = u.EducationLevel
+            })
+            .ToListAsync();
+
+        return Ok(users);
     }
 
-    // POST: api/user
-    [HttpPost]
-    public async Task<ActionResult<User>> PostUser(User user)
-    {
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync();
-
-        return CreatedAtAction("GetUser", new { id = user.Id }, user);
-    }
 
     [HttpPost("register")]
     public async Task<ActionResult<UserResponseDto>> RegisterUser(UserRegistrationDto registrationDto)
@@ -119,29 +121,27 @@ public class UserController : ControllerBase
         });
     }
 
-    // Pobierz szczegóły użytkownika
+    // GET: api/User/{id}
     [HttpGet("{id}")]
-    public async Task<ActionResult<UserResponseDto>> GetUser(int id)
+    public async Task<ActionResult<UserDto>> GetUser(int id)
     {
-        var user = await _context.Users
-            .Include(u => u.SocialLogins)
-            .FirstOrDefaultAsync(u => u.Id == id);
+        var user = await _context.Users.FindAsync(id);
 
         if (user == null)
         {
             return NotFound();
         }
 
-        return Ok(new UserResponseDto
+        return Ok(new UserDto
         {
             Id = user.Id,
             Username = user.Username,
             Email = user.Email,
-            SocialLogins = user.SocialLogins
-                .Select(sl => new SocialLoginDto { Provider = sl.Provider, ProviderUserId = sl.ProviderUserId })
-                .ToList()
+            DateOfBirth = user.DateOfBirth,
+            EducationLevel = user.EducationLevel
         });
     }
+
 
     // GET: api/User/{userId}/jokes
     [HttpGet("{userId}/jokes")]
@@ -168,9 +168,68 @@ public class UserController : ControllerBase
         return Ok(jokes);
     }
 
+    // POST: api/User
+    [HttpPost]
+    public async Task<ActionResult<UserDto>> CreateUser(UserDto userDto)
+    {
+        var user = new User
+        {
+            Username = userDto.Username,
+            Email = userDto.Email,
+            DateOfBirth = userDto.DateOfBirth,
+            EducationLevel = userDto.EducationLevel
+        };
 
-// Funkcja pomocnicza do hashowania hasła (przykładowa implementacja)
-private string HashPassword(string password)
+        _context.Users.Add(user);
+        await _context.SaveChangesAsync();
+
+        userDto.Id = user.Id;
+        return CreatedAtAction(nameof(GetUser), new { id = user.Id }, userDto);
+    }
+
+    // PUT: api/User/{id}
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateUser(int id, UserDto userDto)
+    {
+        if (id != userDto.Id)
+        {
+            return BadRequest();
+        }
+
+        var user = await _context.Users.FindAsync(id);
+        if (user == null)
+        {
+            return NotFound();
+        }
+
+        user.Username = userDto.Username;
+        user.Email = userDto.Email;
+        user.DateOfBirth = userDto.DateOfBirth;
+        user.EducationLevel = userDto.EducationLevel;
+
+        await _context.SaveChangesAsync();
+        return NoContent();
+    }
+
+    // DELETE: api/User/{id}
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteUser(int id)
+    {
+        var user = await _context.Users.FindAsync(id);
+        if (user == null)
+        {
+            return NotFound();
+        }
+
+        _context.Users.Remove(user);
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
+
+
+    // Funkcja pomocnicza do hashowania hasła (przykładowa implementacja)
+    private string HashPassword(string password)
     {
         // Implementacja hashowania hasła (np. użycie BCrypt lub SHA256)
         return password;  // Przykładowo zwracamy hasło bez hashowania (należy dodać właściwe hashowanie)

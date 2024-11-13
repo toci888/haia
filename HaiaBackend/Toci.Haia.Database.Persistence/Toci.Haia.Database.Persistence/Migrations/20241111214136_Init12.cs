@@ -214,13 +214,7 @@ namespace Toci.Haia.Database.Persistence.Migrations
                 table: "Comments",
                 column: "GroupPostId");
 
-            migrationBuilder.AddForeignKey(
-                name: "FK_Comments_Posts_GroupPostId",
-                table: "Comments",
-                column: "GroupPostId",
-                principalTable: "Posts",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+           
         }
 
         /// <inheritdoc />

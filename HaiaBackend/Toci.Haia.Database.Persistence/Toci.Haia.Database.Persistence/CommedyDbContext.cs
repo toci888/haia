@@ -295,10 +295,6 @@ namespace Toci.Haia.Database.Persistence
                 }).ToArray()
             );
 
-            modelBuilder.Entity<User>().HasData(
-                new User { Id = 1, Username = "user1", Email = "user1@example.com", PasswordHash = "hashed_password_1" },
-                new User { Id = 2, Username = "user2", Email = "user2@example.com", PasswordHash = "hashed_password_2" }
-            );
 
             modelBuilder.Entity<SocialLogin>().HasData(
                 new SocialLogin { Id = 1, Provider = "Google", ProviderUserId = "google_user_1", UserId = 1 },
