@@ -3,6 +3,7 @@ import { registerUser, loginUser } from '../apiService';
 
 import SocialLogin from './SocialLogin';
 import './styles/Register.css';
+import UserPreferencesForm from './UserPreferencesForm';
 
     
 
@@ -38,6 +39,7 @@ const Register = () => {
 
     return (
         <div>
+            { !message && <UserPreferencesForm userId="34" /> }
         <div className="login-container">
         <h2>Logowanie</h2>
         { !message && <form onSubmit={handleLogin} className="login-form">

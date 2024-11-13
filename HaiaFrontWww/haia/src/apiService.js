@@ -22,6 +22,12 @@ export const getCategories = async () => {
   }
 };
 
+export const createUserPreference = async (preferenceData) => {
+  const response = await axios.post(`${API_URL}/UserCategoryPreference`, preferenceData);
+  return response.data;
+};
+
+
 // Pobranie jednej kategorii po ID
 export const getCategoryById = async (id) => {
   try {
