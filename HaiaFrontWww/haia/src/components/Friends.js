@@ -106,7 +106,7 @@ const Friends = ({ userId }) => {
                 {friends.map((friend) => (
 
                 <span key={friend.id}>
-                     {friend.userName} 
+                     <a href="/profile?userId='{friend.id}'">{friend.userName}</a>
                     <button onClick={() => handleRemoveFriend(friend.id)}>Usuń</button>
                 </span>
                 ))}
