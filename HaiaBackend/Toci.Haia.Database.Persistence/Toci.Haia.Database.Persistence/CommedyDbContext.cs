@@ -16,6 +16,7 @@ namespace Toci.Haia.Database.Persistence
 
             base.OnConfiguring(optionsBuilder);
         }
+        public DbSet<UserPreferences> UserPreferences { get; set; }
         public DbSet<ChatRoom> ChatRooms { get; set; }
         public DbSet<ChatMessage> ChatMessages { get; set; }
 
@@ -39,6 +40,19 @@ namespace Toci.Haia.Database.Persistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // Konfiguracja relacji jeden-do-wielu między User a UserPreferences
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.Preferences)
+                .WithOne()
+                .HasForeignKey<UserPreferences>(up => up.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Konfiguracja relacji wiele-do-jednego między UserPreferences a Category
+            modelBuilder.Entity<UserPreferences>()
+                .HasOne(up => up.Category);
+                //.WithMany(c => c.UserPreferences)
+                //.HasForeignKey(up => up.CategoryId);
+
             modelBuilder.Entity<ChatRoom>()
                 .HasMany(cr => cr.Messages)
                 .WithOne(cm => cm.ChatRoom)

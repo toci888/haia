@@ -130,11 +130,34 @@ namespace Toci.Haia.Database.Persistence
         public ICollection<Comment> Comments { get; set; }
     }
 
+    public class UserPreferences
+    {
+        public int Id { get; set; }
+
+        // Id użytkownika (klucz obcy)
+        public int UserId { get; set; }
+        public User User { get; set; }
+
+        // Id kategorii humoru (klucz obcy)
+        public int CategoryId { get; set; }
+        public Category Category { get; set; }
+
+        // Preferencje użytkownika do danej kategorii, np. poziom zainteresowania lub częstotliwość (np. 1-10)
+        public int PreferenceLevel { get; set; }
+    }
+
+
     public class User
     {
         public int Id { get; set; }
         public string Username { get; set; }
+        public string NameSurname { get; set; }
         public string Email { get; set; }
+        public DateTime DateOfBirth { get; set; } // Data urodzenia użytkownika
+        public string EducationLevel { get; set; } // Poziom wykształcenia użytkownika (np. "High School", "Bachelor's", etc.)
+
+        // Relacja z tabelą UserPreferences
+        public UserPreferences Preferences { get; set; }
         public string PasswordHash { get; set; }
         public List<ComedyText> ComedyTexts { get; set; } = new List<ComedyText>();
        // public List<Comment> Comments { get; set; } = new List<Comment>();
