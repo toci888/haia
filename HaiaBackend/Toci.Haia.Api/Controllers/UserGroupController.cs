@@ -38,7 +38,7 @@ namespace YourNamespace.Controllers
                     Id = g.Id,
                     Name = g.Name,
                     Description = g.Description,
-                    UserNames = g.Users.Select(u => u.Username).ToList()
+                    Users = g.Users
                 })
                 .ToListAsync();
 
@@ -63,7 +63,7 @@ namespace YourNamespace.Controllers
                 Id = group.Id,
                 Name = group.Name,
                 Description = group.Description,
-                UserNames = group.Users.Select(u => u.Username).ToList()
+                Users = group.Users.ToList()
             };
 
             return Ok(response);
