@@ -86,6 +86,7 @@ public class PostInteractionController : ControllerBase
         result.JokeId = joke.Id;
         result.CategoryId = joke.CategoryId;
         result.Category = joke.Category;
+        result.CreatedAt = joke.CreatedAt;
 
         return result;
     }

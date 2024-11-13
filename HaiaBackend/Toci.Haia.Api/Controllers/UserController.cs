@@ -13,6 +13,41 @@ public class UserController : ControllerBase
         _context = context;
     }
 
+    private bool VerifyPassword(string password, string passwordHash)
+    {
+        // Implementacja weryfikacji hasła, np. porównanie hasła z hashem (użyj BCrypt lub SHA256)
+        return password == passwordHash;  // Przykład - porównujemy hasło bez hashowania (należy dodać właściwą weryfikację)
+    }
+
+    // Logowanie użytkownika
+    [HttpPost("login")]
+    public async Task<ActionResult<UserResponseDto>> LoginUser(UserLoginDto loginDto)
+    {
+        var user = await _context.Users
+            .FirstOrDefaultAsync(u => u.Email == loginDto.Email);
+
+        if (user == null)
+        {
+            return Unauthorized("Nieprawidłowy adres e-mail lub hasło.");
+        }
+
+        if (!VerifyPassword(loginDto.Password, user.PasswordHash))
+        {
+            return Unauthorized("Nieprawidłowy adres e-mail lub hasło.");
+        }
+
+        return Ok(new UserResponseDto
+        {
+            Id = user.Id,
+            Username = user.Username,
+            Email = user.Email,
+            SocialLogins = await _context.SocialLogins
+                .Where(sl => sl.UserId == user.Id)
+                .Select(sl => new SocialLoginDto { Provider = sl.Provider, ProviderUserId = sl.ProviderUserId })
+                .ToListAsync()
+        });
+    }
+
     // GET: api/user
     [HttpGet]
     public async Task<ActionResult<IEnumerable<User>>> GetUsers()

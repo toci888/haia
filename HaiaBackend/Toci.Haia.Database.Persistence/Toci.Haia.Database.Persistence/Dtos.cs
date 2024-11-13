@@ -140,10 +140,17 @@ namespace Toci.Haia.Database.Persistence
         public string Description { get; set; }
         public List<User> Users { get; set; } // Lista nazw użytkowników
     }
+    public class UserLoginDto
+    {
+        public string Email { get; set; }
+        public string Password { get; set; }
+    }
 
-    // PostDto.cs
+
+
     public class PostDto
     {
+    // PostDto.cs
         public int UserId { get; set; }
         public int CategoryId { get; set; }
         public string Content { get; set; }
