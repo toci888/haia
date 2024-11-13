@@ -7,8 +7,6 @@ import { createReaction, createComment, getCommentsByPost } from '../apiService'
 
 const JokeListGoovno = ({ jokes }) => {
 
-console.log(jokes, 'sraka');
-
 
   const [reactions, setReactions] = useState({});
   const [commendReactions, setCommentReactions] = useState({});
@@ -35,8 +33,6 @@ console.log(jokes, 'sraka');
   // Funkcja do pobierania komentarzy dla konkretnego posta
   const fetchComments = async (postId) => {
     const postComments = await getCommentsByPost(postId);
-
-    console.log(postComments, 'lala');
 
     setComments(prevComments => ({
       ...prevComments,

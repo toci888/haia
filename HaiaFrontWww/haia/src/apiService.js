@@ -10,6 +10,62 @@ export const addComment = async (jokeId, commentText) => {
     return response.data;
 };
 
+
+// Pobranie listy wszystkich kategorii
+export const getCategories = async () => {
+  try {
+      const response = await axios.get(`${API_URL}/Category`);
+      return response.data;
+  } catch (error) {
+      console.error("Błąd podczas pobierania kategorii", error);
+      throw error;
+  }
+};
+
+// Pobranie jednej kategorii po ID
+export const getCategoryById = async (id) => {
+  try {
+      const response = await axios.get(`${API_URL}/Category/${id}`);
+      return response.data;
+  } catch (error) {
+      console.error("Błąd podczas pobierania kategorii o ID:", id, error);
+      throw error;
+  }
+};
+
+// Dodanie nowej kategorii
+export const createCategory = async (categoryData) => {
+  try {
+      const response = await axios.post(`${API_URL}/Category`, categoryData);
+      return response.data;
+  } catch (error) {
+      console.error("Błąd podczas tworzenia kategorii", error);
+      throw error;
+  }
+};
+
+// Aktualizacja istniejącej kategorii
+export const updateCategory = async (id, categoryData) => {
+  try {
+      const response = await axios.put(`${API_URL}/Category/${id}`, categoryData);
+      return response.data;
+  } catch (error) {
+      console.error("Błąd podczas aktualizacji kategorii o ID:", id, error);
+      throw error;
+  }
+};
+
+// Usunięcie kategorii
+export const deleteCategory = async (id) => {
+  try {
+      const response = await axios.delete(`${API_URL}/Category/${id}`);
+      return response.data;
+  } catch (error) {
+      console.error("Błąd podczas usuwania kategorii o ID:", id, error);
+      throw error;
+  }
+};
+
 export const createReaction = async (data) => {
 
 console.log(data);
@@ -194,7 +250,7 @@ export const getPostsByGroup = (groupId) => apiGet(`UserGroup/${groupId}/posts`)
 export const createPostInGroup = (groupId, data) => apiPost(`UserGroup/${groupId}/posts`, data);
 
 // Kategorie
-export const getCategories = () => apiGet("UserGroup/categories");
+//export const getCategories = () => apiGet("UserGroup/categories");
 
 // Reakcje Użytkownika na Kategorie
 export const reactToCategory = (data) => apiPost("UserCategoryPreference/React", data);

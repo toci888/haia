@@ -33,8 +33,6 @@ const PostList = ({ posts }) => {
   const fetchComments = async (postId) => {
     const postComments = await getCommentsByPost(postId);
 
-    console.log(postComments, 'lala');
-
     setComments(prevComments => ({
       ...prevComments,
       [postId]: postComments,
