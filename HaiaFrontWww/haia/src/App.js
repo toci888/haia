@@ -7,6 +7,7 @@ import UserProfile from './components/UserProfile';
 import './App.css';
 import JokeLandingPage from './components/JokeLandingPage';
 import SuggestedPosts from './components/SuggestedPosts';
+
 //import FriendInviteNotifier from './FriendInviteNotifier';
 
 import React from 'react';
@@ -22,8 +23,8 @@ const App = () => {
         <Routes>
           <Route path="/jokes" element={<JokeLandingPage />} />
           <Route path="/suggestedposts" element={<SuggestedPosts />} />
+          <Route path="/registerlogin" element={<Register />} />
           
-          <Route path="/register" element={<Register />} />
         </Routes>
       </div>
     </Router>
