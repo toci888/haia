@@ -1,13 +1,29 @@
 import React, { useState } from 'react';
-import { registerUser } from '../apiService';
+import { registerUser, loginUser } from '../apiService';
+
 import SocialLogin from './SocialLogin';
 import './styles/Register.css';
+
+    
 
 const Register = () => {
     const [email, setEmail] = useState('');
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
+
+
+
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await loginUser({ email, password });
+            setMessage(`Zalogowano pomyślnie: ${response.data.username}`);
+        } catch (error) {
+            setMessage("Błąd logowania. Sprawdź dane i spróbuj ponownie.");
+            console.error(error);
+        }
+    };
 
     const handleRegister = async (e) => {
         e.preventDefault();
@@ -21,6 +37,29 @@ const Register = () => {
     };
 
     return (
+        <div>
+        <div className="login-container">
+        <h2>Logowanie</h2>
+        { !message && <form onSubmit={handleLogin} className="login-form">
+            <input
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+            />
+            <input
+                type="password"
+                placeholder="Hasło"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+            />
+            <button type="submit">Zaloguj się</button>
+        </form> }
+        {message && <p className="login-message">{message}</p>}
+    </div>
+
         <div className="register-container">
             <h2>Rejestracja</h2>
             <form onSubmit={handleRegister} className="register-form">
@@ -50,6 +89,7 @@ const Register = () => {
             {message && <p className="register-message">{message}</p>}
 
             <SocialLogin />
+        </div>
         </div>
     );
 };

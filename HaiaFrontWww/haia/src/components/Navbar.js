@@ -8,6 +8,7 @@ const Navbar = () => {
       <h1>HAIA</h1>
       <ul className="nav-links">
         <li><Link to="/">Strona główna</Link></li>
+        <li><Link to="/friends">Znajomi</Link></li>
         <li><Link to="/suggestedposts">Sugerowane posty</Link></li>
         <li><Link to="/jokes">Zarty</Link></li>
         <li><Link to="/registerlogin">Zarejestruj/Zaloguj</Link></li>

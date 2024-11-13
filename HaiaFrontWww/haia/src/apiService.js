@@ -40,8 +40,64 @@ export const reactToComment = async (commentId, reactionType, userId) => {
     return response.data;
 };
 
+export const searchUsers = async (query) => {
+  const response = await axios.get(`${API_URL}/Friendship/search-users`, {
+      params: { query }
+  });
+  return response.data;
+};
+
+
+// Pobranie listy oczekujących zaproszeń do znajomych
+export const getPendingInvitations = async (userId) => {
+  const response = await axios.get(`${API_URL}/Friendship/invitations/${userId}`);
+  return response.data;
+};
+
+// Akceptacja zaproszenia do znajomych
+export const acceptInvitation = async (friendshipId) => {
+  const response = await axios.post(`${API_URL}/Friendship/accept/${friendshipId}`);
+  return response.data;
+};
+
+// Odrzucenie zaproszenia do znajomych
+export const rejectInvitation = async (friendshipId) => {
+  const response = await axios.delete(`${API_URL}/Friendship/reject/${friendshipId}`);
+  return response.data;
+};
+
+
+// Pobranie listy znajomych
+export const getFriends = async (userId) => {
+  const response = await axios.get(`${API_URL}/Friendship/user/${userId}`);
+  return response.data;
+};
+
+// Dodanie znajomego
+export const addFriend = async (userId, friendId) => {
+  const response = await axios.post(`${API_URL}/Friendship/Invite`, { userId, friendId });
+  return response.data;
+};
+
+// Usunięcie znajomego
+export const removeFriend = async (Id) => {
+  const response = await axios.delete(`${API_URL}/Friendship/${Id}`);
+  return response.data;
+};
+
+
+export const loginUser = async (credentials) => {
+  try {
+      const response = await axios.post(`${API_URL}/User/login`, credentials);
+      return response; // Możesz tutaj zwrócić `response.data` dla danych użytkownika
+  } catch (error) {
+      console.error("Błąd logowania:", error);
+      throw error; // Rzuca błąd, który zostanie obsłużony w komponencie logowania
+  }
+};
+
 export const registerUser = async (userData) => {
-    return await axios.post(`${API_URL}/register`, userData);
+    return await axios.post(`${API_URL}/User/register`, userData);
 };
 
 export const socialLogin = async (provider, providerUserId) => {
@@ -130,3 +186,4 @@ export const getCategories = () => apiGet("UserGroup/categories");
 // Reakcje Użytkownika na Kategorie
 export const reactToCategory = (data) => apiPost("UserCategoryPreference/React", data);
 export const getTopCategoriesForUser = (userId) => apiGet(`UserCategoryPreference/TopCategories/${userId}`);
+

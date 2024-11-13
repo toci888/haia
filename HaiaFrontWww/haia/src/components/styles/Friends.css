@@ -1,0 +1,163 @@
+/* Friends.css */
+
+.friends-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.friends-container h2 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.friends-message {
+    font-size: 1rem;
+    color: green;
+    margin-bottom: 15px;
+}
+
+.friends-list {
+    list-style: none;
+    padding: 0;
+}
+
+.friends-list li,
+.search-results li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.friends-list li button,
+.search-results li button {
+    padding: 5px 10px;
+    font-size: 0.9rem;
+    color: white;
+    background-color: #e74c3c;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.friends-list li button:hover,
+.search-results li button:hover {
+    background-color: #c0392b;
+}
+
+.add-friend {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.add-friend form {
+    display: flex;
+    gap: 10px;
+}
+
+.add-friend input {
+    padding: 8px;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    flex: 1;
+}
+
+.add-friend button {
+    padding: 8px 16px;
+    font-size: 1rem;
+    color: white;
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.add-friend button:hover {
+    background-color: #0056b3;
+}
+
+.search-results {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+}
+
+/* FriendInvitations.css */
+
+.invitations-container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.invitations-container h2 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.invitations-message {
+    font-size: 1rem;
+    color: green;
+    margin-bottom: 15px;
+}
+
+.invitations-list {
+    list-style: none;
+    padding: 0;
+}
+
+.invitations-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.invitation-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.invitation-actions button {
+    padding: 5px 10px;
+    font-size: 0.9rem;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.invitation-actions button:first-of-type {
+    background-color: #28a745;
+}
+
+.invitation-actions button:first-of-type:hover {
+    background-color: #218838;
+}
+
+.invitation-actions button:last-of-type {
+    background-color: #e74c3c;
+}
+
+.invitation-actions button:last-of-type:hover {
+    background-color: #c0392b;
+}
