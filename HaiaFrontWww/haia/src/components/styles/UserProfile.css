@@ -1,0 +1,57 @@
+/* UserProfile.css */
+
+.user-profile-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.user-profile-container h2,
+.user-profile-container h3 {
+    color: #333;
+}
+
+.user-info {
+    margin-bottom: 20px;
+}
+
+.user-info p {
+    font-size: 1rem;
+    color: #555;
+    margin: 5px 0;
+}
+
+.profile-message {
+    color: red;
+    font-size: 1rem;
+    margin-bottom: 15px;
+}
+
+.jokes-list {
+    list-style: none;
+    padding: 0;
+}
+
+.joke-item {
+    padding: 10px;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.joke-item p {
+    color: #333;
+    font-size: 1rem;
+}
+
+.joke-date {
+    font-size: 0.8rem;
+    color: #888;
+    margin-top: 5px;
+    display: block;
+}

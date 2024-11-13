@@ -26,7 +26,7 @@ const App = () => {
           <Route path="/suggestedposts" element={<SuggestedPosts />} />
           <Route path="/registerlogin" element={<Register />} />
           <Route path="/friends" element={<Friends userId={1}/>} />
-
+          <Route path="/profile" element={<UserProfile userId={1}/>} />
         </Routes>
       </div>
     </Router>

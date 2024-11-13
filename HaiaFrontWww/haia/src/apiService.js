@@ -48,6 +48,19 @@ export const searchUsers = async (query) => {
 };
 
 
+// Pobranie danych użytkownika
+export const getUserProfile = async (userId) => {
+  const response = await axios.get(`${API_URL}/User/${userId}`);
+  return response.data;
+};
+
+// Pobranie żartów użytkownika
+export const getUserJokes = async (userId) => {
+  const response = await axios.get(`${API_URL}/User/${userId}/jokes`);
+  return response.data;
+};
+
+
 // Pobranie listy oczekujących zaproszeń do znajomych
 export const getPendingInvitations = async (userId) => {
   const response = await axios.get(`${API_URL}/Friendship/invitations/${userId}`);
