@@ -52,6 +52,9 @@ export const getUserById = async (userId) => {
     return await axios.get(`${API_URL}/${userId}`);
 };
 
+export const getJokes = async () => {
+  return await axios.get(`${API_URL}/Jokes`);
+};
 
 export const addJoke = async (jokeData) => {
     return await axios.post(`${API_URL}/Jokes`, jokeData);

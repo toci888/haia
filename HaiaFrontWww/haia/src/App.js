@@ -1,4 +1,3 @@
-import React from 'react';
 import ComedyTextList from './components/ComedyTextList';
 import UserList from './components/UserList';
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
@@ -10,6 +9,31 @@ import JokeLandingPage from './components/JokeLandingPage';
 import SuggestedPosts from './components/SuggestedPosts';
 //import FriendInviteNotifier from './FriendInviteNotifier';
 
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Navbar from './components/Navbar';
+
+
+const App = () => {
+  return (
+    <Router>
+      <div>
+        <Navbar />
+        <Routes>
+          <Route path="/jokes" element={<JokeLandingPage />} />
+          <Route path="/suggestedposts" element={<SuggestedPosts />} />
+          
+          <Route path="/register" element={<Register />} />
+        </Routes>
+      </div>
+    </Router>
+  );
+};
+
+export default App;
+
+
+/*
 function App() {
     return (
         
@@ -33,8 +57,6 @@ function App() {
     </div>
 
 
-        {/* <FriendInviteNotifier/> */}
-
             <h1 className="text-center mb-4">Comedy App</h1>
             <div className="row">
                 <div className="col-md-6">
@@ -55,3 +77,4 @@ function App() {
 }
 
 export default App;
+*/

@@ -1,10 +1,36 @@
-import React, { useState } from 'react';
-import { addJoke } from '../apiService';
+import React, { useState, useEffect } from 'react';
+import { addJoke, getJokes } from '../apiService';
 import './JokeLandingPage.css';
 
+import  JokeListGoovno  from './JokeListGoovno';
+
+
+
+console.log('ja pierdole');
+
 const JokeLandingPage = () => {
+
+    console.log('ja pierdole');
+
     const [jokeText, setJokeText] = useState('');
     const [message, setMessage] = useState('');
+    const [jokesHook, setJokes] = useState([]);
+
+     useEffect(() => {
+
+        console.log('ja pierdole u e');
+
+        const handlegetJokes = async (e) => {
+            //e.preventDefault();
+        
+            const jokes = await getJokes();
+        console.log(jokes.data, 'doopa');
+        setJokes(jokes.data);
+           // return jokes.data;
+        }
+        
+        handlegetJokes();
+      }, []);
 
     const handleAddJoke = async (e) => {
         e.preventDefault();
@@ -27,7 +53,9 @@ const JokeLandingPage = () => {
         }
     };
 
+
     return (
+        <div>
         <div className="landing-container">
             <h1>Witaj na Haia!</h1>
             <p>Podziel się swoim dowcipem i spraw, by inni się uśmiechnęli!</p>
@@ -45,6 +73,12 @@ const JokeLandingPage = () => {
                 </form>
                 {message && <p className="message">{message}</p>}
             </div>
+        </div>
+
+    <div>
+        
+    <JokeListGoovno jokes={jokesHook} />
+        </div>
         </div>
     );
 };
