@@ -143,8 +143,34 @@ public class UserController : ControllerBase
         });
     }
 
-    // Funkcja pomocnicza do hashowania hasła (przykładowa implementacja)
-    private string HashPassword(string password)
+    // GET: api/User/{userId}/jokes
+    [HttpGet("{userId}/jokes")]
+    public async Task<ActionResult<IEnumerable<JokeDto>>> GetUserJokes(int userId)
+    {
+        // Sprawdzenie, czy użytkownik istnieje
+        var userExists = await _context.Users.AnyAsync(u => u.Id == userId);
+        if (!userExists)
+        {
+            return NotFound("Użytkownik nie istnieje.");
+        }
+
+        // Pobranie listy żartów użytkownika
+        var jokes = await _context.Jokes
+            .Where(j => j.UserId == userId)
+            .Select(j => new JokeDto
+            {
+                JokeId = j.Id,
+                Text = j.Text,
+                CreatedAt = j.CreatedAt
+            })
+            .ToListAsync();
+
+        return Ok(jokes);
+    }
+
+
+// Funkcja pomocnicza do hashowania hasła (przykładowa implementacja)
+private string HashPassword(string password)
     {
         // Implementacja hashowania hasła (np. użycie BCrypt lub SHA256)
         return password;  // Przykładowo zwracamy hasło bez hashowania (należy dodać właściwe hashowanie)
