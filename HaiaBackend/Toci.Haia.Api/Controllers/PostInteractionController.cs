@@ -84,6 +84,8 @@ public class PostInteractionController : ControllerBase
         result.Comments = joke.Comments;
         result.Reactions = joke.Reactions;
         result.JokeId = joke.Id;
+        result.CategoryId = joke.CategoryId;
+        result.Category = joke.Category;
 
         return result;
     }
@@ -101,7 +103,9 @@ public class PostInteractionController : ControllerBase
         result.Content = post.Content;
         result.Comments = post.Comments;
         result.Reactions = post.Reactions;
-        
+        result.CategoryId = post.CategoryId;
+        result.Category = post.Category;
+        result.Group = post.Group;
 
         return result;
     }
