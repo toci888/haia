@@ -122,7 +122,7 @@ console.log(newCommentData, 'LUKLU');
           </div>
 
           <div className="post-content">
-            <p>{post.content || "Brak treści"}</p>
+            <p>{post.text || "Brak treści"}</p>
           </div>
 
           {/* Sekcja komentarzy */}

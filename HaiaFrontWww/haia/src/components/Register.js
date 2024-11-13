@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { registerUser } from '../apiService';
+import SocialLogin from './SocialLogin';
+import './styles/Register.css';
 
 const Register = () => {
     const [email, setEmail] = useState('');
@@ -19,12 +21,12 @@ const Register = () => {
     };
 
     return (
-        <div>
+        <div className="register-container">
             <h2>Rejestracja</h2>
-            <form onSubmit={handleRegister}>
+            <form onSubmit={handleRegister} className="register-form">
                 <input
                     type="text"
-                    placeholder="Username"
+                    placeholder="Nazwa użytkownika"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     required
@@ -38,14 +40,16 @@ const Register = () => {
                 />
                 <input
                     type="password"
-                    placeholder="Password"
+                    placeholder="Hasło"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
                 />
                 <button type="submit">Zarejestruj się</button>
             </form>
-            {message && <p>{message}</p>}
+            {message && <p className="register-message">{message}</p>}
+
+            <SocialLogin />
         </div>
     );
 };

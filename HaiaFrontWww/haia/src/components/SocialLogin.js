@@ -1,5 +1,6 @@
 import React from 'react';
 import { socialLogin } from '../apiService';
+import './styles/SocialLogin.css';
 
 const SocialLogin = () => {
     const handleSocialLogin = async (provider) => {
@@ -16,14 +17,16 @@ const SocialLogin = () => {
     };
 
     return (
-        <div>
+        <div className="social-login-container">
             <h2>Logowanie przez Social Media</h2>
-            <button onClick={() => handleSocialLogin("Google")}>Zaloguj przez Google</button>
-            <button onClick={() => handleSocialLogin("Facebook")}>Zaloguj przez Facebook</button>
-            <button onClick={() => handleSocialLogin("Microsoft")}>Zaloguj przez Microsoft</button>
-            <button onClick={() => handleSocialLogin("GitHub")}>Zaloguj przez GitHub</button>
-            <button onClick={() => handleSocialLogin("Apple")}>Zaloguj przez Apple</button>
-            <button onClick={() => handleSocialLogin("LinkedIn")}>Zaloguj przez LinkedIn</button>
+            <div className="social-buttons">
+                <button onClick={() => handleSocialLogin("Google")} className="google">Zaloguj przez Google</button>
+                <button onClick={() => handleSocialLogin("Facebook")} className="facebook">Zaloguj przez Facebook</button>
+                <button onClick={() => handleSocialLogin("Microsoft")} className="microsoft">Zaloguj przez Microsoft</button>
+                <button onClick={() => handleSocialLogin("GitHub")} className="github">Zaloguj przez GitHub</button>
+                <button onClick={() => handleSocialLogin("Apple")} className="apple">Zaloguj przez Apple</button>
+                <button onClick={() => handleSocialLogin("LinkedIn")} className="linkedin">Zaloguj przez LinkedIn</button>
+            </div>
         </div>
     );
 };
