@@ -86,7 +86,6 @@ export default function MainScreen() {
   );
 };
 
-// Style dla komponentu
 const styles = StyleSheet.create({
   container: {
     flex: 1,

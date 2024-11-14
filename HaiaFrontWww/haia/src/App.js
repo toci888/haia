@@ -1,35 +1,44 @@
-import ComedyTextList from './components/ComedyTextList';
-import UserList from './components/UserList';
-import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
 import Register from './components/Register';
-import SocialLogin from './components/SocialLogin';
 import UserProfile from './components/UserProfile';
 import './App.css';
 import JokeLandingPage from './components/JokeLandingPage';
 import SuggestedPosts from './components/SuggestedPosts';
 import Friends from './components/Friends';
+import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
 
 //import FriendInviteNotifier from './FriendInviteNotifier';
 
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Navbar from './components/Navbar';
-
+import { ThemeProvider, Typography, createTheme } from '@mui/material';
 
 const App = () => {
+  const theme = createTheme({
+    palette: {
+      primary: {
+        main: '#1976d2',
+      },
+    },
+  });
+
   return (
-    <Router>
-      <div>
-        <Navbar />
-        <Routes>
-          <Route path="/jokes" element={<JokeLandingPage />} />
-          <Route path="/suggestedposts" element={<SuggestedPosts />} />
-          <Route path="/registerlogin" element={<Register />} />
-          <Route path="/friends" element={<Friends userId={1}/>} />
-          <Route path="/profile" element={<UserProfile userId={1}/>} />
-        </Routes>
-      </div>
-    </Router>
+    <ThemeProvider theme={createTheme()}>
+      <Typography style={{ color: theme.palette.primary.main }}>
+        <Router>
+          <div>
+            <Navbar />
+            <Routes>
+              <Route path="/jokes" element={<JokeLandingPage />} />
+              <Route path="/suggestedposts" element={<SuggestedPosts />} />
+              <Route path="/registerlogin" element={<Register />} />
+              <Route path="/friends" element={<Friends userId={1}/>} />
+              <Route path="/profile" element={<UserProfile userId={1}/>} />
+            </Routes>
+          </div>
+        </Router>
+      </Typography>
+    </ThemeProvider>
   );
 };
 

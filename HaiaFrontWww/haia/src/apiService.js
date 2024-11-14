@@ -74,8 +74,10 @@ export const deleteCategory = async (id) => {
 
 // Funkcja generująca dowcip
 export const generateJoke = async (postId) => {
+  console.log(postId);
   try {
       const response = await axios.post(`${API_URL}/Jokes/${postId}/generate-joke`);
+      console.log(response);
       return response.data; // Zakładamy, że odpowiedź zawiera wygenerowany dowcip
   } catch (error) {
       console.error("Błąd podczas generowania dowcipu", error);
