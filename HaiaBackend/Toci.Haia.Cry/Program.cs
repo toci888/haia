@@ -7,4 +7,5 @@ Console.WriteLine("Hello, World!");
 
 Seed s = new Seed();
 
-s.SeedUsers();
+//s.SeedUsers();
+s.SeedJokes();

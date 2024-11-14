@@ -20,5 +20,15 @@ namespace Toci.Haia.Cry
 
             cDbContext.SaveChanges();
         }
+
+        public void SeedJokes()
+        {
+            for (int i = 0; i < 100; i++)
+            {
+                cDbContext.Jokes.Add(new Joke() { CategoryId = 1 + i % 8, Text = $"Zart {i}", UserId = 1 + i % 34 });
+            }
+
+            cDbContext.SaveChanges();
+        }
     }
 }
