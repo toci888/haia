@@ -89,9 +89,11 @@ export default function JokeItem({ post }) {
     // Można tutaj zaktualizować stan reakcji dla komentarzy w podobny sposób, jak dla postów
   };
 
+  console.log(post);
+
   return (
     <div key={post.id} className="post-card">
-      <div>123</div>
+
       <div className="post-header">
         <h4 className="post-username">{post.user.username}</h4>
         <span className="post-date">
@@ -116,14 +118,16 @@ export default function JokeItem({ post }) {
 
 
         {/* Przycisk generowania dowcipu */}
-        <button onClick={() => handleGenerateJoke(post.id)} disabled={loading}>
+        <button onClick={() => handleGenerateJoke(post.jokeId)} disabled={loading}>
             {loading ? 'Generowanie...' : 'Wygeneruj dowcip'}
         </button>
+
+        { post.gptJokes.map(joke => <JokeCard joke={joke} />) }
 
         {/* Wyświetlanie wygenerowanego dowcipu */}
         {generatedJoke && (
           <div className="generated-joke">
-            <h3>Wygenerowany Dowcip:</h3>
+            <h3>Dowcip ChatGPT:</h3>
             {/* <p>{JSON.stringify(generatedJoke)}</p> */}
             {generatedJoke &&  <JokeCard joke={generatedJoke} />} 
           </div>
