@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import './styles/PostList.css';
 //import { createReaction } from '../apiService';
 import { createReaction, createComment, getCommentsByPost } from '../apiService';
+import GenerateJoke from './GenerateJoke';
+import { generateJoke } from '../apiService';
 
 
 
@@ -12,6 +14,20 @@ const JokeListGoovno = ({ jokes }) => {
   const [commendReactions, setCommentReactions] = useState({});
   const [comments, setComments] = useState({});
   const [newComment, setNewComment] = useState({});
+  const [loading, setLoading] = useState(false);
+    const [generatedJoke, setGeneratedJoke] = useState(null);
+
+  const handleGenerateJoke = async (postId) => {
+        setLoading(true);
+        try {
+            const joke = await generateJoke(postId); // Wywołanie z userId lub jokeId
+            setGeneratedJoke(joke); // Zapisz wygenerowany dowcip
+        } catch (error) {
+            console.error("Błąd generowania dowcipu:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
   useEffect(() => {
     // Inicjalizacja reakcji dla każdego posta
@@ -115,6 +131,20 @@ console.log(newCommentData, 'LUKLU');
             <span onClick={() => handleReaction(1, post.jokeId, post.id, 'dontCare')} role="img" aria-label="Wali mnie to">
               😒 {reactions[post.id]?.dontCare || 0}
             </span>
+
+
+            {/* Przycisk generowania dowcipu */}
+            <button onClick={() => handleGenerateJoke(post.id)} disabled={loading}>
+                {loading ? 'Generowanie...' : 'Wygeneruj dowcip'}
+            </button>
+
+            {/* Wyświetlanie wygenerowanego dowcipu */}
+            {generatedJoke && (
+                <div className="generated-joke">
+                    <h3>Wygenerowany Dowcip:</h3>
+                    <p>{generatedJoke}</p>
+                </div>
+            )}
           </div>
 
           <div className="post-content">

@@ -14,7 +14,7 @@ const SuggestedPosts = () => {
         setError(null);
 
         // Wykonanie zapytania GET do API
-        const response = await axios.get('http://80.209.230.198:5117/api/PostInteraction/suggested/1');
+        const response = await axios.get('http://80.209.230.198:5117/api/PostInteraction/suggested/34');
         
         // Zaktualizowanie stanu o dane postów
         setPosts(response.data);
