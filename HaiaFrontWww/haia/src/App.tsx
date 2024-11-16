@@ -66,25 +66,24 @@ function App() {
         <div>
       <h1>Portal HAIA</h1>
       <SuggestedPosts />
+
     </div>
-
-
-            <h1 className="text-center mb-4">Comedy App</h1>
-            <div className="row">
-                <div className="col-md-6">
-                    <div className="card p-3 mb-4">
-                        <h2 className="text-primary">Comedy Texts</h2>
-                        <ComedyTextList />
-                    </div>
+      <h1 className="text-center mb-4">Comedy App</h1>
+        <div className="row">
+            <div className="col-md-6">
+                <div className="card p-3 mb-4">
+                    <h2 className="text-primary">Comedy Texts</h2>
+                    <ComedyTextList />
                 </div>
-                <div className="col-md-6">
-                    <div className="card p-3 mb-4">
-                        <h2 className="text-success">Users</h2>
-                        <UserList />
-                    </div>
+            </div>
+            <div className="col-md-6">
+                <div className="card p-3 mb-4">
+                    <h2 className="text-success">Users</h2>
+                    <UserList />
                 </div>
             </div>
         </div>
+      </div>
     );
 }
 

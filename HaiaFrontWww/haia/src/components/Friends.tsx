@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { getFriends, addFriend, removeFriend, searchUsers } from '../apiService';
 import { getPendingInvitations, acceptInvitation, rejectInvitation } from '../apiService';
-
 import './styles/Friends.css';
 
-const Friends = ({ userId }) => {
+type FriendsProps = {
+    userId: number;
+}
+
+const Friends = ({ userId }: FriendsProps) => {
     const [friends, setFriends] = useState([]);
     const [newFriendId, setNewFriendId] = useState('');
     const [searchQuery, setSearchQuery] = useState('');

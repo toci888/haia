@@ -258,7 +258,7 @@ export const apiGet = async (endpoint) => {
     return await response.json();
   };
 
-  export const getUserGroups = () => apiGet("UserGroup");
+export const getUserGroups = () => apiGet("UserGroup");
 export const getUserGroupById = (id) => apiGet(`UserGroup/${id}`);
 export const createUserGroup = (data) => apiPost("UserGroup", data);
 export const updateUserGroup = (id, data) => apiPut(`UserGroup/${id}`, data);
