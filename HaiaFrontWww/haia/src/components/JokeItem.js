@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { createComment } from '../services/commentService';
 import { createReaction, generateJoke, getCommentsByPost } from '../apiService';
 import JokeCard from './JokeCard';
+import PostJokeReaction from './Partials/PostJokeReactions';
 
 export default function JokeItem({ post }) {
   const [reactions, setReactions] = useState({});
@@ -89,8 +90,6 @@ export default function JokeItem({ post }) {
     // Można tutaj zaktualizować stan reakcji dla komentarzy w podobny sposób, jak dla postów
   };
 
-  console.log(post);
-
   return (
     <div key={post.id} className="post-card">
 
@@ -101,25 +100,17 @@ export default function JokeItem({ post }) {
         </span>
       </div>
 
-      {/* Sekcja reakcji */}
-      <div className="post-reactions">
-        <span onClick={() => handleReaction(1, post.jokeId, post.id, 'funny')} role="img" aria-label="Turbo Śmieszne">
-          😂 {reactions[post.id]?.funny || 0}
-        </span>
-        <span onClick={() => handleReaction(1, post.jokeId, post.id, 'super')} role="img" aria-label="Super">
-          👍 {reactions[post.id]?.super || 0}
-        </span>
-        <span onClick={() => handleReaction(1, post.jokeId, post.id, 'dry')} role="img" aria-label="Suchar">
-          🥱 {reactions[post.id]?.dry || 0}
-        </span>
-        <span onClick={() => handleReaction(1, post.jokeId, post.id, 'dontCare')} role="img" aria-label="Wali mnie to">
-          😒 {reactions[post.id]?.dontCare || 0}
-        </span>
+      <div className="post-content">
+        <p>{post.text || "Brak treści"}</p>
+      </div>
 
+      {/* Sekcja reakcji */}
+
+      <PostJokeReaction post={post} />
 
         {/* Przycisk generowania dowcipu */}
         <button onClick={() => handleGenerateJoke(post.jokeId)} disabled={loading}>
-            {loading ? 'Generowanie...' : 'Wygeneruj dowcip'}
+            {loading ? 'Generowanie...' : 'Zażartuj z ChatGPT'}
         </button>
 
         { post.gptJokes.map(joke => <JokeCard joke={joke} />) }
@@ -132,11 +123,8 @@ export default function JokeItem({ post }) {
             {generatedJoke &&  <JokeCard joke={generatedJoke} />} 
           </div>
         )}
-      </div>
 
-      <div className="post-content">
-        <p>{post.text || "Brak treści"}</p>
-      </div>
+    
 
       {/* Sekcja komentarzy */}
       <div className="post-comments">
@@ -145,12 +133,7 @@ export default function JokeItem({ post }) {
           <div key={comment.id} className="comment">
             <span><strong>{comment.user.username}</strong>: {comment.text}</span>
             <div className="comment-reactions">
-              {/* <span onClick={() => handleCommentReaction(1, comment.id, 'like')} role="img" aria-label="Lubię to">
-                👍 {comment.reactions?.like || 0}
-              </span>
-              <span onClick={() => handleCommentReaction(1, comment.id, 'haha')} role="img" aria-label="Haha">
-                😂 {comment.reactions?.haha || 0}
-              </span> */}
+
 
                   <span onClick={() =>  handleCommentReaction(1, comment.id, post.id, 'funny')} role="img" aria-label="Turbo Śmieszne">
                       😂 {comment.reactions?.funny || 0}

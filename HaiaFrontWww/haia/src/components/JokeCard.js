@@ -1,7 +1,7 @@
 import React from 'react'
 import { Card, CardContent, Typography, Button } from '@mui/material';
 import { addComment, reactToJoke, reactToComment } from '../apiService';
-
+import PostJokeReaction from './Partials/PostJokeReactions';
 
 export default function JokeCard({ joke }) {
 
@@ -23,6 +23,8 @@ export default function JokeCard({ joke }) {
           {new Date(joke.createdAt).toLocaleString()}
         </Typography>
       </CardContent>
+      
+       <PostJokeReaction post={joke} />
 
     </Card>
   );

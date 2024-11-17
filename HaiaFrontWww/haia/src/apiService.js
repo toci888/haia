@@ -87,8 +87,6 @@ export const generateJoke = async (postId) => {
 
 export const createReaction = async (data) => {
 
-console.log(data);
-
   const response = await fetch(`${API_URL}/Reaction`, {
     method: "POST",
     headers: {
