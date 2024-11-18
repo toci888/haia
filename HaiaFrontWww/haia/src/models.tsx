@@ -1,6 +1,7 @@
 export interface Comment {
     jokeId: number;
     text: string;
+    userId: number
 }
 
 export interface Category {

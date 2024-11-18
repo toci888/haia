@@ -5,14 +5,19 @@ import { Comment, Category, PreferenceData, Joke, Reaction, User, Credentials, G
 const API_URL = 'http://80.209.230.198:5117/api';
 
 // Dodawanie komentarza
-export const addComment = async (jokeId: number, commentText: string): Promise<Comment> => {
-    const response = await axios.post<Comment>(`${API_URL}/comments`, { jokeId, text: commentText });
+export const addComment = async (jokeId: number, commentText: Comment): Promise<Comment> => {
+    const response = await axios.post<Comment>(`${API_URL}/comments`, { jokeId, commentText });
     return response.data;
 };
 
 // Pobranie listy kategorii
 export const getCategories = async (): Promise<Category[]> => {
     const response = await axios.get<Category[]>(`${API_URL}/Category`);
+    return response.data;
+};
+
+export const getCommentsByPost = async (postId: number): Promise<Comment[]> => {
+    const response = await axios.get<Comment[]>(`${API_URL}/Comment/postComments/${postId}`);
     return response.data;
 };
 

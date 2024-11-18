@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { createComment, createReaction, generateJoke, getCommentsByPost } from '../apiService';
+import { addComment, createReaction, generateJoke, getCommentsByPost } from '../apiService';
 import JokeCard from './JokeCard';
 
 interface User {
@@ -58,7 +58,7 @@ const JokeItem: React.FC<JokeItemProps> = ({ post }) => {
     const handleAddComment = async (postId: number) => {
         const commentText = newComment[postId];
         if (commentText) {
-            const newCommentData = await createComment({
+            const newCommentData = await addComment(postId, {
                 text: commentText,
                 postId,
                 userId: 1, // Assuming we have the logged-in user's ID
