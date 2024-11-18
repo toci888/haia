@@ -5,16 +5,28 @@ import './styles/Friends.css';
 
 type FriendsProps = {
     userId: number;
+};
+
+interface User {
+    id: number;
+    username: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+}
+
+interface Invitation {
+    id: number;
+    userName: string;
 }
 
 const Friends = ({ userId }: FriendsProps) => {
-    const [friends, setFriends] = useState([]);
-    const [newFriendId, setNewFriendId] = useState('');
-    const [searchQuery, setSearchQuery] = useState('');
-    const [searchResults, setSearchResults] = useState([]);
-    const [message, setMessage] = useState('');
-    const [invitations, setInvitations] = useState([]);
-
+    const [friends, setFriends] = useState<User[]>([]);
+    const [newFriendId, setNewFriendId] = useState<string>('');
+    const [searchQuery, setSearchQuery] = useState<string>('');
+    const [searchResults, setSearchResults] = useState<User[]>([]);
+    const [message, setMessage] = useState<string>('');
+    const [invitations, setInvitations] = useState<Invitation[]>([]);
 
     useEffect(() => {
         fetchFriends();
@@ -23,95 +35,94 @@ const Friends = ({ userId }: FriendsProps) => {
 
     const fetchInvitations = async () => {
         try {
-            const pendingInvitations = await getPendingInvitations(userId);
+            const pendingInvitations: Invitation[] = await getPendingInvitations(userId);
             setInvitations(pendingInvitations);
             setMessage('');
         } catch (error) {
-            setMessage("Błąd podczas pobierania zaproszeń.");
+            setMessage('Błąd podczas pobierania zaproszeń.');
             console.error(error);
         }
     };
 
-    const handleAccept = async (friendshipId) => {
+    const handleAccept = async (friendshipId: number) => {
         try {
             await acceptInvitation(friendshipId);
-            setMessage("Zaproszenie zostało zaakceptowane.");
-            fetchInvitations(); // Odśwież listę zaproszeń
+            setMessage('Zaproszenie zostało zaakceptowane.');
+            fetchInvitations();
+            fetchFriends();
         } catch (error) {
-            setMessage("Błąd podczas akceptowania zaproszenia.");
+            setMessage('Błąd podczas akceptowania zaproszenia.');
             console.error(error);
         }
     };
 
-    const handleReject = async (friendshipId) => {
+    const handleReject = async (friendshipId: number) => {
         try {
             await rejectInvitation(friendshipId);
-            setMessage("Zaproszenie zostało odrzucone.");
-            fetchInvitations(); // Odśwież listę zaproszeń
+            setMessage('Zaproszenie zostało odrzucone.');
+            fetchInvitations();
         } catch (error) {
-            setMessage("Błąd podczas odrzucania zaproszenia.");
+            setMessage('Błąd podczas odrzucania zaproszenia.');
             console.error(error);
         }
     };
 
     const fetchFriends = async () => {
         try {
-            const friendsList = await getFriends(userId);
+            const friendsList: User[] = await getFriends(userId);
             setFriends(friendsList);
         } catch (error) {
-            setMessage("Błąd podczas pobierania listy znajomych");
+            setMessage('Błąd podczas pobierania listy znajomych.');
             console.error(error);
         }
     };
 
-    const handleAddFriend = async (friendId) => {
+    const handleAddFriend = async (friendId: number) => {
         try {
             await addFriend(userId, friendId);
-            setMessage("Znajomy został zaproszony!");
-            fetchFriends(); // Odśwież listę znajomych
-            setSearchResults([]); // Wyczyść wyniki wyszukiwania
+            setMessage('Znajomy został zaproszony!');
+            fetchFriends();
+            setSearchResults([]);
         } catch (error) {
-            setMessage("Błąd podczas dodawania znajomego");
+            setMessage('Błąd podczas dodawania znajomego.');
             console.error(error);
         }
     };
 
-    const handleRemoveFriend = async (friendId) => {
+    const handleRemoveFriend = async (friendId: number, FriendId: number) => {
         try {
-            await removeFriend(userId, friendId);
-            setMessage("Znajomy został usunięty!");
-            fetchFriends(); // Odśwież listę znajomych
+            await removeFriend(friendId, FriendId);
+            setMessage('Znajomy został usunięty!');
+            fetchFriends();
         } catch (error) {
-            setMessage("Błąd podczas usuwania znajomego");
+            setMessage('Błąd podczas usuwania znajomego.');
             console.error(error);
         }
     };
 
-    const handleSearch = async (e) => {
+    const handleSearch = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const results = await searchUsers(searchQuery);
+            const results: User[] = await searchUsers(searchQuery);
             setSearchResults(results);
             setMessage('');
         } catch (error) {
-            setMessage("Błąd podczas wyszukiwania użytkowników");
+            setMessage('Błąd podczas wyszukiwania użytkowników.');
             console.error(error);
         }
     };
 
     return (
-        <div>
         <div className="friends-container">
             <h2>Twoi znajomi</h2>
             {message && <p className="friends-message">{message}</p>}
-            
+
             <div className="friends-list">
                 {friends.map((friend) => (
-
-                <span key={friend.id}>
-                     <a href="/profile?userId='{friend.id}'">{friend.userName}</a>
-                    <button onClick={() => handleRemoveFriend(friend.id)}>Usuń</button>
-                </span>
+                    <span key={friend.id}>
+                        <a href={`/profile?userId=${friend.id}`}>{friend.username}</a>
+                        <button onClick={() => handleRemoveFriend(friend.id, 1)}>Usuń</button>
+                    </span>
                 ))}
             </div>
 
@@ -136,22 +147,21 @@ const Friends = ({ userId }: FriendsProps) => {
                     </li>
                 ))}
             </ul>
-        </div>
-        <div className="invitations-container">
-            <h2>Oczekujące zaproszenia</h2>
-            {message && <p className="invitations-message">{message}</p>}
-            <ul className="invitations-list">
-                {invitations.map((invitation) => (
-                    <li key={invitation.id}>
-                        {invitation.userName}
-                        <div className="invitation-actions">
-                            <button onClick={() => handleAccept(invitation.id)}>Akceptuj</button>
-                            <button onClick={() => handleReject(invitation.id)}>Odrzuć</button>
-                        </div>
-                    </li>
-                ))}
-            </ul>
-        </div>
+
+            <div className="invitations-container">
+                <h2>Oczekujące zaproszenia</h2>
+                <ul className="invitations-list">
+                    {invitations.map((invitation) => (
+                        <li key={invitation.id}>
+                            {invitation.userName}
+                            <div className="invitation-actions">
+                                <button onClick={() => handleAccept(invitation.id)}>Akceptuj</button>
+                                <button onClick={() => handleReject(invitation.id)}>Odrzuć</button>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
         </div>
     );
 };

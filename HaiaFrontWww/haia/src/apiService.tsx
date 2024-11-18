@@ -195,7 +195,7 @@ export const addFriend = async (userId: number, friendId: number): Promise<any> 
 };
 
 // Remove a friend
-export const removeFriend = async (Id: number): Promise<void> => {
+export const removeFriend = async (Id: number, FriendId: number): Promise<void> => {
     const response = await axios.delete(`${API_URL}/Friendship/${Id}`);
     return response.data;
 };
