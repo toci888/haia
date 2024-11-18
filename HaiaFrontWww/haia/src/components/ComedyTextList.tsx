@@ -2,8 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { getAllComedyTexts } from '../services/comedyTextService';
 import styles from './styles/ComedyTextList.module.css';
 
-const ComedyTextList = () => {
-    const [comedyTexts, setComedyTexts] = useState([]);
+interface ComedyText {
+    id: number; // Assuming id is a number
+    text: string; // Assuming text is a string
+}
+
+const ComedyTextList: React.FC = () => {
+    const [comedyTexts, setComedyTexts] = useState<ComedyText[]>([]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -14,7 +19,6 @@ const ComedyTextList = () => {
                 console.error('Failed to fetch comedy texts:', error);
             }
         };
-
         fetchData();
     }, []);
 

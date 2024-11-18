@@ -1,9 +1,23 @@
 import React, { useState } from 'react';
 import { addComment, reactToJoke, reactToComment } from '../apiService';
 
-const Joke = ({ joke, userId }) => {
-    const [commentText, setCommentText] = useState('');
-    const [comments, setComments] = useState(joke.comments || []);
+interface Comment {
+    id: number; // Assuming id is a number
+    text: string; // Assuming text is a string
+}
+
+interface JokeProps {
+    joke: {
+        id: number; // Assuming id is a number
+        text: string; // Assuming text is a string
+        comments?: Comment[]; // Optional comments array
+    };
+    userId: string; // Assuming userId is a string, adjust if needed
+}
+
+const Joke: React.FC<JokeProps> = ({ joke, userId }) => {
+    const [commentText, setCommentText] = useState<string>('');
+    const [comments, setComments] = useState<Comment[]>(joke.comments || []);
 
     const handleAddComment = async () => {
         const newComment = await addComment(joke.id, commentText);
@@ -11,12 +25,12 @@ const Joke = ({ joke, userId }) => {
         setCommentText('');
     };
 
-    const handleReaction = async (reactionType) => {
+    const handleReaction = async (reactionType: string) => {
         await reactToJoke(joke.id, reactionType, userId);
         alert(`You reacted with: ${reactionType}`);
     };
 
-    const handleCommentReaction = async (commentId, reactionType) => {
+    const handleCommentReaction = async (commentId: number, reactionType: string) => {
         await reactToComment(commentId, reactionType, userId);
         alert(`You reacted to comment with: ${reactionType}`);
     };
