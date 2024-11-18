@@ -2,44 +2,52 @@ import React, { useState, useEffect } from 'react';
 import { getCategories, createUserPreference } from '../apiService';
 import './styles/UserPreferencesForm.css';
 
-const UserPreferencesForm = ({ userId }) => {
-    const [categories, setCategories] = useState([]);
-    const [preferences, setPreferences] = useState({});
-    const [message, setMessage] = useState('');
+interface Category {
+    id: number;
+    name: string;
+}
+
+interface UserPreferencesFormProps {
+    userId: number;
+}
+
+const UserPreferencesForm: React.FC<UserPreferencesFormProps> = ({ userId }) => {
+    const [categories, setCategories] = useState<Category[]>([]);
+    const [preferences, setPreferences] = useState<Record<number, number>>({});
+    const [message, setMessage] = useState<string>('');
 
     useEffect(() => {
         const fetchCategories = async () => {
             try {
                 const data = await getCategories();
                 setCategories(data);
-                const initialPreferences = data.reduce((acc, category) => {
-                    acc[category.id] = 0; // Ustaw domyślny poziom preferencji na 0 dla każdej kategorii
+                const initialPreferences = data.reduce((acc: Record<number, number>, category: Category) => {
+                    acc[category.id] = 0; // Set default preference level to 0 for each category
                     return acc;
                 }, {});
                 setPreferences(initialPreferences);
             } catch (error) {
-                console.error("Błąd podczas pobierania kategorii", error);
-                setMessage("Nie udało się pobrać kategorii.");
+                console.error("Error fetching categories", error);
+                setMessage("Failed to fetch categories.");
             }
         };
-
         fetchCategories();
     }, []);
 
-    // Obsługa kliknięcia gwiazdki do ustawienia poziomu preferencji
-    const handleStarClick = (categoryId, level) => {
+    // Handle star click to set preference level
+    const handleStarClick = (categoryId: number, level: number) => {
         setPreferences(prevPreferences => ({
             ...prevPreferences,
             [categoryId]: level
         }));
     };
 
-    // Obsługa wysłania formularza
-    const handleSubmit = async (e) => {
+    // Handle form submission
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
             for (const [categoryId, preferenceLevel] of Object.entries(preferences)) {
-                if (preferenceLevel > 0) { // Tylko dla wybranych preferencji
+                if (preferenceLevel > 0) { // Only for selected preferences
                     await createUserPreference({
                         userId,
                         categoryId: parseInt(categoryId),
@@ -47,16 +55,16 @@ const UserPreferencesForm = ({ userId }) => {
                     });
                 }
             }
-            setMessage("Preferencje zostały zapisane!");
+            setMessage("Preferences have been saved!");
         } catch (error) {
-            console.error("Błąd podczas zapisywania preferencji", error);
-            setMessage("Nie udało się zapisać preferencji.");
+            console.error("Error saving preferences", error);
+            setMessage("Failed to save preferences.");
         }
     };
 
     return (
         <div className="preferences-form">
-            <h2>Preferencje Użytkownika</h2>
+            <h2>User Preferences</h2>
             {message && <p>{message}</p>}
             <form onSubmit={handleSubmit}>
                 {categories.map(category => (
@@ -78,7 +86,7 @@ const UserPreferencesForm = ({ userId }) => {
                         </div>
                     </div>
                 ))}
-                <button type="submit">Zapisz Preferencje</button>
+                <button type="submit">Save Preferences</button>
             </form>
         </div>
     );

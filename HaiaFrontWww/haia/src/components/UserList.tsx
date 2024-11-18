@@ -2,8 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { getAllUsers } from '../services/userService';
 import styles from './styles/UserList.module.css';
 
-const UserList = () => {
-    const [users, setUsers] = useState([]);
+interface User {
+    id: number; // Assuming user ID is a number
+    username: string; // Assuming username is a string
+}
+
+const UserList: React.FC = () => {
+    const [users, setUsers] = useState<User[]>([]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -14,7 +19,6 @@ const UserList = () => {
                 console.error('Failed to fetch users:', error);
             }
         };
-
         fetchData();
     }, []);
 

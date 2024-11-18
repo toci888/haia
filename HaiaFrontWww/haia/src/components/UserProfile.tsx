@@ -2,10 +2,28 @@ import React, { useState, useEffect } from 'react';
 import { getUserProfile, getUserJokes } from '../apiService';
 import './styles/UserProfile.css';
 
-const UserProfile = ({ userId }) => {
-    const [user, setUser] = useState(null);
-    const [jokes, setJokes] = useState([]);
-    const [message, setMessage] = useState('');
+interface User {
+    username: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    // Add other user properties as needed
+}
+
+interface Joke {
+    id: number;
+    text: string;
+    createdAt: string; // Assuming createdAt is a string (ISO date format)
+}
+
+interface UserProfileProps {
+    userId: number; // Assuming userId is a number
+}
+
+const UserProfile: React.FC<UserProfileProps> = ({ userId }) => {
+    const [user, setUser] = useState<User | null>(null);
+    const [jokes, setJokes] = useState<Joke[]>([]);
+    const [message, setMessage] = useState<string>('');
 
     useEffect(() => {
         fetchUserProfile();
@@ -17,7 +35,7 @@ const UserProfile = ({ userId }) => {
             const userData = await getUserProfile(userId);
             setUser(userData);
         } catch (error) {
-            setMessage("Błąd podczas pobierania danych użytkownika.");
+            setMessage("Error fetching user data.");
             console.error(error);
         }
     };
@@ -27,26 +45,26 @@ const UserProfile = ({ userId }) => {
             const jokesData = await getUserJokes(userId);
             setJokes(jokesData);
         } catch (error) {
-            setMessage("Błąd podczas pobierania żartów użytkownika.");
+            setMessage("Error fetching user jokes.");
             console.error(error);
         }
     };
 
     if (!user) {
-        return <p>Ładowanie danych użytkownika...</p>;
+        return <p>Loading user data...</p>;
     }
 
     return (
         <div className="user-profile-container">
-            <h2>Profil Użytkownika</h2>
+            <h2>User Profile</h2>
             {message && <p className="profile-message">{message}</p>}
             <div className="user-info">
                 <p><strong>Username:</strong> {user.username}</p>
-                <p><strong>Imię:</strong> {user.firstName}</p>
-                <p><strong>Nazwisko:</strong> {user.lastName}</p>
+                <p><strong>First Name:</strong> {user.firstName}</p>
+                <p><strong>Last Name:</strong> {user.lastName}</p>
                 <p><strong>Email:</strong> {user.email}</p>
             </div>
-            <h3>Żarty użytkownika</h3>
+            <h3>User Jokes</h3>
             <ul className="jokes-list">
                 {jokes.length > 0 ? (
                     jokes.map((joke) => (
@@ -56,7 +74,7 @@ const UserProfile = ({ userId }) => {
                         </li>
                     ))
                 ) : (
-                    <p>Brak żartów do wyświetlenia.</p>
+                    <p>No jokes to display.</p>
                 )}
             </ul>
         </div>
