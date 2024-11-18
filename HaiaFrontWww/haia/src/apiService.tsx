@@ -1,153 +1,305 @@
 import axios from 'axios';
-import { Comment, Category, PreferenceData, Joke, Reaction, User, Credentials, Group, Post } from './models';
-//import { Category } from './models';
 
 const API_URL = 'http://80.209.230.198:5117/api';
 
-// Dodawanie komentarza
-export const addComment = async (jokeId: number, commentText: Comment): Promise<Comment> => {
-    const response = await axios.post<Comment>(`${API_URL}/comments`, { jokeId, commentText });
+// Define interfaces for the expected data structures
+interface Comment {
+    jokeId: number;
+    text: string;
+}
+
+interface Category {
+    id: number;
+    name: string;
+    description?: string;
+}
+
+interface UserPreference {
+    userId: number;
+    categoryId: number;
+}
+
+interface Joke {
+    id: number;
+    text: string;
+    createdAt: string; // Assuming createdAt is in string format (ISO date)
+}
+
+interface User {
+    id: number;
+    username: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+}
+
+// Function to add a comment to a joke
+export const addComment = async (jokeId: number, commentText: string): Promise<Comment> => {
+    const response = await axios.post(`${API_URL}/comments`, {
+        jokeId,
+        text: commentText
+    });
     return response.data;
 };
 
-// Pobranie listy kategorii
+// Fetch all categories
 export const getCategories = async (): Promise<Category[]> => {
-    const response = await axios.get<Category[]>(`${API_URL}/Category`);
+    try {
+        const response = await axios.get(`${API_URL}/Category`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching categories", error);
+        throw error;
+    }
+};
+
+// Create a user preference for a category
+export const createUserPreference = async (preferenceData: UserPreference): Promise<void> => {
+    const response = await axios.post(`${API_URL}/UserCategoryPreference`, preferenceData);
     return response.data;
 };
 
-export const getCommentsByPost = async (postId: number): Promise<Comment[]> => {
-    const response = await axios.get<Comment[]>(`${API_URL}/Comment/postComments/${postId}`);
-    return response.data;
-};
-
-// Tworzenie preferencji użytkownika
-export const createUserPreference = async (preferenceData: PreferenceData): Promise<PreferenceData> => {
-    const response = await axios.post<PreferenceData>(`${API_URL}/UserCategoryPreference`, preferenceData);
-    return response.data;
-};
-
-// Pobranie kategorii po ID
+// Fetch a category by ID
 export const getCategoryById = async (id: number): Promise<Category> => {
-    const response = await axios.get<Category>(`${API_URL}/Category/${id}`);
-    return response.data;
+    try {
+        const response = await axios.get(`${API_URL}/Category/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching category by ID:", id, error);
+        throw error;
+    }
 };
 
-// Dodanie nowej kategorii
+// Create a new category
 export const createCategory = async (categoryData: Category): Promise<Category> => {
-    const response = await axios.post<Category>(`${API_URL}/Category`, categoryData);
-    return response.data;
+    try {
+        const response = await axios.post(`${API_URL}/Category`, categoryData);
+        return response.data;
+    } catch (error) {
+        console.error("Error creating category", error);
+        throw error;
+    }
 };
 
-// Aktualizacja kategorii
+// Update an existing category
 export const updateCategory = async (id: number, categoryData: Category): Promise<Category> => {
-    const response = await axios.put<Category>(`${API_URL}/Category/${id}`, categoryData);
-    return response.data;
+    try {
+        const response = await axios.put(`${API_URL}/Category/${id}`, categoryData);
+        return response.data;
+    } catch (error) {
+        console.error("Error updating category by ID:", id, error);
+        throw error;
+    }
 };
 
-// Usunięcie kategorii
+// Delete a category
 export const deleteCategory = async (id: number): Promise<void> => {
-    await axios.delete(`${API_URL}/Category/${id}`);
+    try {
+        const response = await axios.delete(`${API_URL}/Category/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error deleting category by ID:", id, error);
+        throw error;
+    }
 };
 
-// Generowanie dowcipu
+// Generate a joke based on a post ID
 export const generateJoke = async (postId: number): Promise<Joke> => {
-    const response = await axios.post<Joke>(`${API_URL}/Jokes/${postId}/generate-joke`);
+    try {
+        const response = await axios.post(`${API_URL}/Jokes/${postId}/generate-joke`);
+        return response.data; // Assuming the response contains the generated joke
+    } catch (error) {
+        console.error("Error generating joke", error);
+        throw error;
+    }
+};
+
+// Create a reaction
+export const createReaction = async (data: any): Promise<any> => {
+    const response = await fetch(`${API_URL}/Reaction`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+    });
+    return await response.json();
+};
+
+// React to a joke
+export const reactToJoke = async (jokeId: number, reactionType: string, userId: number): Promise<any> => {
+    const response = await axios.post(`${API_URL}/jokes/${jokeId}/react`, {
+        reactionType,
+        userId
+    });
     return response.data;
 };
 
-// Tworzenie reakcji
-export const createReaction = async (data: Reaction): Promise<Reaction> => {
-    const response = await axios.post<Reaction>(`${API_URL}/Reaction`, data);
+// React to a comment
+export const reactToComment = async (commentId: number, reactionType: string, userId: number): Promise<any> => {
+    const response = await axios.post(`${API_URL}/comments/${commentId}/react`, {
+        reactionType,
+        userId
+    });
     return response.data;
 };
 
-// Reakcja na dowcip
-export const reactToJoke = async (jokeId: number, reactionType: string, userId: number): Promise<void> => {
-    await axios.post(`${API_URL}/jokes/${jokeId}/react`, { reactionType, userId });
-};
-
-// Reakcja na komentarz
-export const reactToComment = async (commentId: number, reactionType: string, userId: number): Promise<void> => {
-    await axios.post(`${API_URL}/comments/${commentId}/react`, { reactionType, userId });
-};
-
-// Wyszukiwanie użytkowników
+// Search for users
 export const searchUsers = async (query: string): Promise<User[]> => {
-    const response = await axios.get<User[]>(`${API_URL}/Friendship/search-users`, { params: { query } });
+    const response = await axios.get(`${API_URL}/Friendship/search-users`, {
+        params: { query }
+    });
     return response.data;
 };
 
-// Pobranie profilu użytkownika
+// Fetch user profile
 export const getUserProfile = async (userId: number): Promise<User> => {
-    const response = await axios.get<User>(`${API_URL}/User/${userId}`);
+    const response = await axios.get(`${API_URL}/User/${userId}`);
     return response.data;
 };
 
-// Pobranie dowcipów użytkownika
+// Fetch jokes by user ID
 export const getUserJokes = async (userId: number): Promise<Joke[]> => {
-    const response = await axios.get<Joke[]>(`${API_URL}/User/${userId}/jokes`);
+    const response = await axios.get(`${API_URL}/User/${userId}/jokes`);
     return response.data;
 };
 
-// Pobranie zaproszeń
+// Fetch pending friend invitations
 export const getPendingInvitations = async (userId: number): Promise<any[]> => {
     const response = await axios.get(`${API_URL}/Friendship/invitations/${userId}`);
     return response.data;
 };
 
-// Akceptowanie zaproszenia
-export const acceptInvitation = async (friendshipId: number): Promise<void> => {
-    await axios.post(`${API_URL}/Friendship/accept/${friendshipId}`);
+// Accept a friend invitation
+export const acceptInvitation = async (friendshipId: number): Promise<any> => {
+    const response = await axios.post(`${API_URL}/Friendship/accept/${friendshipId}`);
+    return response.data;
 };
 
-// Odrzucenie zaproszenia
-export const rejectInvitation = async (friendshipId: number): Promise<void> => {
-    await axios.delete(`${API_URL}/Friendship/reject/${friendshipId}`);
+// Reject a friend invitation
+export const rejectInvitation = async (friendshipId: number): Promise<any> => {
+    const response = await axios.delete(`${API_URL}/Friendship/reject/${friendshipId}`);
+    return response.data;
 };
 
-// Pobranie znajomych
+// Fetch friends list
 export const getFriends = async (userId: number): Promise<User[]> => {
-    const response = await axios.get<User[]>(`${API_URL}/Friendship/user/${userId}`);
+    const response = await axios.get(`${API_URL}/Friendship/user/${userId}`);
     return response.data;
 };
 
-// Dodanie znajomego
-export const addFriend = async (userId: number, friendId: number): Promise<void> => {
-    await axios.post(`${API_URL}/Friendship/Invite`, { userId, friendId });
-};
-
-// Usunięcie znajomego
-export const removeFriend = async (id: number): Promise<void> => {
-    await axios.delete(`${API_URL}/Friendship/${id}`);
-};
-
-// Logowanie użytkownika
-export const loginUser = async (credentials: Credentials): Promise<User> => {
-    const response = await axios.post<User>(`${API_URL}/User/login`, credentials);
+// Add a friend
+export const addFriend = async (userId: number, friendId: number): Promise<any> => {
+    const response = await axios.post(`${API_URL}/Friendship/Invite`, { userId, friendId });
     return response.data;
 };
 
-// Rejestracja użytkownika
-export const registerUser = async (userData: User): Promise<User> => {
-    const response = await axios.post<User>(`${API_URL}/User/register`, userData);
+// Remove a friend
+export const removeFriend = async (Id: number): Promise<void> => {
+    const response = await axios.delete(`${API_URL}/Friendship/${Id}`);
     return response.data;
 };
 
-// Social Login
-export const socialLogin = async (provider: string, providerUserId: string): Promise<User> => {
-    const response = await axios.post<User>(`${API_URL}/social-login`, { provider, providerUserId });
-    return response.data;
+// Login user
+export const loginUser = async (credentials: any): Promise<any> => {
+    try {
+        const response = await axios.post(`${API_URL}/User/login`, credentials);
+        return response; // You can return `response.data` for user data
+    } catch (error) {
+        console.error("Login error:", error);
+        throw error; // Throw error to be handled in the login component
+    }
 };
 
-// Grupowe API
-export const getUserGroups = async (): Promise<Group[]> => {
-    const response = await axios.get<Group[]>(`${API_URL}/UserGroup`);
-    return response.data;
+// Register user
+export const registerUser = async (userData: any): Promise<any> => {
+    return await axios.post(`${API_URL}/User/register`, userData);
 };
 
-// Posty w grupach
-export const getPostsByGroup = async (groupId: number): Promise<Post[]> => {
-    const response = await axios.get<Post[]>(`${API_URL}/UserGroup/${groupId}/posts`);
-    return response.data;
+// Social login
+export const socialLogin = async (provider: string, providerUserId: string): Promise<any> => {
+    return await axios.post(`${API_URL}/social-login`, { provider, providerUserId });
 };
+
+// Fetch user by ID
+export const getUserById = async (userId: number): Promise<User> => {
+    return await axios.get(`${API_URL}/${userId}`);
+};
+
+// Fetch all jokes
+export const getJokes = async (): Promise<Joke[]> => {
+    return await axios.get(`${API_URL}/Jokes`);
+};
+
+// Add a joke
+export const addJoke = async (jokeData: Joke): Promise<Joke> => {
+    return await axios.post(`${API_URL}/Jokes`, jokeData);
+};
+
+// Helper function for GET requests
+export const apiGet = async (endpoint: string): Promise<any> => {
+    const response = await fetch(`${API_URL}/${endpoint}`);
+    return await response.json();
+};
+
+// Helper function for POST requests
+export const apiPost = async (endpoint: string, data: any): Promise<any> => {
+    const response = await fetch(`${API_URL}/${endpoint}`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+    });
+    return await response.json();
+};
+
+// Helper function for PUT requests
+export const apiPut = async (endpoint: string, data: any): Promise<any> => {
+    const response = await fetch(`${API_URL}/${endpoint}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+    });
+    return await response.json();
+};
+
+// Helper function for DELETE requests
+export const apiDelete = async (endpoint: string): Promise<void> => {
+    await fetch(`${API_URL}/${endpoint}`, { method: "DELETE" });
+};
+
+// Create a comment
+export const createComment = async (data: Comment): Promise<Comment> => {
+    const response = await fetch(`${API_URL}/Comment`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+    });
+    return await response.json();
+};
+
+// Get comments by post ID
+export const getCommentsByPost = async (postId: number): Promise<Comment[]> => {
+    const response = await fetch(`${API_URL}/Comment/postComments/${postId}`);
+    return await response.json();
+};
+
+// User groups
+export const getUserGroups = async (): Promise<any[]> => apiGet("UserGroup");
+export const getUserGroupById = async (id: number): Promise<any> => apiGet(`UserGroup/${id}`);
+export const createUserGroup = async (data: any): Promise<any> => apiPost("UserGroup", data);
+export const updateUserGroup = async (id: number, data: any): Promise<any> => apiPut(`UserGroup/${id}`, data);
+export const deleteUserGroup = async (id: number): Promise<void> => apiDelete(`UserGroup/${id}`);
+
+// Posts in group
+export const getPostsByGroup = async (groupId: number): Promise<any[]> => apiGet(`UserGroup/${groupId}/posts`);
+export const createPostInGroup = async (groupId: number, data: any): Promise<any> => apiPost(`UserGroup/${groupId}/posts`, data);
+
+// User category reactions
+export const reactToCategory = async (data: any): Promise<any> => apiPost("UserCategoryPreference/React", data);
+export const getTopCategoriesForUser = async (userId: number): Promise<any[]> => apiGet(`UserCategoryPreference/TopCategories/${userId}`);

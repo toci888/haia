@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getCategories, reactToCategory, getTopCategoriesForUser } from './api';
+import { getCategories, reactToCategory, getTopCategoriesForUser } from '../apiService';
 
 interface Category {
     id: number;

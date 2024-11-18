@@ -14,7 +14,7 @@ const ComedyTextList: React.FC = () => {
         const fetchData = async () => {
             try {
                 const data = await getAllComedyTexts();
-                setComedyTexts(data);
+                setComedyTexts(data as ComedyText[]);
             } catch (error) {
                 console.error('Failed to fetch comedy texts:', error);
             }
