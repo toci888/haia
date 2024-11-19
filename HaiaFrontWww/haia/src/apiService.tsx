@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { Joke } from './models';
 
 const API_URL = 'http://80.209.230.198:5117/api';
 
@@ -23,13 +24,13 @@ interface UserPreference {
     categoryId: number;
 }
 
-interface Joke {
-    id: number;
-    jokeId: number;
-    user: User;
-    createdAt: string;
-    text: string;
-}
+// interface Joke {
+//     id: number;
+//     jokeId: number;
+//     user: User;
+//     createdAt: string;
+//     text: string;
+// }
 
 interface User {
     id: number;

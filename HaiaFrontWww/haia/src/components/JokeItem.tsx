@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { addComment, createReaction, generateJoke } from '../apiService';
 import JokeCard from './JokeCard';
+import { Joke, Post } from '../models';
 //import from '../types';
 
 

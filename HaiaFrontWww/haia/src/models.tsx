@@ -23,6 +23,7 @@ export interface User {
 
 export interface Joke {
     id: number;
+    createdAt: string;
     text: string;
     userId: number;
     categoryId: number;

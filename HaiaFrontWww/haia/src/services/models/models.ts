@@ -9,23 +9,23 @@ interface Comment {
     reactions?: Record<string, number>;
 }
 
-interface Post {
-    id: number;
-    jokeId: number;
-    user: User;
-    createdAt: string;
-    text: string;
-    jokeText: string;
-}
+// interface Post {
+//     id: number;
+//     jokeId: number;
+//     user: User;
+//     createdAt: string;
+//     text: string;
+//     jokeText: string;
+// }
 
-interface Joke {
-    id: number;
-    jokeId: number;
-    user: User;
-    createdAt: string;
-    text: string;
-    jokeText: string;
-}
+// interface Joke {
+//     id: number;
+//     jokeId: number;
+//     user: User;
+//     createdAt: string;
+//     text: string;
+//     jokeText: string;
+// }
 
 interface JokeItemProps {
     post: Post;
@@ -37,11 +37,11 @@ interface Comment {
     text: string;
 }
 
-interface Joke {
-    id: number;
-    text: string;
-    comments?: Comment[]; // Pole opcjonalne
-}
+// interface Joke {
+//     id: number;
+//     text: string;
+//     comments?: Comment[]; // Pole opcjonalne
+// }
 
 interface JokeProps {
     joke: Joke;

@@ -4,11 +4,11 @@ interface Comment {
     text: string;
 }
 
-interface Joke {
-    id: number;
-    text: string;
-    comments?: Comment[]; // Pole opcjonalne
-}
+// interface Joke {
+//     id: number;
+//     text: string;
+//     comments?: Comment[]; // Pole opcjonalne
+// }
 
 interface JokeProps {
     joke: Joke;
