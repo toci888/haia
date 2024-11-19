@@ -4,9 +4,13 @@ const API_URL = 'http://80.209.230.198:5117/api';
 
 // Define interfaces for the expected data structures
 interface Comment {
-    jokeId: number;
+    id: number;
     text: string;
+    user: User;
+    jokeId: number;
+    reactions?: Record<string, number>;
 }
+
 
 interface Category {
     id: number;
@@ -21,8 +25,10 @@ interface UserPreference {
 
 interface Joke {
     id: number;
+    jokeId: number;
+    user: User;
+    createdAt: string;
     text: string;
-    createdAt: string; // Assuming createdAt is in string format (ISO date)
 }
 
 interface User {

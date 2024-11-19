@@ -2,17 +2,20 @@ import React, { useState } from 'react';
 import { addComment, reactToJoke, reactToComment } from '../apiService';
 
 interface Comment {
-    id: number; // Assuming id is a number
-    text: string; // Assuming text is a string
+    id: number;
+    jokeId: number;
+    text: string;
+}
+
+interface Joke {
+    id: number;
+    text: string;
+    comments?: Comment[]; // Pole opcjonalne
 }
 
 interface JokeProps {
-    joke: {
-        id: number; // Assuming id is a number
-        text: string; // Assuming text is a string
-        comments?: Comment[]; // Optional comments array
-    };
-    userId: string; // Assuming userId is a string, adjust if needed
+    joke: Joke;
+    userId: number; // Zakładam, że userId jest liczbą. Zmień typ, jeśli to string.
 }
 
 const Joke: React.FC<JokeProps> = ({ joke, userId }) => {
@@ -20,19 +23,31 @@ const Joke: React.FC<JokeProps> = ({ joke, userId }) => {
     const [comments, setComments] = useState<Comment[]>(joke.comments || []);
 
     const handleAddComment = async () => {
-        const newComment = await addComment(joke.id, commentText);
-        setComments([...comments, newComment]);
-        setCommentText('');
+        try {
+            const newComment: Comment = await addComment(joke.id, commentText);
+            setComments([...comments, newComment]);
+            setCommentText('');
+        } catch (error) {
+            console.error('Error adding comment:', error);
+        }
     };
 
     const handleReaction = async (reactionType: string) => {
-        await reactToJoke(joke.id, reactionType, userId);
-        alert(`You reacted with: ${reactionType}`);
+        try {
+            await reactToJoke(joke.id, reactionType, userId);
+            alert(`You reacted with: ${reactionType}`);
+        } catch (error) {
+            console.error('Error reacting to joke:', error);
+        }
     };
 
     const handleCommentReaction = async (commentId: number, reactionType: string) => {
-        await reactToComment(commentId, reactionType, userId);
-        alert(`You reacted to comment with: ${reactionType}`);
+        try {
+            await reactToComment(commentId, reactionType, userId);
+            alert(`You reacted to comment with: ${reactionType}`);
+        } catch (error) {
+            console.error('Error reacting to comment:', error);
+        }
     };
 
     return (

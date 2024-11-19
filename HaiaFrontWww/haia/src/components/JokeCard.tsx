@@ -1,10 +1,18 @@
 import React from 'react';
 import { Card, CardContent, Typography, Button } from '@mui/material';
 
+interface User {
+    username: string;
+}
+
 interface Joke {
-    id: number; // Assuming id is a number
+    id: number;
+    jokeId: number;
+    user: User;
+    createdAt: string;
+    text: string;
     jokeText: string; // Assuming jokeText is a string
-    createdAt: string; // Assuming createdAt is a string in ISO format
+    
 }
 
 interface JokeCardProps {

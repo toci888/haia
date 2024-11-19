@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getPostsByGroup, createPostInGroup } from './api';
+import { getPostsByGroup, createPostInGroup } from '../apiService';
 
 interface Post {
     id: number; // Assuming post ID is a number

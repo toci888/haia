@@ -1,52 +1,29 @@
-import React, { useEffect, useState } from 'react';
-import { addComment, createReaction, generateJoke, getCommentsByPost } from '../apiService';
+import React, { useState } from 'react';
+import { addComment, createReaction, generateJoke } from '../apiService';
 import JokeCard from './JokeCard';
+//import from '../types';
 
-interface User {
-    username: string;
-}
 
-interface Comment {
-    id: number;
-    text: string;
-    user: User;
-    reactions?: Record<string, number>; // Assuming reactions are stored as a record
-}
-
-interface Post {
-    id: number;
-    jokeId: number;
-    user: User;
-    createdAt: string;
-    text: string;
-}
-
-interface JokeItemProps {
-    post: Post;
-}
 
 const JokeItem: React.FC<JokeItemProps> = ({ post }) => {
     const [reactions, setReactions] = useState<Record<number, Record<string, number>>>({});
     const [comments, setComments] = useState<Record<number, Comment[]>>({});
     const [newComment, setNewComment] = useState<Record<number, string>>({});
     const [loading, setLoading] = useState<boolean>(false);
-    const [generatedJoke, setGeneratedJoke] = useState<any | null>(null); // Adjust type as needed
+    const [generatedJoke, setGeneratedJoke] = useState<Post | Joke | null>(null);
 
-    const fetchComments = async (postId: number) => {
-        const postComments = await getCommentsByPost(postId);
-        setComments(prevComments => ({
-            ...prevComments,
-            [postId]: postComments,
-        }));
-    };
-
-    const handleReaction = async (userId: number, jokeId: number, postId: number, reactionType: string) => {
+    const handleReaction = async (
+        userId: number,
+        jokeId: number,
+        postId: number,
+        reactionType: string
+    ) => {
         await createReaction({
             reactionType,
             jokeId,
-            userId
+            userId,
         });
-        setReactions(prevReactions => ({
+        setReactions((prevReactions) => ({
             ...prevReactions,
             [postId]: {
                 ...prevReactions[postId],
@@ -58,16 +35,15 @@ const JokeItem: React.FC<JokeItemProps> = ({ post }) => {
     const handleAddComment = async (postId: number) => {
         const commentText = newComment[postId];
         if (commentText) {
-            const newCommentData = await addComment(postId, {
-                text: commentText,
-                postId,
-                userId: 1, // Assuming we have the logged-in user's ID
+            const newCommentData: Comment = await addComment(postId, commentText); // Zapewniamy poprawny typ zwracanych danych
+            setComments((prevComments) => {
+                const updatedComments = [...(prevComments[postId] || []), newCommentData];
+                return {
+                    ...prevComments,
+                    [postId]: updatedComments, // Gwarantujemy, że wynik to zawsze Comment[]
+                };
             });
-            setComments(prevComments => ({
-                ...prevComments,
-                [postId]: [...(prevComments[postId] || []), newCommentData],
-            }));
-            setNewComment(prevNewComment => ({
+            setNewComment((prevNewComment) => ({
                 ...prevNewComment,
                 [postId]: "",
             }));
@@ -77,8 +53,8 @@ const JokeItem: React.FC<JokeItemProps> = ({ post }) => {
     const handleGenerateJoke = async (postId: number) => {
         setLoading(true);
         try {
-            const joke = await generateJoke(postId); // Call with userId or jokeId as needed
-            setGeneratedJoke(joke); // Save the generated joke
+            const joke = await generateJoke(postId);
+            setGeneratedJoke(joke);
         } catch (error) {
             console.error("Error generating joke:", error);
         } finally {
@@ -86,13 +62,17 @@ const JokeItem: React.FC<JokeItemProps> = ({ post }) => {
         }
     };
 
-    const handleCommentReaction = async (userId: number, commentId: number, postId: number, reactionType: string) => {
+    const handleCommentReaction = async (
+        userId: number,
+        commentId: number,
+        postId: number,
+        reactionType: string
+    ) => {
         await createReaction({
             reactionType,
             commentId,
-            userId
+            userId,
         });
-        // Here you can update the state for comment reactions similarly to post reactions
     };
 
     return (
@@ -131,9 +111,11 @@ const JokeItem: React.FC<JokeItemProps> = ({ post }) => {
             </div>
             <div className="post-comments">
                 <h5>Comments:</h5>
-                {(comments[post.id] || []).map(comment => (
+                {(comments[post.id] || []).map((comment) => (
                     <div key={comment.id} className="comment">
-                        <span><strong>{comment.user.username}</strong>: {comment.text}</span>
+                        <span>
+                            <strong>{comment.user.username}</strong>: {comment.text}
+                        </span>
                         <div className="comment-reactions">
                             <span onClick={() => handleCommentReaction(1, comment.id, post.id, 'funny')} role="img" aria-label="Funny">
                                 😂 {comment.reactions?.funny || 0}
@@ -154,7 +136,9 @@ const JokeItem: React.FC<JokeItemProps> = ({ post }) => {
                     <input
                         type="text"
                         value={newComment[post.id] || ""}
-                        onChange={(e) => setNewComment(prev => ({ ...prev, [post.id]: e.target.value }))}
+                        onChange={(e) =>
+                            setNewComment((prev) => ({ ...prev, [post.id]: e.target.value }))
+                        }
                         placeholder="Add a comment"
                     />
                     <button onClick={() => handleAddComment(post.id)}>Send</button>
