@@ -1,0 +1,223 @@
+HAIA — AI INTEGRATION FOUNDATION
+Raport techniczny z wykonanej pracy (stan bieżący)
+Wersja: 0.1
+Data: 2026-07-26
+
+1) Cel dokumentu
+Ten dokument uzasadnia bieżący podział klas i odpowiedzialności w pierwszym slice fundacji integracji HAIA z AI.
+Zakres raportu obejmuje wyłącznie kod aktualnie dodany w solution Toci.Haia.AiIntegration.Core.
+
+
+2) Zakres wykonanej pracy
+Wykonane elementy:
+- utworzenie minimalnego podziału projektów:
+  - Toci.Haia.AiIntegration.Core
+  - Toci.Haia.AiIntegration.OpenAI
+  - Toci.Haia.AiIntegration.Tests
+- dodanie bazowych kontraktów i modeli domenowych niezależnych od providera AI,
+- dodanie pierwszego modelu operacji „Generate Custom Reactions From Image”,
+- dodanie walidacji request/response po stronie HAIA,
+- dodanie bazowej konfiguracji OpenAI options i walidatora options,
+- dodanie oficjalnego pakietu OpenAI (2.12.0) do projektu providera.
+
+
+3) Uzasadnienie architektoniczne podziału projektów
+3.1) Toci.Haia.AiIntegration.Core
+Powód istnienia:
+- separacja domeny HAIA od szczegółów SDK OpenAI,
+- możliwość testowania i mockowania bez płatnych wywołań,
+- stabilny kontrakt pod przyszłe operacje AI.
+
+Korzyść:
+- Core nie zależy od OpenAI, więc można dodać innego providera bez przebudowy domeny.
+
+3.2) Toci.Haia.AiIntegration.OpenAI
+Powód istnienia:
+- izolacja integracji z konkretnym providerem i jego konfiguracją,
+- centralizacja opcji (model, timeout, retry, limity) i ich walidacji.
+
+Korzyść:
+- zmiany API/SDK OpenAI pozostają w adapterze providera, bez naruszania kontraktów Core.
+
+3.3) Toci.Haia.AiIntegration.Tests
+Powód istnienia:
+- osobna przestrzeń na testy walidacji i mapowania bez realnych requestów do AI.
+
+
+4) Uzasadnienie klas i kontraktów — Core
+
+4.1) Abstrakcje wykonania operacji AI
+Pliki:
+- Abstractions/IAiOperation.cs
+- Abstractions/IAiRequestValidator.cs
+- Abstractions/IAiResponseValidator.cs
+
+Uzasadnienie:
+- IAiOperation<TRequest,TResponse> standaryzuje asynchroniczne wykonanie operacji z CancellationToken.
+- IAiRequestValidator<TRequest> i IAiResponseValidator<TRequest,TResponse> wymuszają jawną walidację lokalną,
+  niezależnie od tego, czy provider zwróci „syntaktycznie poprawny” JSON.
+
+Wartość:
+- spójny cykl „validate -> execute -> validate semantic” dla każdej przyszłej operacji.
+
+
+4.2) Model błędów i rezultat operacji
+Pliki:
+- Models/AiErrorCode.cs
+- Models/AiOperationError.cs
+- Models/AiOperationResult.cs
+- Models/ValidationIssue.cs
+
+Uzasadnienie:
+- AiErrorCode przenosi obsługę błędów na poziom typowany (bez wycieku surowych wyjątków SDK).
+- AiOperationError niesie kod, komunikat i opcjonalny kontekst (provider code, isTransient, inner exception).
+- AiOperationResult<T> zapewnia jednolity kontrakt sukces/porażka z metadanymi wykonania.
+- ValidationIssue umożliwia wielobłędową odpowiedź walidatora i audyt przyczyn odrzucenia.
+
+Wartość:
+- kontrolowalna obsługa błędów i czytelna integracja z kolejnymi warstwami systemu.
+
+
+4.3) Metadane wykonania i kosztów
+Pliki:
+- Models/AiExecutionStatus.cs
+- Models/AiTokenUsage.cs
+- Models/AiOperationMetadata.cs
+
+Uzasadnienie:
+- AiOperationMetadata przechowuje ślad operacji: operation name, correlation id, provider, model,
+  provider response id, prompt id/version, timing, retry/repair count, usage tokenów i status.
+- AiTokenUsage przygotowuje fundament pod analizę kosztów.
+- AiExecutionStatus oddziela sukces, błąd, anulowanie i odmowę bezpieczeństwa.
+
+Wartość:
+- gotowość do audytu, diagnostyki i późniejszego cost control bez zmian kontraktu operacji.
+
+
+4.4) Kontrakt operacji „GenerateCustomReactionsFromImage”
+Pliki:
+- Operations/GenerateCustomReactionsFromImage/ImageInput.cs
+- Operations/GenerateCustomReactionsFromImage/GenerateCustomReactionsFromImageRequest.cs
+- Operations/GenerateCustomReactionsFromImage/GenerateCustomReactionsFromImageResponse.cs
+- Operations/EditorialStatus.cs
+
+Uzasadnienie modelu wejścia:
+- ImageInput używa bytes + MIME type + opcjonalna nazwa pliku,
+  co jest bezpieczniejsze niż arbitralne URL-e i wspiera walidację rozmiaru/formatu.
+- Request zawiera kontekst treści, kontekst odbiorcy oraz parametry pakietu reakcji
+  (liczba reakcji, widoczność domyślna, drugie puenty, correlation id).
+
+Uzasadnienie modelu wyjścia:
+- Response oddziela analizę materiału od listy reakcji,
+- GeneratedReaction zawiera pola potrzebne pod redakcję i przyszłą persistence
+  (style, mechanizmy, intensywność, safety tags, second punchline, default visibility),
+- EditorialStatus domyślnie ustawiony na GeneratedAwaitingEditorialReview,
+  aby AI nie publikowało wyników automatycznie.
+
+Wartość:
+- wynik jest „persistence-ready” i „editorial-ready”, ale bez wdrażania bazy danych.
+
+
+4.5) Ustawienia i walidatory semantyczne operacji
+Pliki:
+- Operations/GenerateCustomReactionsFromImage/GenerateCustomReactionsValidationSettings.cs
+- Operations/GenerateCustomReactionsFromImage/GenerateCustomReactionsFromImageRequestValidator.cs
+- Operations/GenerateCustomReactionsFromImage/GenerateCustomReactionsFromImageResponseValidator.cs
+
+Uzasadnienie:
+- ValidationSettings centralizuje limity (max image bytes, max reactions, długości pól),
+  co eliminuje rozproszone „magic numbers”.
+- RequestValidator egzekwuje:
+  - niepusty obraz,
+  - dozwolone MIME (JPEG/PNG/WEBP),
+  - limit rozmiaru,
+  - poprawny język,
+  - poprawne zakresy liczby reakcji i intensywności.
+- ResponseValidator egzekwuje:
+  - niepustą listę reakcji,
+  - zgodność liczby reakcji z requestem,
+  - brak pustych/duplikowanych etykiet,
+  - zakres intensywności,
+  - zgodność logiki drugiej puenty,
+  - limity długości tekstów,
+  - limit reakcji domyślnie widocznych.
+
+Wartość:
+- HAIA nie ufa bezwarunkowo odpowiedzi modelu i wymusza dodatkową kontrolę jakości.
+
+
+5) Uzasadnienie klas — OpenAI
+
+5.1) OpenAiIntegrationOptions
+Plik:
+- Toci.Haia.AiIntegration.OpenAI/Configuration/OpenAiIntegrationOptions.cs
+
+Uzasadnienie:
+- zawiera parametry niezbędne do bezpiecznej i sterowalnej integracji:
+  ApiKey, Model, Endpoint, Timeout, MaxRetryAttempts, MaxImageBytes,
+  DefaultReactionCount, MaxReactionCount, MaxRepairAttempts,
+  EnableMetadataLogging, ImageDetailLevel, EnableSemanticRepair.
+
+Wartość:
+- konfiguracja jest zewnętrzna i wersjonowalna bez zmian kodu domeny.
+
+5.2) OpenAiOptionsValidator
+Plik:
+- Toci.Haia.AiIntegration.OpenAI/Configuration/OpenAiOptionsValidator.cs
+
+Uzasadnienie:
+- waliduje spójność konfiguracji (model, limity, timeout, retry/repair),
+- nie loguje i nie ujawnia wartości sekretów.
+
+Wartość:
+- szybka detekcja błędnej konfiguracji przed wykonaniem operacji.
+
+5.3) AiPromptTemplate
+Plik:
+- Toci.Haia.AiIntegration.OpenAI/Prompting/AiPromptTemplate.cs
+
+Uzasadnienie:
+- przygotowanie wersjonowanego nośnika promptu (TemplateId, Version, SystemPrompt)
+  jako fundament pod dalsze sterowanie promptami.
+
+
+6) Decyzje technologiczne i uzasadnienie
+- Target framework: net10.0 (spójność z kontekstem solution).
+- Pakiet OpenAI: 2.12.0 (stabilna, jawnie przypięta wersja; brak wildcardów).
+- Microsoft.Extensions.* w projekcie OpenAI podniesione do 10.0.3,
+  aby usunąć konflikt NU1605 z transytywnymi zależnościami OpenAI/System.ClientModel.
+
+
+7) Status realizacji względem pełnego slice’a
+Zrealizowane fundamenty:
+- kontrakty Core,
+- modele request/response/result/errors/metadata,
+- walidatory lokalne,
+- szkic konfiguracji providera OpenAI.
+
+Elementy jeszcze do domknięcia w kolejnych krokach implementacji:
+- właściwy adapter OpenAI (wykonanie requestu multimodalnego),
+- strict structured output (JSON schema) i mapowanie wyniku providera,
+- retry policy + obsługa refusal/rate-limit/timeout,
+- DI extension method,
+- testy jednostkowe,
+- smoke test opcjonalny,
+- dokumentacja użycia i końcowa walidacja restore/build/test.
+
+
+8) Non-goals zachowane na tym etapie
+Nie dodano:
+- persistence / EF Core,
+- Web API,
+- UI,
+- Onboarding Studio (implementacyjnie),
+- upload/storage/CDN,
+- pełnego moderation pipeline.
+
+
+9) Podsumowanie
+Aktualny zestaw klas tworzy clean foundation pod operacje AI w HAIA:
+- oddziela domenę od providera,
+- umożliwia kontrolowaną walidację wejścia i odpowiedzi,
+- dostarcza typowane błędy i metadane audytowe,
+- przygotowuje fundament pod kolejne atomowe slice’y bez długoterminowego vendor lock-in w Core.

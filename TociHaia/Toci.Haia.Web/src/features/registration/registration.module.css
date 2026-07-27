@@ -1,0 +1,122 @@
+.layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    min-height: 100svh;
+}
+
+@media (min-width: 960px) {
+    .layout {
+        grid-template-columns: minmax(320px, 42%) 1fr;
+    }
+}
+
+.branding {
+    background: var(--haia-gradient);
+    padding: 2rem 1.25rem;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+}
+
+.brandWordmark {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    margin: 0 0 0.6rem;
+    color: transparent;
+    background: linear-gradient(120deg, #ffffff 0%, #e7f8ff 40%, #bbf6ff 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+}
+
+.emojiCloud {
+    display: flex;
+    gap: 0.7rem;
+    font-size: 1.5rem;
+    margin-top: 1rem;
+    opacity: 0.9;
+}
+
+.formPane {
+    display: flex;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.formCard {
+    width: 100%;
+    max-width: var(--haia-form-width);
+    background: var(--haia-surface);
+    border: 1px solid var(--haia-border);
+    border-radius: var(--haia-radius);
+    padding: 1.25rem;
+    box-shadow: var(--haia-shadow);
+    align-self: center;
+}
+
+.subtitle {
+    color: var(--haia-muted);
+    margin-top: 0;
+}
+
+.input {
+    width: 100%;
+    height: 2.75rem;
+    border-radius: 12px;
+    border: 1px solid var(--haia-border);
+    padding: 0 0.75rem;
+}
+
+.input[aria-invalid='true'] {
+    border-color: var(--haia-error);
+}
+
+.inlineRow {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.errorBox {
+    border: 1px solid #fecaca;
+    background: #fff4f4;
+    color: var(--haia-error);
+    border-radius: 12px;
+    padding: 0.75rem;
+    margin-bottom: 0.9rem;
+}
+
+.successBox {
+    border: 1px solid #a7f3d0;
+    background: #ecfdf5;
+    color: var(--haia-success);
+    border-radius: 12px;
+    padding: 0.75rem;
+    margin-bottom: 0.9rem;
+}
+
+.legalBox {
+    border: 1px solid var(--haia-border);
+    border-radius: 12px;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.legalError {
+    border-color: var(--haia-error);
+}
+
+.legalItem {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.secondaryText {
+    font-size: 0.875rem;
+    color: var(--haia-muted);
+}

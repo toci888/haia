@@ -1,0 +1,8 @@
+<Solution>
+  <Project Path="Toci.Haia.AiIntegration.Core/Toci.Haia.AiIntegration.Core.csproj" />
+  <Project Path="Toci.Haia.AiIntegration.OpenAI/Toci.Haia.AiIntegration.OpenAI.csproj" />
+  <Project Path="Toci.Haia.AiIntegration.Tests/Toci.Haia.AiIntegration.Tests.csproj" />
+  <Project Path="Toci.Haia.Api.Tests/Toci.Haia.Api.Tests.csproj" />
+  <Project Path="Toci.Haia.Api/Toci.Haia.Api.csproj" />
+  <Project Path="Toci.Haia.Database.Persistence/Toci.Haia.Database.Persistence.csproj" />
+</Solution>

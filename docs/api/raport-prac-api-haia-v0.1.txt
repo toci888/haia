@@ -1,0 +1,67 @@
+RAPORT PRAC - HAIA API (iteracja v0.1)
+Data: 2026-07-27
+
+1) Zakres zrealizowany
+- Utworzono projekt API: Toci.Haia.Api (net10.0).
+- Utworzono projekt testowy: Toci.Haia.Api.Tests (net10.0).
+- Dodano projekty do solution i podpięto referencje:
+  - API -> Toci.Haia.Database.Persistence
+  - Tests -> Toci.Haia.Api
+
+2) Fundament API
+- Minimal API z bazową ścieżką /api/v1.
+- OpenAPI.
+- ProblemDetails + globalny exception handler.
+- Correlation ID middleware (nagłówek X-Correlation-ID).
+- Health checks:
+  - /health/live
+  - /health/ready (zależne od HaiaDbContext.Database.CanConnectAsync)
+- Rate limiting (polityki nazwane): registration, verification, resend, nickname.
+
+3) Funkcjonalność domenowa (rejestracja email)
+- Endpointy:
+  - GET  /api/v1/legal-documents/current
+  - GET  /api/v1/registration/nickname-availability
+  - POST /api/v1/registration/email
+  - POST /api/v1/registration/email/verify
+  - POST /api/v1/registration/email/resend
+- Implementacja store + serwisów:
+  - IEmailRegistrationStore / EfEmailRegistrationStore
+  - IEmailRegistrationService / EmailRegistrationService
+  - ILegalDocumentsService / EfLegalDocumentsService
+  - INicknameAvailabilityService / EfNicknameAvailabilityService
+- Rejestracja transakcyjna z użyciem DB-first persistence.
+- Hashowanie haseł: PasswordHasher<Account>.
+- Tokeny email verification:
+  - generowanie tokenu plaintext (Base64Url)
+  - zapis tylko hash SHA-256 do bazy
+- Obsługa duplicate email bez ujawniania istnienia konta (privacy-safe behavior).
+
+4) Bezpieczeństwo i obsługa błędów
+- Spójne mapowanie błędów domenowych do ProblemDetails (RFC 7807) z kodami domenowymi.
+- Brak zwracania wrażliwych danych (tokeny/hasła).
+- In-memory sender dla Development/Test:
+  - IEmailVerificationSender
+  - InMemoryEmailVerificationSender
+
+5) Testy
+- Usunięto szablonowy UnitTest1.
+- Dodano testy unit:
+  - EmailRegistrationNormalizationTests
+  - TokenSecurityTests
+  - EmailRegistrationOptionsValidationTests
+- Dodano integration smoke test:
+  - ApiSmokeTests (liveness endpoint).
+- Dodano globalny setup środowiska testowego:
+  - TestEnvironmentSetup.cs (ModuleInitializer + HAIA_DB_CONNECTION_STRING).
+- Migracja asercji z FluentAssertions do xUnit Assert; usunięto pakiet FluentAssertions.
+- Ostatni wynik testów:
+  - 7/7 passed (Toci.Haia.Api.Tests).
+
+6) Dokumentacja techniczna
+- Utworzono dokument:
+  docs/api/haia-api-foundation-email-registration-v0.1.md
+
+7) Uwagi końcowe
+- API działa na .NET 10 zgodnie z kontekstem workspace.
+- Pozostają ostrzeżenia zależności (NU1903/NU1510), nie blokują bieżącej funkcjonalności, zalecany osobny etap hardeningu pakietów.

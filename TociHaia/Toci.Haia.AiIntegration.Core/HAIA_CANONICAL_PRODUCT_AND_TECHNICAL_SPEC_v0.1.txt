@@ -1,0 +1,3064 @@
+﻿HAIA — CANONICAL PRODUCT AND TECHNICAL SPECIFICATION
+Aktualna, skonsolidowana dokumentacja produktu, domeny i kierunku technicznego
+
+Wersja: 0.1
+Data bazowa: 2026-07-26
+Właściciel wizji produktu: Bartłomiej Zapart
+Status: CANONICAL WORKING SPECIFICATION
+Język dokumentu: polski
+Format: jedno źródło bieżącego kontekstu dla właściciela produktu, zespołu i agentów AI
+
+===============================================================================
+0. JAK CZYTAĆ TEN DOKUMENT
+===============================================================================
+
+Ten plik opisuje najświeższy, spójny stan wiedzy o HAIA. Nie jest zlepkiem
+wszystkich historycznych raportów. W przypadku sprzeczności z wcześniejszym
+dokumentem ten plik ma pierwszeństwo jako bieżąca specyfikacja robocza, o ile
+późniejsza jawna decyzja właściciela produktu nie mówi inaczej.
+
+Oznaczenia decyzji:
+
+[CONFIRMED]
+Decyzja obowiązująca w aktualnej wizji produktu.
+
+[RECOMMENDED]
+Najlepszy obecnie wariant, jeszcze możliwy do skorygowania przed implementacją.
+
+[OPEN]
+Decyzja nierozstrzygnięta. Nie wolno udawać, że została zatwierdzona.
+
+[EXPERIMENTAL]
+Hipoteza produktowa do sprawdzenia przez prototyp, test lub dane.
+
+[DEFERRED]
+Element wizji HAIA świadomie odłożony poza bieżący atomic slice.
+
+[IMPLEMENTED]
+Element potwierdzony w kodzie lub bieżącym rozwiązaniu.
+
+[PARTIALLY IMPLEMENTED]
+Istnieje fundament lub część kontraktów, ale flow nie jest ukończone.
+
+[CONCEPTUAL]
+Element opisany analitycznie, bez potwierdzonej implementacji.
+
+[REPLACED]
+Założenie historyczne, które nie powinno już sterować nowym projektem.
+
+Najważniejsza zasada dokumentu:
+pełna wizja jest szeroka, ale implementacja pozostaje atomowa.
+
+One feature
+→ one user flow
+→ minimal domain model
+→ working vertical slice
+→ tests
+→ review
+→ next feature.
+
+
+===============================================================================
+1. HAIA W JEDNYM ZDANIU
+===============================================================================
+
+[CONFIRMED]
+
+HAIA to mobile-first platforma społecznościowa, w której humor nie jest jedną
+z kategorii treści, lecz stanowi rdzeń produktu: język interfejsu, mechanizm
+interakcji, obszar personalizacji, twórczości, współpracy, uczenia systemu
+i przyszłej monetyzacji.
+
+HAIA ma pomagać użytkownikowi:
+
+- szybciej trafiać na humor, który naprawdę go bawi;
+- wyrażać reakcję w bardziej kreatywny sposób niż standardowe „lubię to”;
+- współtworzyć humor, dialogi, memy, riposty i remiksy;
+- rozwijać własny rozpoznawalny styl;
+- budować społeczność wokół własnej inwencji;
+- bezpiecznie używać AI jako narzędzia twórczego;
+- rozumieć, że profil humoru jest hipotezą ewoluującą, a nie diagnozą.
+
+
+===============================================================================
+2. CZYM HAIA NIE JEST
+===============================================================================
+
+[CONFIRMED]
+
+HAIA nie jest:
+
+- generycznym klonem Facebooka z zakładką „Humor”;
+- katalogiem memów bez pamięci użytkownika;
+- aplikacją, która generuje kosztowny request AI przy każdym scrollu;
+- automatycznym wydawcą publikującym wszystko, co zwróci model;
+- systemem przypisującym ludziom sztywne cechy na podstawie wieku lub zawodu;
+- narzędziem do podszywania się pod innych autorów;
+- automatyczną armatą do nękania ludzi pod hasłem „to tylko żart”;
+- systemem, który przejmuje prawa do treści użytkownika przez sam fakt publikacji;
+- gotowym marketplace’em, systemem licencji, płatności i eventów już w MVP;
+- jedną gigantyczną ontologią wdrażaną przed pierwszym działającym flow.
+
+
+===============================================================================
+3. KONSTYTUCJA PRODUKTU
+===============================================================================
+
+3.1. Humor jako rdzeń
+
+[CONFIRMED]
+
+Każda ważna warstwa HAIA powinna wzmacniać humorystyczną tożsamość produktu:
+onboarding, feed, reakcje, komentarze, profile twórców, narzędzia AI, Studio,
+analityka, współpraca marek i przyszłe funkcje sceniczne.
+
+3.2. Mobile-first
+
+[CONFIRMED]
+
+Kluczowe interakcje nie mogą zależeć od hover. Tooltip rozumiany jako
+„dopalenie beki” musi mieć mobilny odpowiednik: bubble, card, popover,
+bottom sheet albo krótką animowaną warstwę.
+
+3.3. AI jako orkiestracja kontrolowana przez HAIA
+
+[CONFIRMED]
+
+OpenAI lub inny provider:
+- generuje;
+- analizuje;
+- proponuje;
+- klasyfikuje;
+- pomaga redaktorowi i użytkownikowi.
+
+HAIA:
+- pamięta;
+- wybiera;
+- wersjonuje;
+- waliduje;
+- kontroluje koszt;
+- cache’uje;
+- ogranicza;
+- moderuje;
+- decyduje o publikacji.
+
+Zasada skrótowa:
+
+„OpenAI generuje i analizuje.
+HAIA pamięta, klasyfikuje, wybiera, cache’uje i kontroluje koszt.”
+
+3.4. Human-in-the-loop
+
+[CONFIRMED]
+
+AI nie aktywuje samodzielnie produkcyjnych kart onboardingowych, pakietów
+reakcji, zmian polityki selekcji ani wrażliwych materiałów. Człowiek pozostawia
+audytowalną decyzję redakcyjną, moderacyjną lub administracyjną.
+
+3.5. Profil nie jest wyrokiem
+
+[CONFIRMED]
+
+Humor DNA:
+- jest estymacją;
+- posiada confidence;
+- może być niepełne;
+- może się zmieniać;
+- powinno odróżniać dane obserwowane od hipotez;
+- nie jest diagnozą medyczną ani psychologiczną;
+- nie może zamykać użytkownika w jednej kategorii.
+
+3.6. Anti-stereotyping
+
+[CONFIRMED]
+
+Wiek, zawód, branża i kohorta mogą poprawić punkt startowy, ale:
+- nie przypisują preferencji automatycznie;
+- nie tworzą potwierdzonych cech Humor DNA;
+- muszą szybko ustąpić rzeczywistym zachowaniom użytkownika;
+- wymagają kart kontrolnych i eksploracji poza przewidywanym profilem;
+- nie mogą tworzyć samopotwierdzającej pętli.
+
+3.7. Osobne cele przetwarzania
+
+[CONFIRMED]
+
+Należy rozdzielić:
+1. analizę operacyjną potrzebną do wykonania funkcji;
+2. personalizację Humor DNA i Humor Contexts;
+3. analitykę produktu;
+4. ewentualne ulepszanie lub trenowanie modeli;
+5. działanie AI uruchomione przez użytkownika;
+6. remiks i wtórne użycie cudzych materiałów.
+
+3.8. Atomowy rozwój
+
+[CONFIRMED]
+
+Raporty i szerokie modele są mapami. Nie są automatycznie projektem bazy,
+migracją ani kontraktem implementacyjnym.
+
+
+===============================================================================
+4. AKTUALNY PRIORYTET PRODUKTOWY
+===============================================================================
+
+[CONFIRMED]
+
+Bieżąca rodzina funkcjonalności:
+
+HAIA USER ENTRY AND INITIAL HUMOR ONBOARDING
+
+Główny cel:
+użytkownik uzyskuje dostęp do konta, szybko poznaje wyróżnik HAIA,
+interaktywnie kalibruje humor i otrzymuje pierwszy, nieostateczny
+Initial Humor DNA Snapshot.
+
+Bieżące elementy kluczowe:
+- wejście email + hasło, Google i Facebook;
+- jedno konto z wieloma metodami dostępu;
+- pseudonim i wymagane dokumenty;
+- rozdzielone age eligibility oraz optional Age Context;
+- opcjonalny zawód/branża;
+- około 10 adaptacyjnych kart;
+- customowe reakcje;
+- druga puenta;
+- wielokrotny wybór reakcji;
+- pula około 12 reakcji, około 6 widocznych;
+- Sucharek 1–6;
+- working Humor DNA;
+- finalny snapshot i bezpieczny humorystyczny werdykt;
+- wznowienie cross-device;
+- population learning;
+- Onboarding Studio.
+
+
+===============================================================================
+5. ROLE I TYPY UCZESTNIKÓW
+===============================================================================
+
+5.1. Zwykły użytkownik
+
+[CONFIRMED]
+
+Może:
+- założyć konto;
+- przejść onboarding;
+- publikować i konsumować treści;
+- wybierać wiele customowych reakcji;
+- oceniać Sucharka;
+- komentować;
+- rozwijać Humor DNA;
+- zarządzać prywatnością i kontekstami;
+- korzystać z bezpłatnych funkcji dostępnych w planie podstawowym.
+
+5.2. Power User / Power Creator
+
+[EXPERIMENTAL]
+
+Płatny użytkownik posiadający rozszerzone narzędzia AI do tworzenia remiksów,
+scenek, żartów, dialogów, memów i pakietów reakcji. Może budować społeczność
+odbiorców własnego stylu.
+
+Robocza cena:
+około 10 PLN miesięcznie, prawdopodobnie z pulą kredytów i dodatkowymi kosztami
+za wybrane operacje AI.
+
+Cena, limity i model rozliczeń są otwarte.
+
+5.3. Redaktor humoru
+
+[CONFIRMED CONCEPTUAL]
+
+Tworzy i poprawia:
+- karty;
+- reakcje;
+- drugie puenty;
+- klasyfikacje;
+- pakiety reakcji;
+- warianty tekstu;
+- ustawienia widoczności.
+
+Nie musi mieć prawa aktywacji produkcyjnej.
+
+5.4. Moderator
+
+[CONFIRMED CONCEPTUAL]
+
+Ocenia:
+- bezpieczeństwo;
+- nękanie;
+- dyskryminację;
+- dane osobowe;
+- prawa do materiałów;
+- nieadekwatność wiekową;
+- ryzyko podszywania się;
+- treść reakcji i drugich puent.
+
+Może:
+- zatwierdzić;
+- zatwierdzić z ograniczeniami;
+- zażądać anonimizacji;
+- ograniczyć dystrybucję;
+- odrzucić;
+- awaryjnie wycofać.
+
+5.5. Analityk
+
+[CONFIRMED CONCEPTUAL]
+
+Analizuje:
+- skuteczność kart;
+- reakcje;
+- puenty;
+- Sucharka;
+- sekwencje;
+- recovery;
+- cohort mismatch;
+- prediction vs actual;
+- koszty AI;
+- zdrowie puli.
+
+Nie powinien sam publikować materiałów.
+
+5.6. Administrator
+
+[CONFIRMED CONCEPTUAL]
+
+Zarządza:
+- rolami;
+- uprawnieniami;
+- aktywacją;
+- politykami;
+- rollbackiem;
+- kill switch;
+- bezpieczeństwem operacyjnym.
+
+5.7. Product Owner / Lead Editor
+
+[CONFIRMED CONCEPTUAL]
+
+Odpowiada za:
+- spójność produktu;
+- konstytucję humoru;
+- kierunek redakcyjny;
+- priorytety roadmapy;
+- ostateczne rozstrzygnięcia domenowe.
+
+5.8. Osoba, profil i organizacja
+
+[RECOMMENDED / DEFERRED]
+
+Docelowy model:
+- Account jest technicznym kontem człowieka;
+- Person reprezentuje człowieka i odpowiedzialność;
+- Personal Profile jest publiczną obecnością;
+- Creator Profile jest profesjonalną warstwą twórczą;
+- Organization działa przez członkostwa i delegacje;
+- Organization nie powinna mieć współdzielonego loginu.
+
+Każda ważna akcja biznesowa powinna móc zapisać:
+- technical executor;
+- authenticated account;
+- represented subject;
+- capability used;
+- visible publisher.
+
+
+===============================================================================
+6. REJESTRACJA I WEJŚCIE DO HAIA
+===============================================================================
+
+6.1. Metody wejścia
+
+[CONFIRMED]
+
+- email + hasło;
+- Google;
+- Facebook;
+- późniejsze rozszerzenie o innych providerów.
+
+6.2. Jedno konto, wiele metod
+
+[CONFIRMED]
+
+Google i Facebook są metodami dostępu, nie typami użytkownika.
+
+Jedno konto HAIA może mieć:
+- hasło;
+- Google;
+- Facebook;
+- kilka metod równocześnie.
+
+Nie wolno automatycznie scalać kont wyłącznie dlatego, że providery zwróciły
+podobny adres e-mail. Bezpieczne linkowanie wymaga świadomej akcji użytkownika
+i potwierdzenia tożsamości.
+
+6.3. Konto gotowe
+
+[CONFIRMED]
+
+Konto osiąga status account-ready po spełnieniu wymaganych warunków:
+- rozwiązana metoda wejścia;
+- pseudonim;
+- wymagane wersje dokumentów;
+- weryfikacja e-maila, jeśli potrzebna;
+- age eligibility, jeżeli finalna polityka prawna tego wymaga.
+
+6.4. Pseudonim
+
+[CONFIRMED]
+
+Pseudonim:
+- jest publiczną tożsamością HAIA;
+- powinien być unikalny w aktywnym zakresie;
+- może być rezerwowany podczas rejestracji;
+- wymaga decyzji o zwalnianiu po wygaśnięciu/usunięciu konta.
+
+6.5. Hasła i tokeny
+
+[CONFIRMED]
+
+- hasło przechowywane wyłącznie jako bezpieczny hash;
+- tokeny weryfikacyjne i resetujące przechowywane jako hash;
+- brak jawnych tokenów;
+- brak pytań bezpieczeństwa;
+- idempotencja wielokrotnego użycia linku;
+- ograniczanie resend;
+- nie wolno logować sekretów.
+
+6.6. Dokumenty i zgody
+
+[CONFIRMED]
+
+Każda akceptacja wskazuje konkretną wersję dokumentu.
+
+Należy rozróżnić:
+- regulamin;
+- informację o prywatności;
+- zgody opcjonalne;
+- personalizację;
+- operację AI;
+- wtórne użycie do poprawy modeli;
+- remiks;
+- marketing;
+- wizerunek;
+- zgody relacyjne.
+
+Nie przechowywać wszystkiego jako booleany na tabeli użytkownika.
+
+6.7. Wejście do feedu przed ukończeniem kalibracji
+
+[RECOMMENDED]
+
+Feed nie powinien być bezwzględnie zablokowany. Użytkownik może wejść wcześniej,
+ale HAIA wyraźnie zachęca do ukończenia kalibracji. Onboarding można przerwać
+i wznowić.
+
+
+===============================================================================
+7. WIEK I ZAWÓD — HUMOR CONTEXTS, NIE HUMOR DNA
+===============================================================================
+
+7.1. Age eligibility
+
+[OPEN / LEGAL REVIEW]
+
+To osobna funkcja prawna i bezpieczeństwa:
+- minimalny wiek;
+- ewentualne ograniczenia dostępu;
+- dodatkowe zgody;
+- źródło ustalenia;
+- wersja polityki.
+
+Nie wolno mieszać age gate z personalizacją humoru.
+
+7.2. Optional Age Context
+
+[CONFIRMED]
+
+Age Context:
+- jest opcjonalny;
+- domyślnie prywatny;
+- nie blokuje onboardingu;
+- może zostać pominięty;
+- może zostać zmieniony lub usunięty;
+- nie jest negatywnym sygnałem przy braku odpowiedzi;
+- działa jako słaby prior zrozumiałości odniesień.
+
+[RECOMMENDED]
+
+MVP używa przedziału wiekowego zamiast dokładnej daty urodzenia.
+Pytanie pojawia się po account-ready, razem z lekkimi kontekstami startowymi.
+
+7.3. Profession Context
+
+[CONFIRMED]
+
+Zawód i branża:
+- są opcjonalne;
+- domyślnie prywatne;
+- mogą zostać pominięte bez kary;
+- mogą podnieść trafność pierwszych kart;
+- nie stają się automatycznie cechą Humor DNA.
+
+[RECOMMENDED]
+
+MVP:
+- jedna główna branża;
+- opcjonalny zawód;
+- własny krótki opis;
+- możliwość późniejszej edycji/usunięcia.
+
+7.4. Zasada przepływu dowodu
+
+[CONFIRMED]
+
+Poprawny łańcuch:
+
+wiek/zawód
+→ słaba hipoteza kontekstowa
+→ ekspozycja treści
+→ rzeczywista interakcja
+→ observed evidence
+→ ewentualna zmiana working Humor DNA.
+
+Sam wiek lub zawód nigdy nie wystarcza do potwierdzenia wymiaru Humor DNA.
+
+7.5. Mismatch
+
+[CONFIRMED]
+
+System powinien rozpoznawać:
+- age-cohort mismatch;
+- profession-cohort mismatch;
+- ogólny cohort mismatch.
+
+Przy sprzecznych sygnałach:
+- prior słabnie;
+- pojawiają się karty uniwersalne i kontrolne;
+- indywidualne zachowanie przejmuje sterowanie.
+
+
+===============================================================================
+8. ADAPTACYJNY ONBOARDING HUMORU
+===============================================================================
+
+8.1. Cel
+
+[CONFIRMED]
+
+Celem nie jest tylko zebranie danych. Użytkownik powinien poczuć „pierwsze
+trafienie” i zrozumieć, że HAIA ma wyjątkowy język interakcji.
+
+8.2. Pełny flow
+
+[CONFIRMED]
+
+1. Start wejścia: Google, Facebook albo email + hasło.
+2. Rozpoznanie lub utworzenie konta.
+3. Uzupełnienie wymagań.
+4. Account ready.
+5. Utworzenie sesji onboardingu.
+6. Opcjonalny zawód/branża.
+7. Opcjonalny Age Context.
+8. Około 10 adaptacyjnych kart.
+9. Aktualizacja profilu po każdej interakcji.
+10. Opcjonalna Meme Calibration.
+11. Opcjonalna User Humor Inspiration.
+12. Initial Humor DNA Snapshot.
+13. Bezpieczny humorystyczny werdykt.
+14. Wejście do głównego portalu/feedu.
+
+8.3. Candidate Universe
+
+[CONFIRMED]
+
+Nie istnieje jeden statyczny zestaw dziesięciu kart. System wybiera z szerokiej,
+zbalansowanej biblioteki.
+
+Formaty:
+- mem;
+- obrazek z podpisem;
+- krótki żart;
+- dialog;
+- riposta;
+- absurdalne pytanie;
+- scenka;
+- tekst obserwacyjny;
+- recovery card;
+- fallback;
+- finał.
+
+Osie klasyfikacji:
+- format;
+- mechanizm humoru;
+- temat;
+- kontekst;
+- intensywność;
+- suchość;
+- złożoność;
+- język;
+- odniesienia kulturowe;
+- bezpieczeństwo;
+- rola w sekwencji;
+- reaction rescue potential;
+- novelty.
+
+8.4. Funkcje pojedynczej karty
+
+[CONFIRMED]
+
+Karta:
+1. ma realną szansę rozbawić;
+2. zbiera sygnał;
+3. testuje hipotezę;
+4. wpływa na kolejną kartę;
+5. demonstruje reakcje i metahumor HAIA.
+
+8.5. Selection policy
+
+[CONFIRMED CONCEPTUAL]
+
+Ranking bierze pod uwagę:
+- predicted enjoyment;
+- information gain;
+- diversity;
+- novelty;
+- exploration vs exploitation;
+- kontekst;
+- słabe priory;
+- indywidualne evidence;
+- format balance;
+- safety;
+- reaction rescue potential;
+- ostatnie karty;
+- recovery state.
+
+Pierwsze karty powinny mieszać:
+- treści uniwersalne;
+- kontekstowe;
+- kontrolne;
+- różne mechanizmy.
+
+8.6. Explainability trail
+
+[CONFIRMED]
+
+Dla każdej decyzji system powinien później móc ustalić:
+- dlaczego wybrano kartę;
+- jaka wersja polityki działała;
+- jakie priory miały wpływ;
+- jaki wynik przewidziano;
+- co rzeczywiście zrobił użytkownik;
+- czy reakcje uratowały kartę;
+- czy trzeba było wejść w recovery.
+
+8.7. Recovery Mode
+
+[CONFIRMED]
+
+Przykładowy trigger:
+- 2–3 nietrafione karty;
+- seria „nie mój klimat”;
+- rosnące skipy;
+- oznaki porzucenia.
+
+Interwencje:
+- zmiana formatu;
+- zmiana mechanizmu;
+- zmiana intensywności;
+- neutralny absurd;
+- ograniczenie age/profession prior;
+- mocniejsze reakcje ratunkowe;
+- pytanie o kierunek;
+- skrócenie flow;
+- fallback bez AI.
+
+8.8. Resume
+
+[CONFIRMED]
+
+- stan zapisywany po każdej ukończonej karcie;
+- wznowienie cross-device;
+- tolerancja utraty połączenia;
+- idempotencja kliknięć;
+- możliwość korekty oceny;
+- ponowne przeliczenie profilu po zmianie.
+
+
+===============================================================================
+9. HUMOR DNA
+===============================================================================
+
+9.1. Warstwy
+
+[CONFIRMED]
+
+Należy rozdzielić:
+
+A. Context priors
+- wiek;
+- zawód;
+- branża;
+- population prior.
+
+B. Working profile
+- wartości robocze w bieżącej sesji;
+- confidence;
+- sygnały pozytywne;
+- sygnały negatywne;
+- sprzeczności.
+
+C. Observed evidence
+- ocena karty;
+- wybór reakcji;
+- feedback drugiej puenty;
+- Sucharek;
+- skip;
+- własna puenta;
+- kalibracja memem.
+
+D. Initial Humor DNA Snapshot
+- wynik po onboardingu;
+- wersja modelu;
+- confidence;
+- cechy potwierdzone;
+- hipotezy słabe;
+- obszary niezbadane;
+- finalny werdykt.
+
+E. Long-term Humor DNA
+- profil ewoluujący w późniejszym użyciu;
+- walidacja na feedzie;
+- możliwość korekty.
+
+9.2. Potencjalne wymiary
+
+[CONCEPTUAL]
+
+- absurd;
+- ironia;
+- suchy humor;
+- gra słów;
+- humor obserwacyjny;
+- meta-humor;
+- humor branżowy;
+- tolerancja intensywności;
+- krótka/długa forma;
+- dialog;
+- reaction rescue affinity;
+- preferencja drugiej puenty;
+- tolerancja ostrego języka.
+
+Lista nie jest zamknięta.
+
+9.3. Confidence
+
+[CONFIRMED]
+
+Każdy ważny wniosek wymaga confidence. Brak danych oznacza niepewność, a nie
+dowolne przypisanie wartości.
+
+9.4. Finalny werdykt
+
+[CONFIRMED]
+
+Werdykt:
+- domyka emocjonalnie onboarding;
+- może mieć styl mock-serious;
+- informuje, co wiadomo i z jaką pewnością;
+- nie diagnozuje;
+- nie redukuje użytkownika do wieku lub zawodu;
+- mówi, że profil będzie ewoluował.
+
+
+===============================================================================
+10. SHARED REACTION ENGINE
+===============================================================================
+
+10.1. Reakcja jako treść
+
+[CONFIRMED]
+
+Customowa reakcja nie jest enumem „like/laugh/angry”. To miniaturowy artefakt
+humorystyczny posiadający:
+- etykietę;
+- ikonę/emoji;
+- styl;
+- mechanizm humoru;
+- intensywność;
+- potencjał ratunkowy;
+- opcjonalną drugą puentę;
+- status redakcyjny;
+- status moderacji;
+- wersję;
+- statystyki.
+
+10.2. Pula 12 / widoczne 6
+
+[CONFIRMED]
+
+Preferowany model:
+- silnik przygotowuje około 12 reakcji dla treści;
+- około 6 jest widocznych początkowo;
+- wartości są konfigurowalne i wersjonowane;
+- reakcje ukryte pozostają w puli;
+- kolejność może być ustalona redakcyjnie lub później adaptacyjnie.
+
+10.3. Wielokrotny wybór
+
+[CONFIRMED]
+
+Użytkownik może wybrać kilka reakcji dla jednej treści.
+
+Po kliknięciu:
+1. reakcja pozostaje widoczna jako wybrana lub trafia do „Twoje reakcje”;
+2. pojawia się dopalenie / druga puenta;
+3. zwolniony slot może zostać wypełniony kolejną reakcją z puli;
+4. użytkownik może wybrać kolejną;
+5. użytkownik może odznaczyć pojedynczą reakcję;
+6. odznaczenie jednej nie usuwa pozostałych.
+
+Nie wolno usuwać wizualnie reakcji tak, aby użytkownik sądził, że wybór zniknął.
+
+10.4. Exposure tracking
+
+[CONFIRMED]
+
+System musi rozdzielić:
+- obecność reakcji w pakiecie;
+- realne pokazanie reakcji;
+- slot;
+- źródło ujawnienia;
+- początek i koniec widoczności;
+- initial;
+- replacement;
+- more;
+- adaptive reveal;
+- wybrana/niewybrana;
+- kolejność wyborów.
+
+Ukryta reakcja nie jest ekspozycją.
+
+Bez tego nie można wiarygodnie liczyć:
+- CTR;
+- rescue;
+- skuteczności replacement;
+- jakości initial pool;
+- reakcji niewybranej, lecz widocznej.
+
+10.5. Druga puenta
+
+[CONFIRMED]
+
+Klik reakcji, pokazanie drugiej puenty i ocena puenty są trzema różnymi sygnałami.
+
+[OPEN]
+
+Docelowy model tożsamości:
+- puenta jako część Reaction Version;
+albo
+- osobny Second Punchline + wersje.
+
+Decyzja musi być spójna ze Studio i analityką.
+
+10.6. Reaction Rescue
+
+[CONFIRMED]
+
+Reakcja może uratować słabą treść.
+
+Reaction Rescue Rate nie może wynikać wyłącznie z kliknięcia. Powinien brać pod
+uwagę wiarygodny pozytywny sygnał dla reakcji/puenty oraz dalsze zachowanie
+użytkownika.
+
+Przypadek bazowy:
+- główna karta oceniona słabo lub średnio;
+- reakcja lub puenta oceniona wyraźnie pozytywnie;
+- użytkownik pozostaje zaangażowany;
+- kolejna część flow ma lepszy wynik.
+
+10.7. Normalizacja wielokrotnego wyboru
+
+[CONFIRMED]
+
+Osiem kliknięć jednego użytkownika nie może dawać ośmiokrotnie większego wpływu
+niż jeden świadomy wybór innego użytkownika.
+
+Dane powinny umożliwiać:
+- kolejność wyboru;
+- liczbę wyborów;
+- fazę ekspozycji;
+- czas od ekspozycji;
+- późniejsze usunięcie;
+- normalizację łącznej wagi per użytkownik/per treść.
+
+Finalny algorytm jest [OPEN].
+
+10.8. Wspólny silnik
+
+[RECOMMENDED]
+
+Onboarding i przyszły feed powinny korzystać ze wspólnego fundamentu reakcji,
+z adapterami dla konkretnych powierzchni treści.
+
+Należy unikać:
+- drugiego niezależnego silnika tylko dla onboardingu;
+- luźnego `target_type + target_id` bez kontroli integralności.
+
+Preferowany kierunek:
+wspólna, stabilna powierzchnia interakcji posiadająca własne ID oraz typed
+powiązania do onboarding presentation, postu, mema lub innej publikacji.
+
+
+===============================================================================
+11. SUCHAREK — SZEŚCIOPOZIOMOWA OCENA SUCHOŚCI
+===============================================================================
+
+11.1. Skala
+
+[CONFIRMED]
+
+Każdy docelowy post, mem, onboarding card lub inna wrzutka może mieć opcję
+„Sucharek” z sześcioma poziomami:
+
+1. Lekko podsuszony
+2. Klasyczny suchar
+3. Poproszę wodę
+4. Wilgotność 3%
+5. Sahara zgłasza plagiat
+6. Wezwij cysternę
+
+Skala i etykiety powinny być wersjonowane.
+
+11.2. Jeden poziom aktywny
+
+[CONFIRMED]
+
+Użytkownik wybiera jeden poziom suchości. Zmiana zastępuje poprzedni wybór.
+Ocena może zostać usunięta.
+
+11.3. Relacja do innych reakcji
+
+[OPEN]
+
+Wariant A — exclusivity:
+- Sucharek blokuje customowe reakcje dla tej treści;
+- czytelna semantyka;
+- prostszy UX;
+- mniej danych.
+
+Wariant B — coexistence:
+- Sucharek może współistnieć z customowymi reakcjami;
+- bogatszy sygnał;
+- trudniejsza interpretacja.
+
+[RECOMMENDED]
+
+MVP: exclusivity jako prostszy, mocny werdykt UX.
+Architektura powinna jednak pozwalać przełączyć politykę na coexistence
+dla wybranych flow lub eksperymentów.
+
+11.4. Sygnał
+
+[CONFIRMED]
+
+Sucharek jest osobnym wymiarem, nie zwykłą reakcją.
+Może wpływać na:
+- tolerancję suchości;
+- ocenę treści;
+- ranking;
+- recovery;
+- analitykę materiałów;
+- Humor DNA po obserwacji zachowania.
+
+
+===============================================================================
+12. CONTENT GRAPH: TREŚĆ, WERSJA, PUBLIKACJA I REMIKS
+===============================================================================
+
+12.1. Pojęcia
+
+[RECOMMENDED / DEFERRED]
+
+- Source Material: materiał wejściowy.
+- Humor Artifact: stabilna tożsamość utworu lub konceptu.
+- Artifact Version: utrwalona wersja.
+- Publication: publikacja konkretnej wersji w konkretnym kontekście.
+- Remix: transformacja istniejącego źródła.
+- Derived Artifact: nowy artefakt pochodny.
+
+12.2. Relacje pochodzenia
+
+[RECOMMENDED]
+
+- uses-source;
+- derived-from;
+- remixes;
+- combines;
+- anonymizes;
+- AI-transforms;
+- translates;
+- campaign-submission-of.
+
+12.3. Wersja czy nowy artefakt
+
+[OPEN / RECOMMENDED]
+
+Nowa wersja tego samego artefaktu:
+- korekta;
+- zmiana puenty bez utraty tożsamości konceptu;
+- anonimizacja moderacyjna;
+- alternatywny format zachowujący rdzeń.
+
+Nowy Derived Artifact:
+- transformacja zmieniająca główny koncept;
+- połączenie wielu źródeł;
+- nowa scenka z komentarzy;
+- remiks tworzący samodzielny utwór.
+
+12.4. Źródło i prawa
+
+[CONFIRMED]
+
+System powinien pamiętać:
+- autora;
+- materiał źródłowy;
+- podstawę użycia;
+- wersję;
+- wkład AI;
+- osobę wybierającą wynik;
+- redaktora finalnego;
+- wymagane zgody;
+- status prawny/pochodzenie media.
+
+
+===============================================================================
+13. FEED I SPOŁECZNA WARSTWA HAIA
+===============================================================================
+
+[DEFERRED, ALE KIERUNKOWO POTWIERDZONE]
+
+Docelowy feed nie jest tylko strumieniem postów. Powinien:
+- korzystać z Humor DNA i Humor Contexts;
+- utrzymywać eksplorację poza profilem;
+- pokazywać customowe reakcje;
+- wspierać Sucharka;
+- pozwalać obserwować twórców;
+- odróżniać treść zabawną, bezpieczną i neutralną;
+- nie banować automatycznie treści „niedostatecznie zabawnej”;
+- móc ograniczać jej dystrybucję w humor-core feedzie;
+- umożliwiać rekomendacje globalne, kontekstowe i społeczne;
+- w przyszłości walidować onboardingowe predykcje.
+
+Social graph, znajomi, grupy, chat i ranking feedu nie należą do obecnego slice’a.
+
+
+===============================================================================
+14. POWER USER / POWER CREATOR
+===============================================================================
+
+14.1. Idea
+
+[EXPERIMENTAL, WYSOKI POTENCJAŁ]
+
+Power User kupuje narzędzia twórcze, a nie tylko brak reklam lub dekoracyjną
+odznakę.
+
+Może:
+- zaznaczać komentarze;
+- uruchamiać „Dopal z AI”;
+- generować warianty;
+- budować własny styl;
+- zapisywać drafty;
+- publikować remiksy;
+- tworzyć serie;
+- obserwować wyniki;
+- budować społeczność odbiorców swojej inwencji.
+
+14.2. Roboczy model cenowy
+
+[EXPERIMENTAL]
+
+- abonament około 10 PLN/miesiąc;
+- pula kredytów;
+- tanie operacje tekstowe;
+- ograniczona liczba grafik;
+- dodatkowe usage rozliczane osobno;
+- szacowany koszt przed wykonaniem;
+- miesięczny limit;
+- ostrzeżenia kosztowe;
+- panel bieżącego zużycia;
+- późniejsza faktura lub rozliczenie.
+
+Finalny cennik jest [OPEN].
+
+14.3. Entitlements i ledger
+
+[RECOMMENDED / DEFERRED]
+
+HAIA powinna znać:
+- plan;
+- wersję ceny;
+- aktywną subskrypcję;
+- entitlement;
+- kredyty;
+- usage;
+- pricing snapshot;
+- okres rozliczeniowy;
+- limit wydatków;
+- kandydat pozycji rozliczeniowej.
+
+Operator płatności odpowiada za transakcję.
+System fakturowy odpowiada za formalną fakturę.
+HAIA nie powinna udawać pełnego systemu księgowego.
+
+14.4. Creator growth
+
+[DEFERRED]
+
+Późniejsze możliwości:
+- creator profile;
+- serie;
+- obserwujący;
+- statystyki;
+- ranking twórców;
+- użycia reakcji twórcy;
+- monetyzacja;
+- udział w licencjach;
+- współpraca z markami.
+
+
+===============================================================================
+15. DOPAL Z AI — POWER REMIX KOMENTARZY
+===============================================================================
+
+15.1. Flow
+
+[EXPERIMENTAL]
+
+1. Power User zaznacza wybrane komentarze.
+2. Uruchamia „Dopal z AI”.
+3. Wybiera format, styl, intensywność, absurd i granice.
+4. HAIA pokazuje koszt.
+5. AI generuje kilka wariantów.
+6. Wynik trafia do draftu.
+7. Użytkownik wybiera, poprawia lub odrzuca.
+8. Wynik przechodzi wymagane bezpieczeństwo/moderację.
+9. Publikacja ma oznaczenie AI remix.
+10. Usage trafia do ledgeru.
+
+15.2. Możliwe rezultaty
+
+[EXPERIMENTAL]
+
+- bekowa wymiana zdań;
+- scenka;
+- nowy żart;
+- absurdalne streszczenie;
+- dialog filmowy;
+- podpis mema;
+- pełny mem;
+- pakiet reakcji;
+- alternatywne zakończenie;
+- „sekcja zwłok logiki”;
+- protokół urzędowy;
+- remiks w stylu konkretnego narratora HAIA.
+
+15.3. Pochodzenie
+
+[CONFIRMED PRINCIPLE]
+
+Należy pamiętać:
+- identyfikatory komentarzy;
+- autorów;
+- wersję tekstu użytego do remiksu;
+- moment pobrania;
+- usunięcie źródła;
+- status zgody/praw;
+- provenance;
+- decyzję moderacji;
+- wycofanie.
+
+15.4. Zakaz podszywania się
+
+[CONFIRMED]
+
+Wygenerowane wypowiedzi nie mogą być przedstawiane jako autentyczne słowa
+konkretnej osoby.
+
+Oznaczenie:
+„Remiks utworzony z pomocą AI na podstawie dyskusji.”
+
+15.5. Draft-first
+
+[CONFIRMED]
+
+Brak automatycznej publikacji wyniku.
+
+
+===============================================================================
+16. MEME CALIBRATION I USER HUMOR INSPIRATION
+===============================================================================
+
+16.1. Meme Calibration
+
+[DEFERRED, ALE OPISANE]
+
+Użytkownik dodaje mem, który rzeczywiście go bawi.
+HAIA:
+- analizuje mechanizmy;
+- generuje około 6 ripost/wariantów;
+- pozwala ocenić wyniki;
+- może wygenerować poprawioną wersję finalną;
+- aktualizuje Humor DNA i Contexts.
+
+Pominięcie nie jest negatywnym sygnałem.
+
+16.2. User Humor Inspiration
+
+[DEFERRED, ALE OPISANE]
+
+Użytkownik wpisuje własną:
+- puentę;
+- ripostę;
+- inspirację;
+- dialog;
+- odpowiedź.
+
+HAIA analizuje styl twórczy.
+
+Preferencja odbiorcy nie jest automatycznie tym samym co styl twórcy.
+
+
+===============================================================================
+17. HAIA ONBOARDING STUDIO / CONTENT STUDIO
+===============================================================================
+
+17.1. Cel
+
+[CONFIRMED CONCEPTUAL]
+
+Studio jest wewnętrznym centrum:
+- redakcji;
+- moderacji;
+- wersjonowania;
+- aktywacji;
+- podglądu;
+- analityki;
+- rekomendacji;
+- rollbacku;
+- audytu.
+
+Nie jest zwykłym CRM.
+
+17.2. Candidate Library
+
+[CONFIRMED CONCEPTUAL]
+
+Redaktor zarządza:
+- treścią;
+- mediami;
+- źródłem;
+- prawami;
+- formatem;
+- klasyfikacją;
+- wersjami;
+- statusem;
+- rolą w flow.
+
+17.3. Reaction Generation Mill
+
+[CONFIRMED CONCEPTUAL]
+
+Generator wspiera:
+- warianty;
+- style;
+- branżowe i uniwersalne reakcje;
+- reakcje ratunkowe;
+- drugie puenty;
+- „krócej”;
+- „mocniej”;
+- „bez ostrych słów”;
+- „przegeneruj tylko puenty”;
+- język dopasowany bez stereotypu.
+
+17.4. Reaction Review Workspace
+
+[CONFIRMED CONCEPTUAL]
+
+Redaktor może:
+- zaakceptować;
+- odrzucić;
+- poprawić;
+- zmienić emoji;
+- zmienić drugą puentę;
+- ustawić kolejność;
+- ustawić initial/hidden/more;
+- dodać ręczną reakcję.
+
+Moderator ocenia cały kontekst:
+karta + reakcje + drugie puenty.
+
+17.5. Lifecycle
+
+[RECOMMENDED]
+
+Candidate:
+- Draft
+- Awaiting AI Analysis
+- AI Analysis Ready
+- Reactions Generated
+- Editorial Review
+- Moderation Review
+- Approved
+- Scheduled
+- Active
+- Paused
+- Retired
+- Rejected
+- Archived
+
+AI nie wykonuje autonomicznie:
+- approval;
+- activation;
+- emergency withdrawal;
+- rollback.
+
+17.6. Mobile Preview
+
+[CONFIRMED CONCEPTUAL]
+
+Podgląd:
+- karta;
+- reakcje;
+- 12/6;
+- replacement;
+- druga puenta;
+- Sucharek;
+- przejście dalej;
+- tryb bez mediów;
+- różne rozmiary ekranów.
+
+17.7. Simulated Onboarding
+
+[CONFIRMED CONCEPTUAL]
+
+Testowanie:
+- sekwencji;
+- recovery;
+- braku wieku/zawodu;
+- wielu negatywnych reakcji;
+- awarii AI;
+- fallbacków;
+- profili przykładowych.
+
+17.8. Aktywacja
+
+[CONFIRMED CONCEPTUAL]
+
+Kontrole:
+- okno czasowe;
+- zakres;
+- role w sekwencji;
+- kohorty;
+- limity;
+- eksperyment;
+- planowanie;
+- pause;
+- retire;
+- kill switch;
+- rollback.
+
+17.9. Prawa do media
+
+[CONFIRMED]
+
+Materiał nie powinien być aktywowany bez informacji o:
+- źródle;
+- prawach;
+- statusie osoby przedstawionej;
+- wymaganej anonimizacji;
+- ograniczeniach dystrybucji.
+
+
+===============================================================================
+18. LEARNING ENGINE
+===============================================================================
+
+18.1. Dwie pętle
+
+[CONFIRMED]
+
+Individual loop:
+karta → interakcja → working profile → następna karta.
+
+Population loop:
+wiele onboardingów → agregaty → lepszy start kolejnego użytkownika.
+
+18.2. Trzy warstwy punktu startowego
+
+[CONFIRMED]
+
+- Global Prior;
+- Cohort Prior;
+- Individual Profile.
+
+Individual Profile ma szybko dominować.
+
+18.3. Cohort Prior
+
+[CONFIRMED]
+
+Kohorty mogą opierać się na:
+- zawodzie;
+- wieku;
+- wczesnym zachowaniu;
+- preferowanym formacie;
+- innych stabilnych, bezpiecznych sygnałach.
+
+Guardraile:
+- minimalna liczebność;
+- confidence;
+- brak publikacji małych segmentów;
+- limit łączenia filtrów;
+- kontrolne karty;
+- cohort mismatch;
+- brak trwałej etykiety użytkownika;
+- brak bezpośredniego transferu prioru do potwierdzonego DNA.
+
+18.4. Co system powinien uczyć
+
+[CONFIRMED]
+
+- skuteczność kart;
+- skuteczność pozycji;
+- skuteczność reakcji;
+- drugie puenty;
+- initial vs hidden pool;
+- replacement;
+- recovery;
+- sequence;
+- completion;
+- abandonment;
+- prediction vs outcome;
+- fatigue;
+- różnice kohort;
+- późniejsza zgodność z feedem.
+
+18.5. Policy versioning
+
+[CONFIRMED]
+
+Wersjonowane:
+- onboarding flow;
+- scoring;
+- candidate pool;
+- reaction policy;
+- 12/6;
+- Sucharek mode;
+- recovery;
+- cohort strategy;
+- Humor DNA model;
+- final verdict;
+- prompt templates.
+
+18.6. Rekomendacje
+
+[CONFIRMED]
+
+Learning Engine może rekomendować:
+- zwiększenie/zmniejszenie ekspozycji;
+- wycofanie;
+- odświeżenie reakcji;
+- zmianę pozycji;
+- korektę recovery;
+- wykrycie braku puli;
+- ryzyko stereotypu;
+- fatigue.
+
+Człowiek podejmuje decyzję.
+
+
+===============================================================================
+19. ANALITYKA
+===============================================================================
+
+19.1. Candidate metrics
+
+[CONFIRMED CONCEPTUAL]
+
+- exposures;
+- unique users;
+- rating distribution;
+- skip rate;
+- not-my-style;
+- completion effect;
+- abandonment effect;
+- position effect;
+- cohort performance;
+- predicted vs actual;
+- trend;
+- fatigue.
+
+19.2. Reaction metrics
+
+[CONFIRMED CONCEPTUAL]
+
+- real exposures;
+- clicks;
+- CTR;
+- initial/hidden/replacement;
+- multi-selection depth;
+- second punchline views;
+- feedback puenty;
+- rescue;
+- time in slot;
+- not-clicked-but-exposed;
+- cohort performance;
+- decay.
+
+19.3. Sucharek metrics
+
+[CONFIRMED CONCEPTUAL]
+
+- udział treści oznaczonych jako Sucharek;
+- rozkład 1–6;
+- różnice per format;
+- wpływ na dalsze zachowanie;
+- zgodność z klasyfikacją redakcyjną;
+- wpływ na tolerancję suchości.
+
+19.4. Onboarding funnel
+
+[CONFIRMED CONCEPTUAL]
+
+- account ready;
+- onboarding start;
+- konteksty;
+- karta 1/3/5/10;
+- recovery;
+- steps optional;
+- snapshot;
+- verdict;
+- portal entry;
+- resume;
+- porzucenia.
+
+19.5. Creator/Power metrics
+
+[DEFERRED]
+
+- remiksy;
+- warianty;
+- koszt;
+- publikacje;
+- followers;
+- reakcje na materiały;
+- użycia reakcji twórcy;
+- przyrost społeczności;
+- najlepsze formaty.
+
+19.6. AI cost metrics
+
+[CONFIRMED CONCEPTUAL]
+
+- koszt per operation;
+- token usage;
+- model;
+- prompt version;
+- cache hit;
+- retry;
+- repair;
+- failure;
+- refusal;
+- cost per accepted artifact;
+- cost per onboarding completed.
+
+
+===============================================================================
+20. AI ARCHITECTURE
+===============================================================================
+
+20.1. Obecny fundament
+
+[PARTIALLY IMPLEMENTED]
+
+Solution/projekty:
+- Toci.Haia.AiIntegration.Core
+- Toci.Haia.AiIntegration.OpenAI
+- Toci.Haia.AiIntegration.Tests
+
+Projekty zostały utworzone i ręcznie dodane do solution.
+Rozwiązanie kompilowało się po dodaniu.
+
+20.2. Core
+
+[IMPLEMENTED FOUNDATION]
+
+Core zawiera fundamenty:
+- IAiOperation<TRequest,TResponse>;
+- request validator;
+- response validator;
+- typed result;
+- typed error;
+- execution metadata;
+- token usage;
+- statusy;
+- pierwszą operację GenerateCustomReactionsFromImage;
+- request/response niezależny od providera;
+- semantic validation.
+
+Core nie powinien zależeć od OpenAI SDK.
+
+20.3. OpenAI adapter
+
+[PARTIALLY IMPLEMENTED / STATUS DO WERYFIKACJI]
+
+Raport v0.1 potwierdził:
+- options;
+- options validation;
+- prompt template;
+- zależność do oficjalnego SDK;
+- izolację providera.
+
+Nie potwierdzono jeszcze w raporcie v0.1 zakończenia:
+- właściwego multimodalnego requestu;
+- strict structured output;
+- mapowania;
+- retry/refusal/rate-limit/timeout;
+- DI extension;
+- pełnych testów;
+- smoke testu.
+
+20.4. GenerateCustomReactionsFromImage
+
+[PARTIALLY IMPLEMENTED CONTRACT]
+
+Input:
+- bytes/stream obrazu;
+- JPEG/PNG/WEBP;
+- caption;
+- kontekst redakcyjny;
+- audience context;
+- zawód;
+- wiek;
+- intensywność;
+- łagodne przekleństwa;
+- granice;
+- język;
+- liczba reakcji;
+- liczba visible;
+- drugie puenty;
+- correlation/candidate ID.
+
+Output:
+- neutralna analiza obrazu;
+- mechanizmy humoru;
+- konteksty;
+- rescue potential;
+- editorial/safety flags;
+- reakcje;
+- emoji;
+- druga puenta;
+- styl;
+- intensywność;
+- safety tags;
+- default-visible;
+- metadata execution.
+
+20.5. Prompt versioning
+
+[CONFIRMED]
+
+Każda ważna operacja posiada:
+- TemplateId;
+- Version;
+- System Prompt;
+- model;
+- schema version;
+- metadata;
+- możliwość porównania wyników.
+
+20.6. Validation
+
+[CONFIRMED]
+
+HAIA nie ufa poprawnemu JSON-owi bez walidacji semantycznej.
+
+Walidacja obejmuje:
+- format obrazu;
+- rozmiar;
+- język;
+- liczbę reakcji;
+- duplikaty;
+- długości;
+- intensywność;
+- widoczność;
+- spójność drugiej puenty;
+- bezpieczeństwo.
+
+Możliwa maksymalnie jedna kontrolowana próba repair.
+
+20.7. Koszt
+
+[CONFIRMED]
+
+Nie wywoływać AI:
+- per scroll;
+- per exposure;
+- per wybór zapisanej reakcji;
+- do prostych reguł;
+- bez budżetu.
+
+Preferować:
+- analyze once;
+- generate once;
+- reuse many;
+- cache;
+- prefetch;
+- local scoring;
+- fallback;
+- tańszy model dla prostych zadań;
+- cięższy model tylko, gdy wartość uzasadnia koszt.
+
+20.8. Sekrety
+
+[CONFIRMED]
+
+- User Secrets / environment / secret vault;
+- brak kluczy w repo;
+- brak wartości w logach;
+- stare sekrety z legacy traktować jako skompromitowane;
+- rotacja/revoke;
+- nie testować, czy nadal działają.
+
+
+===============================================================================
+21. ARCHITEKTURA TECHNICZNA
+===============================================================================
+
+21.1. Kierunek
+
+[RECOMMENDED]
+
+- backend: C# / .NET 10;
+- ASP.NET Core REST API;
+- modular monolith;
+- PostgreSQL;
+- EF Core;
+- Redis;
+- object storage + CDN;
+- SignalR;
+- workers / Hangfire lub równoważny scheduler;
+- FFmpeg dla media processing;
+- React / Next.js + TypeScript dla WWW mobile-first/PWA;
+- React Native dla aplikacji mobilnej;
+- jedno API dla klientów;
+- Docker/Kubernetes w miarę wzrostu;
+- observability i metryki kosztu.
+
+21.2. Namespaces
+
+[CONFIRMED]
+
+Każdy projekt i namespace zaczyna się od:
+
+Toci.Haia.
+
+21.3. Modular monolith
+
+[RECOMMENDED]
+
+Start jako modularny monolit:
+- mniejszy koszt operacyjny;
+- łatwiejszy development;
+- jednoznaczne granice;
+- możliwość późniejszego wydzielenia ciężkich modułów.
+
+Nie rozpoczynać od mikroserwisów bez realnego obciążenia lub niezależności zespołu.
+
+21.4. Realtime
+
+[DEFERRED / RECOMMENDED]
+
+SignalR:
+- powiadomienia;
+- live komentarze;
+- eventy Studio;
+- status generacji;
+- chat;
+- późniejsze funkcje eventowe.
+
+21.5. Media
+
+[DEFERRED]
+
+- storage poza główną bazą;
+- hash;
+- MIME;
+- wymiary;
+- rights status;
+- moderation status;
+- transkodowanie;
+- thumbnail;
+- anonimizacja;
+- CDN.
+
+
+===============================================================================
+22. DATABASE PRINCIPLES
+===============================================================================
+
+22.1. Status DDL v0.1
+
+[CONCEPTUAL ATLAS, NIE GOTOWA MIGRACJA]
+
+Istnieje szeroki szkic PostgreSQL:
+- 7 schematów;
+- 75 tabel;
+- identity;
+- onboarding;
+- humor;
+- studio;
+- learning;
+- ai;
+- audit.
+
+DDL był ręcznie przejrzany, ale nie został wykonany na lokalnym PostgreSQL
+w środowisku agenta.
+
+Nie należy wdrażać go jako jednej migracji.
+
+22.2. Wykryte błędy v0.1
+
+[CONFIRMED]
+
+Najważniejsze:
+- model blokował wiele aktywnych reakcji;
+- brak realnych reaction exposures;
+- reaction_version bez stabilnej reaction identity;
+- druga puenta bez spójnej tożsamości;
+- sprzeczne wersjonowanie snapshotu;
+- niektóre semantyczne UUID bez FK;
+- asset zbyt związany z Candidate Version;
+- classification zbyt JSON-heavy;
+- age/profession jako evidence zamiast prior;
+- brak membership wymiarów modelu DNA;
+- format kandydata zmieszany z rolą flow;
+- legal retention zagrożona przez CASCADE;
+- audit nazwany append-only bez egzekucji;
+- polymorphic targety o słabej integralności;
+- brak Sucharka;
+- brak Power Usera/remiksu.
+
+22.3. Zasady modelowania
+
+[CONFIRMED]
+
+- uuid;
+- timestamptz;
+- citext dla case-insensitive identity;
+- normalne kolumny dla ważnych pól;
+- jsonb tylko dla elastycznej konfiguracji i explanation payload;
+- stabilny byt oddzielony od wersji;
+- Publication wskazuje konkretną wersję;
+- eventy oddzielone od bieżącego stanu;
+- ekspozycja oddzielona od kliknięcia;
+- prior oddzielony od observed evidence;
+- snapshot oddzielony od working profile;
+- legal records nie znikają przypadkowo;
+- audit wymaga uprawnień i ochrony;
+- event tables przygotowane na skalę;
+- brak wielkiego `users` z całym światem;
+- brak jednej tabeli `events` bez typowanych kolumn;
+- brak sekretów i obrazów binarnych w logach AI.
+
+22.4. Reaction repair
+
+[CONFIRMED DIRECTION]
+
+Najpierw:
+- stable Reaction;
+- Reaction Version;
+- Reaction Pack;
+- Reaction Pack Version;
+- decyzja o Second Punchline identity;
+- stabilna interaction surface.
+
+Następnie:
+- Exposure;
+- multi-selection;
+- replacement;
+- idempotency;
+- analytics.
+
+Nie budować M4 na wadliwym reaction identity.
+
+22.5. Soft delete
+
+[CONFIRMED PRINCIPLE]
+
+Nie dodawać `is_deleted` wszędzie.
+
+Rozróżnić:
+- physical delete;
+- archive;
+- retire;
+- tombstone;
+- pseudonymization;
+- legal retention;
+- aggregate retention;
+- user-controlled removal.
+
+22.6. Append-only
+
+[RECOMMENDED]
+
+Audit/ledger:
+- rola INSERT-only;
+- brak UPDATE/DELETE dla aplikacji;
+- trigger lub procedura ochronna;
+- oddzielna ścieżka administracyjna;
+- archiwizacja kontrolowana.
+
+22.7. Atomic migrations
+
+[CONFIRMED]
+
+Preferowana kolejność logiczna:
+
+1. Identity and Registration.
+2. Optional Context and Onboarding State.
+3. Candidate Library + stable media.
+4. Shared Reaction Foundation.
+5. Multi-Reaction Exposure and Selection.
+6. Sucharek.
+7. Adaptive Presentation.
+8. Working Humor DNA.
+9. Initial Snapshot + Verdict.
+10. AI/Studio Integrity.
+11. Population Learning.
+12. Power Subscription and Usage.
+13. Power Remix.
+14. Optional Calibration and Creator features.
+
+Kolejność może zostać skorygowana przez zależności konkretnego slice’a.
+
+
+===============================================================================
+23. MODERACJA, SAFETY I ODWOŁANIA
+===============================================================================
+
+23.1. Content gate
+
+[CONFIRMED CONCEPTUAL]
+
+Pipeline:
+1. lokalne/tańsze reguły;
+2. wykrywanie PII i ryzyk;
+3. AI dla przypadków niejednoznacznych;
+4. decyzja automatyczna o wysokiej pewności;
+5. eskalacja;
+6. odwołanie;
+7. audyt.
+
+23.2. Osie decyzji
+
+[CONFIRMED]
+
+Rozdzielić:
+- naruszenie zasad;
+- bezpieczeństwo;
+- jakość humoru;
+- zgodność z kategorią;
+- prawa;
+- dystrybucję;
+- ograniczenie wieku;
+- potrzebę anonimizacji.
+
+Treść bezpieczna, ale niezabawna nie musi być banowana. Może mieć niższą
+dystrybucję w głównym feedzie humorystycznym.
+
+23.3. Neutralność
+
+[CONFIRMED]
+
+System ocenia konstrukcję i zgodność z zasadami, nie pogląd polityczny sam w
+sobie. Te same reguły powinny działać dla różnych stron sporu.
+
+23.4. Roast Consent
+
+[CONFIRMED PRINCIPLE]
+
+Roast wymaga:
+- granic;
+- zakazu nękania;
+- możliwości wycofania;
+- kontroli publiczności;
+- osobnych reguł dla osób prywatnych;
+- ochrony danych i wizerunku.
+
+23.5. Auto-anonymization
+
+[RECOMMENDED]
+
+- twarze;
+- tablice rejestracyjne;
+- adresy;
+- telefony;
+- e-maile;
+- dane dokumentów;
+- dzieci;
+- materiały prywatne.
+
+23.6. Auto Prank
+
+[DEFERRED, WYSOKIE RYZYKO]
+
+Prank automatyczny musi wykluczać:
+- zdrowie;
+- śmierć;
+- zdradę;
+- pieniądze;
+- policję;
+- pracę;
+- zagrożenie;
+- podszywanie się;
+- panikę;
+- realną szkodę.
+
+Wymaga obustronnej, wersjonowanej i odwoływalnej zgody oraz poziomu zaufania.
+
+23.7. Appeals
+
+[DEFERRED / REQUIRED BEFORE SCALE]
+
+- status;
+- terminy;
+- reason code;
+- rozdział decyzji AI i człowieka;
+- pełna historia;
+- wynik;
+- możliwość przywrócenia;
+- analiza biasu.
+
+
+===============================================================================
+24. PRYWATNOŚĆ, RETENCJA I ZGODY
+===============================================================================
+
+24.1. Minimalizacja
+
+[CONFIRMED]
+
+Przechowywać tylko dane potrzebne do konkretnego celu.
+
+24.2. Widoczność
+
+[CONFIRMED]
+
+Domyślnie prywatne:
+- wiek;
+- zawód używany do personalizacji;
+- working Humor DNA;
+- surowe interakcje;
+- usage i koszty;
+- dane prawne.
+
+24.3. Usuwanie kontekstów
+
+[CONFIRMED]
+
+Użytkownik może usunąć:
+- optional Age Context;
+- profession context;
+- mem kalibracyjny;
+- własną inspirację;
+- draft remiksu.
+
+Nie oznacza to automatycznego usunięcia:
+- wymaganych dowodów prawnych;
+- obowiązkowego audytu;
+- legalnej retencji;
+- zagregowanych, nieodwracalnie zanonimizowanych metryk.
+
+24.4. Training
+
+[OPEN / LEGAL REVIEW]
+
+Użycie danych do ulepszania/trenowania modeli musi być oddzielone od zwykłego
+działania funkcji i personalizacji.
+
+24.5. Małe kohorty
+
+[CONFIRMED]
+
+Nie pokazywać analityki małych grup. Ograniczyć łączenie filtrów wiek + zawód +
+inne cechy, jeśli grozi to reidentyfikacją.
+
+24.6. Cofnięcie zgody
+
+[RECOMMENDED]
+
+Działa co do zasady na przyszłość:
+- zatrzymuje nowe użycia;
+- nie unieważnia automatycznie istniejących licencji;
+- nie kasuje wymaganych śladów;
+- wymaga polityki dla danych już użytych do uczenia.
+
+
+===============================================================================
+25. AUTORSTWO, PRAWA, OFERTY I LICENCJE
+===============================================================================
+
+[DEFERRED, ALE ISTOTNE DLA PEŁNEJ WIZJI]
+
+25.1. Autorstwo
+
+Przypadki:
+- autor pierwotny;
+- współautorzy;
+- AI jako narzędzie;
+- remiks;
+- publikujący cudzy materiał;
+- treść kampanijna;
+- treść sceniczna;
+- licencjobiorca.
+
+25.2. Platform license
+
+[OPEN / LEGAL REVIEW]
+
+HAIA prawdopodobnie potrzebuje ograniczonej licencji technicznej na:
+- hosting;
+- dystrybucję;
+- transkodowanie;
+- bezpieczeństwo;
+- moderację;
+- backup.
+
+Nie oznacza to automatycznego nabycia pełnych praw.
+
+25.3. Offer
+
+Oferta:
+- nie jest licencją;
+- posiada przedmiot;
+- strony;
+- zakres;
+- cenę;
+- czas;
+- terytorium;
+- wyłączność;
+- warunki modyfikacji;
+- status negocjacji.
+
+25.4. License
+
+Licencja:
+- wskazuje Artifact Version;
+- zakres;
+- czas;
+- terytorium;
+- media;
+- modyfikacje;
+- sublicencję;
+- oznaczenie autora;
+- wynagrodzenie;
+- aktywację.
+
+Licencja starej wersji nie obejmuje automatycznie nowej.
+
+25.5. Spór
+
+[RECOMMENDED]
+
+Spór o prawa może zamrozić:
+- ofertę;
+- aktywację licencji;
+- payout;
+- komercyjne użycie.
+
+
+===============================================================================
+26. BRAND CHALLENGE
+===============================================================================
+
+[DEFERRED]
+
+Sponsorowane wyzwania kreatywne:
+
+kampania
+→ regulamin konkretnej wersji
+→ brief
+→ udział
+→ submission
+→ moderacja
+→ jury/głosowanie
+→ wynik
+→ nagroda
+→ ograniczona licencja wynikająca z regulaminu
+→ opcjonalna dodatkowa oferta wykupu
+→ osobna negocjacja.
+
+Marka nie otrzymuje automatycznie dowolnych praw do wszystkich prac.
+
+
+===============================================================================
+27. CREATOR ECONOMY, STAGE, TEST ROOM, EVENTS
+===============================================================================
+
+[DEFERRED]
+
+27.1. Creator Profile
+
+- portfolio;
+- styl;
+- statystyki;
+- współprace;
+- gotowość do ofert;
+- prawa i licencje;
+- payout/compliance.
+
+27.2. Test Room
+
+Twórca publikuje materiał ograniczonej grupie testerów i otrzymuje:
+- metryki;
+- feedback jakościowy;
+- ocenę reakcji;
+- Sucharka;
+- reakcje ratunkowe;
+- brak gwarancji sukcesu scenicznego.
+
+27.3. HAIA Stage / Clubs
+
+- społeczność fanów;
+- treści premium;
+- materiały testowe;
+- występy;
+- serie;
+- kluby twórców.
+
+27.4. Events, Tickets, Booking
+
+- wydarzenia;
+- bilety;
+- rezerwacje;
+- booking;
+- rozliczenia;
+- dostęp premium.
+
+Nie należą do MVP rejestracji/onboardingu.
+
+
+===============================================================================
+28. SHARED HUMOR MEMORY I AUTO PRANK
+===============================================================================
+
+28.1. Shared Humor Memory
+
+[DEFERRED]
+
+Dwie osoby za obopólną zgodą budują pamięć:
+- wspólnych motywów;
+- inside jokes;
+- kontekstów;
+- granic;
+- historii.
+
+Może wspierać rekomendacje i generację tylko w uzgodnionym zakresie.
+
+28.2. Consent pair
+
+[CONFIRMED PRINCIPLE]
+
+Zgoda:
+- dwustronna;
+- wersjonowana;
+- odwoływalna;
+- zakresowa;
+- z historią;
+- bez domyślnego rozszerzania.
+
+28.3. Auto Prank
+
+Patrz zasady bezpieczeństwa w sekcji 23.6.
+
+
+===============================================================================
+29. MODUŁY HUMORYSTYCZNE
+===============================================================================
+
+[DEFERRED / PRODUCT VISION]
+
+Możliwe wyspecjalizowane flow:
+- Jokes;
+- Questions;
+- Confess;
+- Dialogue Remix;
+- Demot;
+- Sekcja zwłok logiki;
+- riposty;
+- mem generator;
+- scenki;
+- protokół urzędowy;
+- narrator.
+
+Wspólne elementy:
+- source;
+- prompt;
+- wariant;
+- styl;
+- intensywność;
+- granice;
+- review;
+- moderation;
+- publication;
+- provenance;
+- cost.
+
+[OPEN]
+
+Czy moduły dzielą jeden workflow engine, czy posiadają osobne, lekkie procesy.
+
+29.1. Narrator levels
+
+[PRODUCT CONCEPT]
+
+- Grzeczny urzędnik
+- Lekko zadziorny
+- HAIA standard
+- Pełna odklejka
+- Same bluzgi
+
+Przekleństwa powinny uderzać w sytuację, system lub logikę, nie w człowieka.
+
+
+===============================================================================
+30. BIZNES I MONETYZACJA
+===============================================================================
+
+[CONCEPTUAL]
+
+Możliwe źródła:
+- Power User subscription;
+- usage AI;
+- pakiety kredytów;
+- Creator tools;
+- prowizja od licencji;
+- Brand Challenge;
+- premium communities;
+- event/ticket/booking fees;
+- promocja treści zgodna z zasadami;
+- współprace marek;
+- narzędzia Studio B2B.
+
+Zasady:
+- koszt jest widoczny przed akcją;
+- limity i alerty;
+- brak ukrytej faktury;
+- transparentny pricing snapshot;
+- HAIA nie finansuje bez limitu drogich generacji z abonamentu 10 PLN;
+- partner płatniczy i system fakturowy mają osobne odpowiedzialności.
+
+
+===============================================================================
+31. LEGACY REPOSITORY
+===============================================================================
+
+31.1. Status
+
+[REFERENCE, NIE BAZA NOWEGO SYSTEMU]
+
+Stare repozytorium:
+- 78 commitów;
+- kilka branchy;
+- projekty .NET, React, React Native, SignalR, AI, seed;
+- częściowe social/feed/chat;
+- brak testów;
+- stare zależności;
+- krytyczne problemy bezpieczeństwa.
+
+31.2. Strategia
+
+[CONFIRMED]
+
+Hybrid:
+- nowy, czysty fundament;
+- reuse pomysłów i wybranych artefaktów;
+- brak kopiowania starego auth;
+- brak kopiowania starych sekretów;
+- brak migracji legacy jako fundamentu.
+
+31.3. Wartościowe elementy
+
+[REFERENCE]
+
+- PostInteraction.TimeSpentMilliseconds;
+- UserCategoryPreference;
+- GptJoke powiązany ze źródłem;
+- heurystyka suggested posts;
+- use-case SignalR;
+- organizacja mobile `domains/api/models/store`;
+- mocki;
+- TypeScript branch;
+- seed utility po sanitizacji.
+
+31.4. Do przepisania
+
+- auth;
+- OpenAI integration;
+- security;
+- migrations;
+- kontrolery z logiką ad hoc.
+
+
+===============================================================================
+32. CURRENT DEVELOPMENT METHOD — LOAN AMP++
+===============================================================================
+
+32.1. Wniosek
+
+[CONFIRMED PROCESS DECISION]
+
+LOAN AMP++ jest skuteczny jako kontrakt jakości i strategiczny briefing, ale
+nie powinien być monolitycznym poleceniem „przeczytaj wszystko, zaprojektuj
+wszystko, zakoduj wszystko, zweryfikuj wszystko”.
+
+32.2. Optymalny cykl
+
+[RECOMMENDED]
+
+DISCOVERY
+→ DESIGN
+→ IMPLEMENT
+→ VERIFY
+→ DOCUMENT/MEMORY.
+
+Każdy etap jest osobnym przebiegiem agenta.
+
+32.3. Canonical context + delta
+
+[CONFIRMED PROCESS DECISION]
+
+Ten dokument jest Context Capsule.
+Kolejne prompty powinny zawierać głównie:
+- mode;
+- single mission;
+- primary artifact;
+- source sections;
+- current state;
+- delta;
+- invariants;
+- decisions required;
+- non-goals;
+- complexity budget;
+- acceptance;
+- stop condition.
+
+32.4. Budżet złożoności
+
+[RECOMMENDED]
+
+Jeden przebieg:
+- jeden problem domenowy;
+- jeden główny artefakt;
+- 3–5 głównych źródeł;
+- maksymalnie około 10 invariants;
+- maksymalnie około 10 decyzji;
+- maksymalnie 8–12 tabel/klas;
+- maksymalnie jeden diagram;
+- raport około 2000–3000 słów;
+- przyszłe rozszerzenia w DEFERRED.
+
+32.5. Statusy prawdziwości
+
+[RECOMMENDED]
+
+Agent raportuje:
+- VERIFIED;
+- CONFIRMED FROM SOURCE;
+- INFERENCE;
+- RECOMMENDATION;
+- OPEN DECISION;
+- NOT VERIFIED.
+
+32.6. Dowód wykonania
+
+[CONFIRMED PROCESS DECISION]
+
+Rozróżniać:
+- utworzono na dysku;
+- dodano do solution;
+- zbudowano;
+- przetestowano;
+- uruchomiono;
+- zweryfikowano integracyjnie.
+
+Raport nie może ogłaszać wyniku tylko na podstawie zamiaru.
+
+
+===============================================================================
+33. AKTUALNA ROADMAPA ATOMOWA
+===============================================================================
+
+Ścieżka A — fundament implementacyjny AI
+
+A0. Dokończenie AI Integration Foundation
+- adapter;
+- structured output;
+- mapping;
+- DI;
+- retry/refusal;
+- testy;
+- smoke test.
+
+Ścieżka B — User Entry
+
+B1. Identity and Registration
+- account;
+- email;
+- password;
+- Google/Facebook;
+- verification;
+- pseudonym;
+- legal documents.
+
+B2. Onboarding State and Context
+- session;
+- resume;
+- profession;
+- age context;
+- age eligibility boundary.
+
+Ścieżka C — Content and Reactions
+
+C1. Candidate Library baseline
+- candidate;
+- version;
+- stable media;
+- classification minimum.
+
+C2. Shared Reaction Foundation
+- reaction identity;
+- reaction version;
+- pack/version;
+- second punchline decision;
+- interaction surface.
+
+C3. Multi-Reaction
+- 12/6;
+- exposure;
+- selection;
+- unselection;
+- replacement;
+- idempotency.
+
+C4. Sucharek
+- scale;
+- levels;
+- current choice;
+- policy exclusivity/coexistence.
+
+Ścieżka D — Adaptive Onboarding
+
+D1. Presentation and feedback
+D2. Adaptive selection
+D3. Recovery
+D4. Working Humor DNA
+D5. Initial Snapshot
+D6. Final Verdict
+D7. Portal entry
+
+Ścieżka E — Governance
+
+E1. Candidate Editor
+E2. Reaction Review
+E3. Moderation
+E4. Activation and rollback
+E5. Mobile preview
+E6. Basic analytics
+E7. Learning recommendations
+
+Ścieżka F — Population Learning
+
+F1. Event baseline
+F2. Candidate/reaction metrics
+F3. Global Prior
+F4. Cohort Prior
+F5. Policy evaluation
+F6. Longitudinal validation
+
+Ścieżka G — Power
+
+G1. Subscription and entitlements
+G2. Pricing and usage ledger
+G3. Text remix
+G4. Meme remix
+G5. Creator Studio
+G6. Creator community
+G7. Monetization
+
+Zasada:
+nie realizować wszystkich ścieżek równolegle bez zespołu i jasno ustalonych
+zależności.
+
+
+===============================================================================
+34. STATUS GOTOWOŚCI OBSZARÓW
+===============================================================================
+
+Identity: READY FOR ATOMIC SPECIFICATION
+External Login: READY FOR ATOMIC SPECIFICATION
+Email Verification: READY FOR ATOMIC SPECIFICATION
+Legal Documents: READY FOR REVIEW
+Public Profile: READY FOR ATOMIC SPECIFICATION
+Profession Context: READY FOR ATOMIC SPECIFICATION
+Optional Age Context: READY FOR ATOMIC SPECIFICATION
+Age Eligibility: NOT READY / LEGAL
+Onboarding State: READY FOR REVIEW
+Candidate Library: PARTIALLY READY
+Shared Reaction Foundation: REQUIRES DESIGN REPAIR
+Multi-Reaction: PRODUCT CONFIRMED, DATA DESIGN REQUIRED
+Sucharek: PRODUCT CONFIRMED, POLICY OPEN
+Adaptive Selection: PARTIALLY READY
+Working Humor DNA: PARTIALLY READY
+Initial Snapshot: PARTIALLY READY
+Final Verdict: PARTIALLY READY
+Onboarding Studio: PRODUCT DESIGN READY FOR ATOMIC DELIVERY
+Population Learning: READY FOR IMPLEMENTATION PLANNING
+AI Core Foundation: PARTIALLY IMPLEMENTED
+OpenAI Provider Completion: STATUS TO VERIFY
+Power User: CONCEPTUAL / EXPERIMENTAL
+Power Remix: CONCEPTUAL / EXPERIMENTAL
+Creator Economy: DEFERRED
+Brand Challenge: DEFERRED
+Licensing: DEFERRED / LEGAL
+Stage/Events/Tickets: DEFERRED
+Shared Humor Memory: DEFERRED
+Auto Prank: DEFERRED / HIGH SAFETY BAR
+
+
+===============================================================================
+35. NAJWAŻNIEJSZE RYZYKA
+===============================================================================
+
+1. Rozmycie produktu
+Odpowiedź: humor-core constitution.
+
+2. Zbyt szeroka implementacja
+Odpowiedź: atomic vertical slices.
+
+3. Niekontrolowany koszt AI
+Odpowiedź: cache, budżety, routing, limits, degrade/off.
+
+4. Fałszywa personalizacja
+Odpowiedź: confidence, exploration, mismatch, individual override.
+
+5. Stereotypy wieku/zawodu
+Odpowiedź: weak prior, control cards, aggregation.
+
+6. Nękanie i toksyczność
+Odpowiedź: roast consent, safety, appeals.
+
+7. Prawa do remiksów
+Odpowiedź: provenance, consent, versioning, legal review.
+
+8. Podszywanie się
+Odpowiedź: disclosure, draft-first, no false attribution.
+
+9. Zbyt duży DDL
+Odpowiedź: conceptual atlas + atomic migrations.
+
+10. Polymorphic orphan records
+Odpowiedź: typed bridges/stable interaction surfaces.
+
+11. Rozjazd event/state
+Odpowiedź: jedno źródło prawdy i transakcyjna projekcja.
+
+12. Utrata legal records
+Odpowiedź: restrict/tombstone/pseudonymization.
+
+13. Audit tylko z nazwy
+Odpowiedź: role INSERT-only, trigger/procedure.
+
+14. Sekrety legacy
+Odpowiedź: revoke/rotate/rewrite.
+
+15. Ukryte koszty Power
+Odpowiedź: estimate, cap, alerts, ledger.
+
+
+===============================================================================
+36. OTWARTE DECYZJE PRODUKTOWE
+===============================================================================
+
+Priorytet P0/P1:
+
+1. Finalny model Reaction + Reaction Version.
+2. Tożsamość Second Punchline.
+3. Stabilna interaction surface bez słabych polymorphic FK.
+4. Definicja real reaction exposure.
+5. Maksymalna liczba aktywnych reakcji użytkownika.
+6. Kolejność replacement: deterministyczna czy adaptacyjna.
+7. Finalna definicja Reaction Rescue Rate.
+8. Sucharek: domyślnie exclusive czy coexistence.
+9. Finalne wymiary Humor DNA v1.
+10. Reguła snapshot version/current/published.
+11. Minimalny wiek platformy.
+12. Czy age gate wymaga daty urodzenia.
+13. Finalne przedziały wieku.
+14. Retencja surowych interaction events.
+15. Retencja raw AI outputs.
+16. Strategia usunięcia konta i legal tombstone.
+17. Minimalna liczebność kohorty.
+18. Maksymalna waga cohort prior.
+19. Formalny mismatch threshold.
+20. Które Studio targety wymagają typed links od początku.
+
+Power/Business:
+
+21. Finalna cena Power.
+22. Kredyty: reset czy rollover.
+23. Pricing snapshot per request czy per session.
+24. Limit miesięczny i alerty.
+25. Zakres darmowych generacji.
+26. Granica HAIA/payment/invoicing.
+27. Prawa do remiksu komentarzy.
+28. Co po usunięciu komentarza źródłowego.
+29. Model Creator Profile.
+30. Model późniejszej monetyzacji twórców.
+
+Future/Legal:
+
+31. Platform license.
+32. AI training opt-in/opt-out.
+33. Shared Humor Memory consent.
+34. Auto Prank trust level.
+35. Brand Challenge rights.
+36. Licencje wyłączne i konflikty.
+37. KYC/payout.
+38. Odwołania moderacyjne.
+39. Osoby niepełnoletnie w Creator Economy.
+40. Granice „Same bluzgi”.
+
+
+===============================================================================
+37. DECYZJE KANONICZNE — DECISION LOG
+===============================================================================
+
+DEC-PROD-001 [CONFIRMED]
+Humor jest rdzeniem produktu.
+
+DEC-PROD-002 [CONFIRMED]
+Produkt jest mobile-first.
+
+DEC-DEV-001 [CONFIRMED]
+Rozwój przez atomic vertical slices.
+
+DEC-AI-001 [CONFIRMED]
+AI jest izolowane za kontraktami provider-independent.
+
+DEC-AI-002 [CONFIRMED]
+HAIA kontroluje pamięć, koszt, cache i publikację.
+
+DEC-AI-003 [CONFIRMED]
+Wynik AI wymaga lokalnej walidacji semantycznej.
+
+DEC-ID-001 [CONFIRMED]
+Jedno konto może mieć wiele metod logowania.
+
+DEC-ID-002 [CONFIRMED]
+Brak blind merge po samym podobieństwie e-maila.
+
+DEC-AGE-001 [CONFIRMED]
+Age eligibility i Age Context są oddzielone.
+
+DEC-AGE-002 [CONFIRMED]
+Wiek jest opcjonalnym weak prior, nie Humor DNA.
+
+DEC-PROF-001 [CONFIRMED]
+Zawód jest opcjonalnym weak prior.
+
+DEC-ONB-001 [CONFIRMED]
+Onboarding obejmuje około 10 adaptacyjnych kart.
+
+DEC-ONB-002 [CONFIRMED]
+Onboarding można przerwać i wznowić.
+
+DEC-DNA-001 [CONFIRMED]
+Initial Humor DNA Snapshot ma confidence.
+
+DEC-DNA-002 [CONFIRMED]
+Prior nie potwierdza DNA bez observed evidence.
+
+DEC-REA-001 [CONFIRMED]
+Reakcje są artefaktami humorystycznymi, nie enumem emocji.
+
+DEC-REA-002 [CONFIRMED]
+Preferowana pula to około 12 reakcji i około 6 widocznych.
+
+DEC-REA-003 [CONFIRMED]
+Użytkownik może wybrać wiele reakcji.
+
+DEC-REA-004 [CONFIRMED]
+Wybrana reakcja pozostaje zaznaczona; slot może odsłonić nową.
+
+DEC-REA-005 [CONFIRMED]
+Ekspozycja reakcji musi być zapisywana osobno.
+
+DEC-REA-006 [CONFIRMED]
+Klik reakcji, pokazanie puenty i feedback puenty są osobne.
+
+DEC-REA-007 [CONFIRMED]
+Reaction Rescue Rate nie może bazować wyłącznie na kliknięciu.
+
+DEC-DRY-001 [CONFIRMED]
+Sucharek posiada sześć poziomów i jest wersjonowany.
+
+DEC-DRY-002 [RECOMMENDED]
+MVP używa exclusivity, architektura dopuszcza coexistence.
+
+DEC-STU-001 [CONFIRMED]
+AI rekomenduje, człowiek aktywuje.
+
+DEC-STU-002 [CONFIRMED]
+Karty i reakcje są wersjonowane i audytowalne.
+
+DEC-LEARN-001 [CONFIRMED]
+Global Prior, Cohort Prior i Individual Profile są rozdzielone.
+
+DEC-LEARN-002 [CONFIRMED]
+Individual override ma pierwszeństwo.
+
+DEC-POWER-001 [EXPERIMENTAL]
+Power User otrzymuje kreator remiksów i usage billing.
+
+DEC-POWER-002 [EXPERIMENTAL]
+Cena około 10 PLN/miesiąc jest robocza.
+
+DEC-REMIX-001 [CONFIRMED PRINCIPLE]
+Remiks AI jest draft-first i oznaczony.
+
+DEC-REMIX-002 [CONFIRMED PRINCIPLE]
+Brak fałszywego przypisywania wypowiedzi autorom komentarzy.
+
+DEC-DB-001 [CONFIRMED]
+DDL 75 tabel jest atlasem koncepcyjnym, nie gotową migracją.
+
+DEC-DB-002 [CONFIRMED]
+Reaction identity musi zostać naprawione przed multi-reaction persistence.
+
+DEC-LEG-001 [CONFIRMED]
+Legacy jest źródłem inspiracji, nie fundamentem bezpieczeństwa.
+
+
+===============================================================================
+38. GLOSSARY
+===============================================================================
+
+Account
+Techniczna tożsamość logowania.
+
+Person
+Człowiek powiązany z kontem.
+
+Personal Profile
+Publiczna obecność osoby.
+
+Creator Profile
+Profesjonalna warstwa twórcza.
+
+Organization
+Marka, grupa, kabaret, klub lub inny podmiot działający przez ludzi.
+
+Acting Context
+Informacja, kto technicznie wykonał akcję i kogo reprezentował.
+
+Humor Context
+Kontekst pomagający zrozumieć odniesienie: wiek, zawód, świat kulturowy.
+
+Humor DNA
+Estymowany, ewoluujący profil mechanizmów humoru.
+
+Prior
+Hipoteza startowa.
+
+Observed Evidence
+Sygnał wynikający z rzeczywistej interakcji.
+
+Working Profile
+Profil roboczy w trakcie flow.
+
+Initial Humor DNA Snapshot
+Pierwszy utrwalony wynik onboardingu z confidence.
+
+Candidate
+Stabilna tożsamość treści proponowanej w onboardingu.
+
+Candidate Version
+Konkretna wersja karty.
+
+Source Material
+Materiał źródłowy.
+
+Humor Artifact
+Stabilna tożsamość utworu humorystycznego.
+
+Artifact Version
+Konkretna wersja artefaktu.
+
+Publication
+Publikacja konkretnej wersji.
+
+Remix
+Transformacja materiału źródłowego.
+
+Derived Artifact
+Nowy utwór pochodny.
+
+Reaction
+Stabilna tożsamość customowej reakcji.
+
+Reaction Version
+Konkretna wersja tekstu/emoji/puenty/metadanych reakcji.
+
+Reaction Pack
+Zestaw reakcji przypisany do treści.
+
+Reaction Pack Version
+Konkretna wersja zestawu.
+
+Reaction Exposure
+Rzeczywiste pokazanie reakcji użytkownikowi.
+
+Initial Pool
+Reakcje widoczne na początku.
+
+Hidden Pool
+Reakcje przygotowane, ale jeszcze niewidoczne.
+
+Replacement
+Reakcja odsłonięta po zwolnieniu slotu.
+
+Second Punchline
+Dopalenie humorystyczne po wyborze reakcji.
+
+Reaction Rescue
+Sytuacja, gdy reakcja/puenta poprawia odbiór słabej karty.
+
+Sucharek
+Osobna sześciopoziomowa ocena suchości.
+
+Recovery Mode
+Tryb odzyskiwania użytkownika po nietrafionych kartach.
+
+Global Prior
+Wiedza z całej populacji.
+
+Cohort Prior
+Wiedza z odpowiednio licznej grupy.
+
+Cohort Mismatch
+Sygnał, że użytkownik nie zachowuje się jak prior kohorty.
+
+Onboarding Studio
+Wewnętrzne centrum redakcji, moderacji i analityki.
+
+Power User
+Płatny użytkownik rozszerzonych narzędzi AI.
+
+Power Creator
+Power User rozwijający własną publiczność twórczą.
+
+Usage Ledger
+Niemutowalny ślad płatnych operacji.
+
+Pricing Snapshot
+Cena i warunki utrwalone w chwili wykonania operacji.
+
+Provenance
+Ślad pochodzenia materiału i transformacji.
+
+Roast Consent
+Zgoda i granice humoru skierowanego wobec osoby.
+
+Shared Humor Memory
+Dwustronna pamięć wspólnych motywów.
+
+Auto Prank
+Automatyczny żart między osobami z restrykcyjną zgodą i safety.
+
+
+===============================================================================
+39. ŹRÓDŁA I ARTEFAKTY ROBOCZE
+===============================================================================
+
+Główne dokumenty historyczne i referencyjne:
+
+- docs/HAIA_WORKING_MEMORY.md
+- raport_v1.txt
+- docs/analysis/haia-foundational-domain-clarification-v0.2.txt
+- docs/features/registration/haia-user-registration-flow-v0.1.md
+- docs/features/registration/haia-entry-and-adaptive-humor-onboarding-v0.2.md
+- docs/features/registration/haia-onboarding-population-learning-addendum-v0.1.md
+- docs/features/registration/haia-onboarding-studio-v0.1.md
+- docs/features/registration/haia-onboarding-age-context-addendum-v0.1.md
+- docs/analysis/haia-legacy-repository-audit-v0.1.md
+- docs/analysis/haia-legacy-salvage-register-v0.1.md
+- haia_ai_integration_technical_report_v0.1.txt
+- docs/database/haia-registration-onboarding-foundation-v0.1.sql
+- docs/database/haia-registration-onboarding-foundation-v0.1.md
+- docs/database/haia-registration-onboarding-repair-plan-v0.2.md
+
+Zasada:
+dokumenty powyżej zachowują wartość jako historia decyzji, analizy i dowody.
+Niniejszy plik opisuje aktualną wersję kanoniczną.
+
+
+===============================================================================
+40. PODSUMOWANIE KANONICZNE
+===============================================================================
+
+HAIA ma być platformą, w której reakcja jest kolejnym żartem, onboarding jest
+pierwszym pokazem osobowości produktu, a AI jest narzędziem kontrolowanym przez
+system i ludzi.
+
+Najbardziej charakterystyczny mechanizm bieżącej wizji:
+
+treść
+→ pula około 12 reakcji
+→ około 6 widocznych
+→ wiele wyborów
+→ druga puenta
+→ replacement
+→ Sucharek
+→ dane o ekspozycji
+→ working Humor DNA
+→ lepszy następny wybór
+→ wiedza dla kolejnych użytkowników.
+
+Najbardziej charakterystyczny mechanizm przyszłej monetyzacji:
+
+komentarze społeczności
+→ wybór przez Power Usera
+→ „Dopal z AI”
+→ kilka kreatywnych wariantów
+→ draft
+→ bezpieczny remiks
+→ publikacja z provenance
+→ społeczność wokół stylu twórcy
+→ widoczny usage i koszt.
+
+Najważniejszy mechanizm rozwoju:
+
+pełna wizja w jednym kanonicznym dokumencie
+→ krótki prompt oparty na delcie
+→ jeden atom
+→ implementacja
+→ test
+→ aktualizacja dokumentacji.
+
+Koniec dokumentu HAIA Canonical Product and Technical Specification v0.1.
