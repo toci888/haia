@@ -1,0 +1,6 @@
+@Toci.Haia.Studio.Api_HostAddress = http://localhost:5173
+
+GET {{Toci.Haia.Studio.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

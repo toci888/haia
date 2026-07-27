@@ -5,4 +5,6 @@
   <Project Path="Toci.Haia.Api.Tests/Toci.Haia.Api.Tests.csproj" />
   <Project Path="Toci.Haia.Api/Toci.Haia.Api.csproj" />
   <Project Path="Toci.Haia.Database.Persistence/Toci.Haia.Database.Persistence.csproj" />
+  <Project Path="Toci.Haia.Studio.Api.Tests/Toci.Haia.Studio.Api.Tests.csproj" />
+  <Project Path="Toci.Haia.Studio.Api/Toci.Haia.Studio.Api.csproj" />
 </Solution>
