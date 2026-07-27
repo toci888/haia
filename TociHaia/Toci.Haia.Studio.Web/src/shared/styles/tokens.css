@@ -1,0 +1,16 @@
+:root {
+    /* HAIA design tokens v0.1 */
+    --haia-gradient: linear-gradient(135deg, #6f3cff 0%, #8f44ff 45%, #24d4c8 75%, #52e8ff 100%);
+    --haia-bg: #f7f9ff;
+    --haia-surface: #ffffff;
+    --haia-text: #1d2340;
+    --haia-muted: #5e6584;
+    --haia-border: #dbe2ff;
+    --haia-error: #b42318;
+    --haia-success: #087443;
+    --haia-warning: #915f00;
+    --haia-focus: #5b5bd6;
+    --haia-shadow: 0 12px 36px rgba(73, 84, 152, 0.14);
+    --haia-radius: 16px;
+    --haia-spacing: 1rem;
+}
