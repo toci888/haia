@@ -100,7 +100,7 @@ public sealed class MemeIntakeService(
 
         await store.MarkUploadedAsync(intakeId, hash, dimensions.WidthPx, dimensions.HeightPx, cancellationToken);
 
-        return new FinalizeMemeIntakeResponse(intakeId, "uploaded", detectedType, metadata.SizeBytes, hash);
+        return new FinalizeMemeIntakeResponse(intakeId, "awaiting_review", detectedType, metadata.SizeBytes, hash);
     }
 
     public async Task<EvaluateMemeIntakeResponse> EvaluateAsync(Guid intakeId, string correlationId, CancellationToken cancellationToken)

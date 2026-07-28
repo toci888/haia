@@ -74,7 +74,7 @@ public sealed class EfMemeIntakeStore(HaiaDbContext dbContext) : IMemeIntakeStor
             CandidateVersionMediaId = Guid.NewGuid(),
             OnboardingCandidateVersionId = candidateVersionId,
             MediaAssetId = assetId,
-            MediaRole = "original",
+            MediaRole = "primary",
             DisplayOrder = 1,
             CaptionOverride = fileName,
             CreatedAt = DateTime.UtcNow,
@@ -183,7 +183,7 @@ public sealed class EfMemeIntakeStore(HaiaDbContext dbContext) : IMemeIntakeStor
         media.MediaAsset.HeightPx = heightPx;
         media.MediaAsset.UpdatedAt = DateTime.UtcNow;
 
-        candidate.CandidateStatus = "uploaded";
+        candidate.CandidateStatus = "awaiting_review";
         candidate.UpdatedAt = DateTime.UtcNow;
 
         await dbContext.SaveChangesAsync(cancellationToken);
