@@ -1,5 +1,6 @@
 namespace Toci.Haia.Studio.Api.Features.MemeIntakes;
 
+using System.Net;
 using System.Security.Cryptography;
 using Microsoft.EntityFrameworkCore;
 using Toci.Haia.Database.Persistence.Context;
@@ -22,6 +23,7 @@ public sealed class EfMemeIntakeStore(HaiaDbContext dbContext) : IMemeIntakeStor
         var assetId = Guid.NewGuid();
         var candidateKey = $"studio-meme-intake-{intakeId:N}";
         var objectKey = $"studio/onboarding-candidates/{candidateId:D}/{assetId:D}/original";
+        var candidateContentFormat = MapContentTypeToCandidateContentFormat(contentType);
 
         await using var tx = await dbContext.Database.BeginTransactionAsync(cancellationToken);
 
@@ -29,7 +31,7 @@ public sealed class EfMemeIntakeStore(HaiaDbContext dbContext) : IMemeIntakeStor
         {
             OnboardingCandidateId = candidateId,
             CandidateKey = candidateKey,
-            ContentFormat = "image",
+            ContentFormat = candidateContentFormat,
             CandidateStatus = "draft",
             CreatedByAccountId = accountId,
             CreatedAt = DateTime.UtcNow,
@@ -97,6 +99,21 @@ public sealed class EfMemeIntakeStore(HaiaDbContext dbContext) : IMemeIntakeStor
             SizeBytes: sizeBytes,
             WorkingTitle: workingTitle,
             Status: "creating_draft");
+    }
+
+    private static string MapContentTypeToCandidateContentFormat(string contentType)
+    {
+        return contentType.Trim().ToLowerInvariant() switch
+        {
+            "image/jpeg" => "image/jpeg",
+            "image/png" => "image/png",
+            "image/webp" => "image/webp",
+            _ => throw new StudioProblemDetailsException(
+                HttpStatusCode.BadRequest,
+                ErrorCodes.UnsupportedMediaType,
+                "Unsupported media type",
+                "Only image/jpeg, image/png and image/webp are supported."),
+        };
     }
 
     public async Task<MemeIntakeAggregate?> GetByIntakeIdAsync(Guid intakeId, CancellationToken cancellationToken)

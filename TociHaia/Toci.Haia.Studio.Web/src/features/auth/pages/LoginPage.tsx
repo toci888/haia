@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Navigate, useLocation } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { StudioLayout } from '../../../layout/StudioLayout'
 import { ApiError } from '../../../shared/api/apiError'
 import { useStudioAuthStatusQuery, useStudioLoginMutation } from '../api/studioAuthQueries'
@@ -27,6 +27,7 @@ export function LoginPage(): React.ReactElement {
 	const authStatusQuery = useStudioAuthStatusQuery()
 	const loginMutation = useStudioLoginMutation()
 	const location = useLocation()
+	const navigate = useNavigate()
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
 	const [submitError, setSubmitError] = useState<string | null>(null)
@@ -48,6 +49,7 @@ export function LoginPage(): React.ReactElement {
 
 		try {
 			await loginMutation.mutateAsync({ email, password })
+			navigate(redirectTo, { replace: true })
 		} catch (error) {
 			if (error instanceof ApiError) {
 				setSubmitError(readSafeAuthMessage(error))
