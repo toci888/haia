@@ -5,4 +5,6 @@ public sealed class StudioRateLimitOptions
     public const string SectionName = "RateLimiting";
     public int StudioDefaultPermitLimit { get; init; } = 60;
     public int WindowSeconds { get; init; } = 60;
+    public int StudioLoginPermitLimit { get; init; } = 10;
+    public int LoginWindowSeconds { get; init; } = 60;
 }

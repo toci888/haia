@@ -1,16 +1,18 @@
+using System.Security.Claims;
 using System.Threading.RateLimiting;
-using System.Text;
+using Microsoft.AspNetCore.Antiforgery;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.RateLimiting;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using Toci.Haia.Database.Persistence.Context;
 using Toci.Haia.Database.Persistence.DependencyInjection;
 using Toci.Haia.Studio.Api.Common.Correlation;
 using Toci.Haia.Studio.Api.Common.Errors;
+using Toci.Haia.Studio.Api.Features.Authentication;
 using Toci.Haia.Studio.Api.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
+var shouldBootstrapStudioAdmin = args.Any(arg => string.Equals(arg, "--bootstrap-studio-admin", StringComparison.OrdinalIgnoreCase));
 
 builder.Services.AddOpenApi();
 builder.Services.AddProblemDetails();
@@ -24,58 +26,91 @@ builder.Services
     .ValidateOnStart();
 
 builder.Services
-    .AddOptions<StudioAuthOptions>()
-    .Bind(builder.Configuration.GetSection(StudioAuthOptions.SectionName))
+    .AddOptions<StudioCookieAuthOptions>()
+    .Bind(builder.Configuration.GetSection(StudioCookieAuthOptions.SectionName))
     .ValidateOnStart();
 
-var studioAuth = builder.Configuration.GetSection(StudioAuthOptions.SectionName).Get<StudioAuthOptions>()
-    ?? new StudioAuthOptions();
+builder.Services
+    .AddOptions<StudioPasswordPolicyOptions>()
+    .Bind(builder.Configuration.GetSection(StudioPasswordPolicyOptions.SectionName))
+    .ValidateOnStart();
+
+var studioCookieAuth = builder.Configuration.GetSection(StudioCookieAuthOptions.SectionName).Get<StudioCookieAuthOptions>()
+    ?? new StudioCookieAuthOptions();
 
 builder.Services
-    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
+    .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
     {
-        options.RequireHttpsMetadata = true;
-
-        if (!string.IsNullOrWhiteSpace(studioAuth.Authority))
+        options.Cookie.Name = studioCookieAuth.CookieName;
+        options.Cookie.HttpOnly = true;
+        options.Cookie.Path = "/";
+        options.Cookie.SameSite = SameSiteMode.Lax;
+        options.Cookie.SecurePolicy = builder.Environment.IsDevelopment()
+            ? CookieSecurePolicy.SameAsRequest
+            : CookieSecurePolicy.Always;
+        options.SlidingExpiration = true;
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(studioCookieAuth.SessionMinutes);
+        options.Events = new CookieAuthenticationEvents
         {
-            options.Authority = studioAuth.Authority;
-            options.Audience = studioAuth.Audience;
-        }
-        else
-        {
-            var key = builder.Configuration["HAIA_STUDIO_AUTH_SIGNING_KEY"];
-            if (string.IsNullOrWhiteSpace(key))
+            OnRedirectToLogin = context =>
             {
-                key = studioAuth.SigningKey;
-            }
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                return Task.CompletedTask;
+            },
+            OnRedirectToAccessDenied = context =>
+            {
+                context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                return Task.CompletedTask;
+            },
+            OnValidatePrincipal = context =>
+            {
+                var validator = context.HttpContext.RequestServices.GetRequiredService<IStudioAuthenticationService>();
+                var accountStatus = context.Principal?.FindFirstValue("account_status");
+                var hasRequiredScope = context.Principal?.HasClaim(c => c.Type == "scope" && c.Value == "studio.api") == true;
+                var hasRequiredRole = context.Principal?.IsInRole("StudioAdmin") == true;
+                var accountIdRaw = context.Principal?.FindFirstValue(ClaimTypes.NameIdentifier);
+                var hasValidAccountId = Guid.TryParse(accountIdRaw, out var accountId);
 
-            if (string.IsNullOrWhiteSpace(key))
-            {
-                throw new InvalidOperationException("Missing configuration key: StudioAuth:SigningKey or HAIA_STUDIO_AUTH_SIGNING_KEY");
-            }
+                var stillValid = hasValidAccountId
+                    ? validator.ValidateSessionAsync(accountId, context.HttpContext.RequestAborted).GetAwaiter().GetResult()
+                    : false;
 
-            options.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuer = true,
-                ValidIssuer = studioAuth.Issuer,
-                ValidateAudience = true,
-                ValidAudience = studioAuth.Audience,
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
-                ValidateLifetime = true,
-                ClockSkew = TimeSpan.FromMinutes(1),
-            };
-        }
+                if (!string.Equals(accountStatus, "active", StringComparison.OrdinalIgnoreCase)
+                    || !hasRequiredScope
+                    || !hasRequiredRole)
+                {
+                    context.RejectPrincipal();
+                }
+
+                if (!stillValid)
+                {
+                    context.RejectPrincipal();
+                }
+
+                return Task.CompletedTask;
+            },
+        };
     });
+
+builder.Services.AddAntiforgery(options =>
+{
+    options.HeaderName = "X-CSRF-TOKEN";
+    options.Cookie.Name = "haia.studio.csrf";
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = builder.Environment.IsDevelopment()
+        ? CookieSecurePolicy.SameAsRequest
+        : CookieSecurePolicy.Always;
+    options.Cookie.SameSite = SameSiteMode.Lax;
+});
 
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("studio-access", policy =>
     {
         policy.RequireAuthenticatedUser();
-        policy.RequireRole(studioAuth.RequiredRole);
-        policy.RequireClaim("scope", studioAuth.RequiredScope);
+        policy.RequireRole("StudioAdmin");
+        policy.RequireClaim("scope", "studio.api");
     });
 });
 
@@ -90,6 +125,10 @@ if (string.IsNullOrWhiteSpace(connectionString))
 }
 
 builder.Services.AddHaiaDatabasePersistence(connectionString);
+builder.Services.AddSingleton<IStudioBootstrapConsole, StudioBootstrapConsole>();
+builder.Services.AddScoped<IStudioIdentityStore, EfStudioIdentityStore>();
+builder.Services.AddScoped<IStudioAuthenticationService, StudioAuthenticationService>();
+builder.Services.AddScoped<IStudioAdminBootstrapService, StudioAdminBootstrapService>();
 
 var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
 builder.Services.AddCors(options =>
@@ -100,7 +139,8 @@ builder.Services.AddCors(options =>
         {
             policy.WithOrigins(allowedOrigins)
                 .WithMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
-                .WithHeaders("Content-Type", "X-Correlation-ID", "Accept");
+                .WithHeaders("Content-Type", "X-Correlation-ID", "X-CSRF-TOKEN", "Accept")
+                .AllowCredentials();
         }
     });
 });
@@ -120,9 +160,28 @@ builder.Services.AddRateLimiter(options =>
                 QueueLimit = 0,
                 AutoReplenishment = true,
             }));
+
+    options.AddPolicy("studio-login", httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = limits.StudioLoginPermitLimit,
+                Window = TimeSpan.FromSeconds(limits.LoginWindowSeconds),
+                QueueLimit = 0,
+                AutoReplenishment = true,
+            }));
 });
 
 var app = builder.Build();
+
+if (shouldBootstrapStudioAdmin)
+{
+    using var scope = app.Services.CreateScope();
+    var bootstrap = scope.ServiceProvider.GetRequiredService<IStudioAdminBootstrapService>();
+    await bootstrap.ExecuteAsync(CancellationToken.None);
+    return;
+}
 
 app.UseExceptionHandler();
 app.UseMiddleware<CorrelationIdMiddleware>();

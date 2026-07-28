@@ -7,7 +7,7 @@ const baseURL = import.meta.env.VITE_STUDIO_API_BASE_URL || undefined
 export const apiClient = axios.create({
 	baseURL,
 	timeout: 15_000,
-	withCredentials: false,
+	withCredentials: true,
 	headers: {
 		Accept: 'application/json',
 	},

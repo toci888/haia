@@ -1,6 +1,6 @@
 # HAIA Studio Web
 
-Pierwsza iteracja portalu redakcyjno-administracyjnego HAIA. Aplikacja udostępnia shell Studio oraz ekran `/system` pokazujący status Studio API.
+Portal redakcyjno-administracyjny HAIA (frontend React + TypeScript + Vite) z lokalnym logowaniem administracyjnym opartym o sesję cookie HttpOnly oraz CSRF.
 
 ## Wymagania
 
@@ -43,6 +43,10 @@ Domyślny adres frontendu: `http://localhost:5173` (lub kolejny wolny port, jeś
 
 Uruchom `Toci.Haia.Studio.Api` (Development). Frontend zakłada dostępność endpointów:
 
+- `GET /api/v1/studio/auth/status`
+- `GET /api/v1/studio/auth/csrf`
+- `POST /api/v1/studio/auth/login`
+- `POST /api/v1/studio/auth/logout`
 - `GET /api/v1/system/info`
 - `GET /health/live`
 - `GET /health/ready`
@@ -52,7 +56,8 @@ Vite proxy przekazuje lokalne wywołania `/api` i `/health` do `VITE_STUDIO_API_
 ## Routy
 
 - `/` -> redirect do `/system`
-- `/system` -> ekran statusu systemu HAIA Studio
+- `/login` -> ekran logowania administratora
+- `/system` -> ekran statusu systemu HAIA Studio (wymaga aktywnej sesji)
 - `*` -> fallback „Nie znaleziono strony”
 
 ## Komendy
@@ -66,12 +71,15 @@ Vite proxy przekazuje lokalne wywołania `/api` i `/health` do `VITE_STUDIO_API_
 ## Struktura (skrót)
 
 - `src/app` – router i providery
+- `src/features/auth` – logowanie, wylogowanie, guard sesji, kontrakty auth
 - `src/layout` – shell Studio (header + main)
 - `src/features/system-status` – API, kontrakty i ekran `/system`
 - `src/shared/api` – axios client, Problem Details, ApiError
 - `src/shared/styles` – globalne style i tokeny
 - `src/test` – setup Vitest + MSW
 
-## Aktualne ograniczenie
+## Model uwierzytelniania
 
-W tej iteracji brak logowania Studio i brak obsługi JWT po stronie klienta. Integracja z dostawcą tożsamości jest kolejnym atomem.
+- brak JWT w localStorage/sessionStorage
+- sesja utrzymywana przez cookie HttpOnly po stronie backendu
+- operacje `login` i `logout` realizowane z tokenem CSRF (`X-CSRF-TOKEN`)

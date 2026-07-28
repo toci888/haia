@@ -35,6 +35,11 @@ public sealed class GlobalExceptionHandler(
 
     private static (HttpStatusCode status, string code, string title, string detail) Map(Exception exception)
     {
+        if (exception is StudioProblemDetailsException studioError)
+        {
+            return (studioError.StatusCode, studioError.Code, studioError.Title, studioError.Detail);
+        }
+
         if (exception is NpgsqlException)
         {
             return (HttpStatusCode.ServiceUnavailable, ErrorCodes.DatabaseUnavailable, "Database unavailable", "Database operation failed.");

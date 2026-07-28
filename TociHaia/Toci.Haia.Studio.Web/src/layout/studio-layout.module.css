@@ -64,6 +64,29 @@
     text-align: right;
 }
 
+.headerActions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.logoutButton {
+    border: 1px solid var(--haia-border);
+    background: #fff;
+    color: var(--haia-text);
+    font-weight: 700;
+    padding: 0.48rem 0.82rem;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.logoutButton:disabled {
+    opacity: 0.7;
+    cursor: progress;
+}
+
 .main {
     width: 100%;
     max-width: 1100px;
@@ -80,5 +103,9 @@
 
     .headerNotice {
         text-align: left;
+    }
+
+    .headerActions {
+        justify-content: flex-start;
     }
 }
