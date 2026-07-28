@@ -7,11 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AWSSDK.S3" Version="4.0.13.1" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.9" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUi" Version="10.1.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Toci.Haia.AiIntegration.Core\Toci.Haia.AiIntegration.Core.csproj" />
+    <ProjectReference Include="..\Toci.Haia.AiIntegration.OpenAI\Toci.Haia.AiIntegration.OpenAI.csproj" />
     <ProjectReference Include="..\Toci.Haia.Database.Persistence\Toci.Haia.Database.Persistence.csproj" />
   </ItemGroup>
 

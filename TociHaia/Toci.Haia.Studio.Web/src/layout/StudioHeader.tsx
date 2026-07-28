@@ -1,7 +1,7 @@
 import styles from './studio-layout.module.css'
 import { ApiError } from '../shared/api/apiError'
 import { useStudioAuthStatusQuery, useStudioLogoutMutation } from '../features/auth/api/studioAuthQueries'
-import { useNavigate } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 
 const logoHref = new URL('../../assets/logo.png', import.meta.url).href
 
@@ -27,12 +27,21 @@ export function StudioHeader(): React.ReactElement {
 	return (
 		<header className={styles.header}>
 			<div className={styles.headerInner}>
-				<div className={styles.brand}>
+				<div className={styles.brandArea}>
+					<div className={styles.brand}>
 					<img className={styles.logo} src={logoHref} alt="Logo HAIA" />
 					<div className={styles.brandText}>
 						<strong className={styles.brandTitle}>HAIA Studio</strong>
 						<span className={styles.brandSubtitle}>Portal redakcyjno-administracyjny</span>
 					</div>
+					</div>
+					{isAuthenticated ? (
+						<nav className={styles.nav} aria-label="Nawigacja Studio">
+							<NavLink to="/system" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`}>System</NavLink>
+							<NavLink to="/meme-intakes/new" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`}>Dodaj mem</NavLink>
+							<NavLink to="/meme-intakes/new" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`}>Review</NavLink>
+						</nav>
+					) : null}
 				</div>
 				<div className={styles.headerActions}>
 					{isAuthenticated ? (

@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.RateLimiting;
 using Toci.Haia.Database.Persistence.Context;
 using Toci.Haia.Database.Persistence.DependencyInjection;
+using Toci.Haia.AiIntegration.OpenAI.DependencyInjection;
 using Toci.Haia.Studio.Api.Common.Correlation;
 using Toci.Haia.Studio.Api.Common.Errors;
 using Toci.Haia.Studio.Api.Features.Authentication;
+using Toci.Haia.Studio.Api.Features.MemeIntakes;
 using Toci.Haia.Studio.Api.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -33,6 +35,16 @@ builder.Services
 builder.Services
     .AddOptions<StudioPasswordPolicyOptions>()
     .Bind(builder.Configuration.GetSection(StudioPasswordPolicyOptions.SectionName))
+    .ValidateOnStart();
+
+builder.Services
+    .AddOptions<MemeIntakeOptions>()
+    .Bind(builder.Configuration.GetSection(MemeIntakeOptions.SectionName))
+    .ValidateOnStart();
+
+builder.Services
+    .AddOptions<R2StorageOptions>()
+    .Bind(builder.Configuration.GetSection(R2StorageOptions.SectionName))
     .ValidateOnStart();
 
 var studioCookieAuth = builder.Configuration.GetSection(StudioCookieAuthOptions.SectionName).Get<StudioCookieAuthOptions>()
@@ -125,10 +137,17 @@ if (string.IsNullOrWhiteSpace(connectionString))
 }
 
 builder.Services.AddHaiaDatabasePersistence(connectionString);
+builder.Services.AddHaiaOpenAiIntegration(builder.Configuration);
 builder.Services.AddSingleton<IStudioBootstrapConsole, StudioBootstrapConsole>();
 builder.Services.AddScoped<IStudioIdentityStore, EfStudioIdentityStore>();
 builder.Services.AddScoped<IStudioAuthenticationService, StudioAuthenticationService>();
 builder.Services.AddScoped<IStudioAdminBootstrapService, StudioAdminBootstrapService>();
+builder.Services.AddScoped<IMemeIntakeStore, EfMemeIntakeStore>();
+builder.Services.AddScoped<IMediaObjectStorage, R2MediaObjectStorage>();
+builder.Services.AddScoped<IMemeEvaluationService, MemeEvaluationService>();
+builder.Services.AddScoped<IMemeIntakeService, MemeIntakeService>();
+builder.Services.AddSingleton(sp => sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<MemeIntakeOptions>>().Value);
+builder.Services.AddSingleton(sp => sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<R2StorageOptions>>().Value);
 
 var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
 builder.Services.AddCors(options =>

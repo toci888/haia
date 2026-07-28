@@ -33,6 +33,34 @@
     gap: 0.75rem;
 }
 
+.brandArea {
+    display: grid;
+    gap: 0.55rem;
+}
+
+.nav {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.navLink {
+    text-decoration: none;
+    color: var(--haia-muted);
+    border: 1px solid var(--haia-border);
+    padding: 0.3rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.86rem;
+    font-weight: 700;
+}
+
+.navLinkActive {
+    color: #fff;
+    background: var(--haia-gradient);
+    border-color: transparent;
+}
+
 .logo {
     width: 42px;
     height: 42px;
