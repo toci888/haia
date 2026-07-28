@@ -14,6 +14,8 @@ public interface IMemeIntakeStore
 
     Task<MemeIntakeAggregate?> GetByIntakeIdAsync(Guid intakeId, CancellationToken cancellationToken);
 
+    Task<bool> IsDuplicateUploadAsync(Guid intakeId, string sha256Hash, CancellationToken cancellationToken);
+
     Task MarkUploadedAsync(Guid intakeId, string sha256Hash, int? widthPx, int? heightPx, CancellationToken cancellationToken);
 
     Task SaveEvaluationAsync(

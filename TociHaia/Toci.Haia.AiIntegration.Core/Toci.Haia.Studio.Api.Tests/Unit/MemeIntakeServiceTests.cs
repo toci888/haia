@@ -54,6 +54,23 @@ public sealed class MemeIntakeServiceTests
     }
 
     [Fact]
+    public async Task FinalizeAsync_ShouldRejectDuplicateUpload()
+    {
+        var store = new FakeStore
+        {
+            Intake = new MemeIntakeAggregate(Guid.NewGuid(), "creating_draft", "meme.png", "image/png", 1024, "key", null, null, null, null),
+            IsDuplicateUpload = true,
+        };
+
+        var service = CreateService(store, new FakeStorage(), new FakeEvaluationService());
+
+        var ex = await Assert.ThrowsAsync<StudioProblemDetailsException>(() => service.FinalizeAsync(store.Intake.IntakeId, CancellationToken.None));
+
+        Assert.Equal(ErrorCodes.UploadObjectDuplicate, ex.Code);
+        Assert.False(store.MarkUploadedCalled);
+    }
+
+    [Fact]
     public async Task FinalizeAsync_ShouldBeIdempotentForUploadedStatus()
     {
         var intakeId = Guid.NewGuid();
@@ -409,6 +426,8 @@ public sealed class MemeIntakeServiceTests
 
         public bool MarkUploadedCalled { get; private set; }
 
+        public bool IsDuplicateUpload { get; set; }
+
         public bool SaveEvaluationCalled { get; private set; }
 
         public bool SaveClassificationCalled { get; private set; }
@@ -439,6 +458,11 @@ public sealed class MemeIntakeServiceTests
         public Task<MemeIntakeAggregate?> GetByIntakeIdAsync(Guid intakeId, CancellationToken cancellationToken)
         {
             return Task.FromResult<MemeIntakeAggregate?>(Intake.IntakeId == intakeId ? Intake : null);
+        }
+
+        public Task<bool> IsDuplicateUploadAsync(Guid intakeId, string sha256Hash, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(IsDuplicateUpload);
         }
 
         public Task MarkUploadedAsync(Guid intakeId, string sha256Hash, int? widthPx, int? heightPx, CancellationToken cancellationToken)

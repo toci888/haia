@@ -162,6 +162,26 @@ public sealed class EfMemeIntakeStore(HaiaDbContext dbContext) : IMemeIntakeStor
             LatestStructuredOutputJson: latestOutput?.StructuredOutput);
     }
 
+    public async Task<bool> IsDuplicateUploadAsync(Guid intakeId, string sha256Hash, CancellationToken cancellationToken)
+    {
+        var currentMediaAssetId = await dbContext.CandidateVersionMedia
+            .AsNoTracking()
+            .Where(vm => vm.OnboardingCandidateVersion.OnboardingCandidateId == intakeId)
+            .OrderByDescending(vm => vm.OnboardingCandidateVersion.VersionNo)
+            .ThenBy(vm => vm.DisplayOrder)
+            .Select(vm => vm.MediaAssetId)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (currentMediaAssetId == Guid.Empty)
+        {
+            return false;
+        }
+
+        return await dbContext.MediaAssets
+            .AsNoTracking()
+            .AnyAsync(a => a.Sha256Hash == sha256Hash && a.MediaAssetId != currentMediaAssetId, cancellationToken);
+    }
+
     public async Task MarkUploadedAsync(Guid intakeId, string sha256Hash, int? widthPx, int? heightPx, CancellationToken cancellationToken)
     {
         var candidate = await dbContext.OnboardingCandidates
@@ -183,10 +203,24 @@ public sealed class EfMemeIntakeStore(HaiaDbContext dbContext) : IMemeIntakeStor
         media.MediaAsset.HeightPx = heightPx;
         media.MediaAsset.UpdatedAt = DateTime.UtcNow;
 
-        candidate.CandidateStatus = "awaiting_review";
+        candidate.CandidateStatus = "awaiting_ai_analysis";
         candidate.UpdatedAt = DateTime.UtcNow;
 
-        await dbContext.SaveChangesAsync(cancellationToken);
+        try
+        {
+            await dbContext.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException ex) when (
+            ex.InnerException is Npgsql.PostgresException pgEx
+            && pgEx.SqlState == "23505"
+            && string.Equals(pgEx.ConstraintName, "ux_media_asset_sha256", StringComparison.Ordinal))
+        {
+            throw new StudioProblemDetailsException(
+                HttpStatusCode.Conflict,
+                ErrorCodes.UploadObjectDuplicate,
+                "Duplicate file",
+                "Uploaded file is a duplicate of an existing media asset.");
+        }
     }
 
     public async Task SaveEvaluationAsync(

@@ -12,6 +12,7 @@ public static class ErrorCodes
     public const string IntakeNotFound = "meme_intake_not_found";
     public const string UploadObjectMissing = "upload_object_missing";
     public const string UploadObjectInvalid = "upload_object_invalid";
+    public const string UploadObjectDuplicate = "upload_object_duplicate";
     public const string IntakeNotUploaded = "meme_intake_not_uploaded";
     public const string IntakeNotReadyForReview = "meme_intake_not_ready_for_review";
     public const string AiEvaluationFailed = "ai_evaluation_failed";

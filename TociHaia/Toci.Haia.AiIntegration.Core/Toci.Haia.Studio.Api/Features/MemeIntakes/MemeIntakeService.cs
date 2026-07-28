@@ -59,7 +59,7 @@ public sealed class MemeIntakeService(
             ?? throw NotFound();
 
         if (string.Equals(intake.Status, "uploaded", StringComparison.OrdinalIgnoreCase)
-            || string.Equals(intake.Status, "awaiting_review", StringComparison.OrdinalIgnoreCase))
+            || string.Equals(intake.Status, "awaiting_ai_analysis", StringComparison.OrdinalIgnoreCase))
         {
             return new FinalizeMemeIntakeResponse(intakeId, intake.Status, intake.ContentType, intake.SizeBytes, string.Empty);
         }
@@ -96,11 +96,21 @@ public sealed class MemeIntakeService(
 
         var imageBytes = await storage.ReadObjectBytesAsync(intake.ObjectKey, options.MaxFileSizeBytes, cancellationToken);
         var hash = ToSha256(imageBytes);
+        var isDuplicate = await store.IsDuplicateUploadAsync(intakeId, hash, cancellationToken);
+        if (isDuplicate)
+        {
+            throw new StudioProblemDetailsException(
+                System.Net.HttpStatusCode.Conflict,
+                ErrorCodes.UploadObjectDuplicate,
+                "Duplicate file",
+                "Uploaded file is a duplicate of an existing media asset.");
+        }
+
         var dimensions = ImageSniffer.TryReadDimensions(prefix, detectedType);
 
         await store.MarkUploadedAsync(intakeId, hash, dimensions.WidthPx, dimensions.HeightPx, cancellationToken);
 
-        return new FinalizeMemeIntakeResponse(intakeId, "awaiting_review", detectedType, metadata.SizeBytes, hash);
+        return new FinalizeMemeIntakeResponse(intakeId, "awaiting_ai_analysis", detectedType, metadata.SizeBytes, hash);
     }
 
     public async Task<EvaluateMemeIntakeResponse> EvaluateAsync(Guid intakeId, string correlationId, CancellationToken cancellationToken)
@@ -109,7 +119,7 @@ public sealed class MemeIntakeService(
             ?? throw NotFound();
 
         if (!string.Equals(intake.Status, "uploaded", StringComparison.OrdinalIgnoreCase)
-            && !string.Equals(intake.Status, "awaiting_review", StringComparison.OrdinalIgnoreCase))
+            && !string.Equals(intake.Status, "awaiting_ai_analysis", StringComparison.OrdinalIgnoreCase))
         {
             throw new StudioProblemDetailsException(
                 System.Net.HttpStatusCode.BadRequest,
