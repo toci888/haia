@@ -99,16 +99,33 @@ public sealed class MemeIntakeService(
         var isDuplicate = await store.IsDuplicateUploadAsync(intakeId, hash, cancellationToken);
         if (isDuplicate)
         {
-            throw new StudioProblemDetailsException(
-                System.Net.HttpStatusCode.Conflict,
-                ErrorCodes.UploadObjectDuplicate,
-                "Duplicate file",
-                "Uploaded file is a duplicate of an existing media asset.");
+            return new FinalizeMemeIntakeResponse(
+                intakeId,
+                "duplicate_upload",
+                detectedType,
+                metadata.SizeBytes,
+                hash,
+                IsDuplicate: true,
+                Message: "Uploaded file is a duplicate of an existing media asset.");
         }
 
         var dimensions = ImageSniffer.TryReadDimensions(prefix, detectedType);
 
-        await store.MarkUploadedAsync(intakeId, hash, dimensions.WidthPx, dimensions.HeightPx, cancellationToken);
+        try
+        {
+            await store.MarkUploadedAsync(intakeId, hash, dimensions.WidthPx, dimensions.HeightPx, cancellationToken);
+        }
+        catch (StudioProblemDetailsException ex) when (ex.Code == ErrorCodes.UploadObjectDuplicate)
+        {
+            return new FinalizeMemeIntakeResponse(
+                intakeId,
+                "duplicate_upload",
+                detectedType,
+                metadata.SizeBytes,
+                hash,
+                IsDuplicate: true,
+                Message: ex.Detail);
+        }
 
         return new FinalizeMemeIntakeResponse(intakeId, "awaiting_ai_analysis", detectedType, metadata.SizeBytes, hash);
     }

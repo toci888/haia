@@ -64,9 +64,11 @@ public sealed class MemeIntakeServiceTests
 
         var service = CreateService(store, new FakeStorage(), new FakeEvaluationService());
 
-        var ex = await Assert.ThrowsAsync<StudioProblemDetailsException>(() => service.FinalizeAsync(store.Intake.IntakeId, CancellationToken.None));
+        var response = await service.FinalizeAsync(store.Intake.IntakeId, CancellationToken.None);
 
-        Assert.Equal(ErrorCodes.UploadObjectDuplicate, ex.Code);
+        Assert.Equal("duplicate_upload", response.Status);
+        Assert.True(response.IsDuplicate);
+        Assert.Equal("Uploaded file is a duplicate of an existing media asset.", response.Message);
         Assert.False(store.MarkUploadedCalled);
     }
 

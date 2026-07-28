@@ -22,7 +22,9 @@ public sealed record FinalizeMemeIntakeResponse(
     string Status,
     string ContentType,
     long SizeBytes,
-    string Sha256Hash);
+    string Sha256Hash,
+    bool IsDuplicate = false,
+    string? Message = null);
 
 public sealed record EvaluateMemeIntakeResponse(
     Guid IntakeId,
