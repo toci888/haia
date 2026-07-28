@@ -17,6 +17,8 @@ public partial class HumorDimensionModelVersion
 
     public DateTime CreatedAt { get; set; }
 
+    public virtual ICollection<ClassificationProjectionModelVersion> ClassificationProjectionModelVersions { get; set; } = new List<ClassificationProjectionModelVersion>();
+
     public virtual ICollection<HumorDimensionModelMember> HumorDimensionModelMembers { get; set; } = new List<HumorDimensionModelMember>();
 
     public virtual ICollection<InitialHumorSnapshot> InitialHumorSnapshots { get; set; } = new List<InitialHumorSnapshot>();

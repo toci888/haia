@@ -48,9 +48,15 @@ public partial class Account
 
     public virtual ICollection<CandidateActivation> CandidateActivations { get; set; } = new List<CandidateActivation>();
 
+    public virtual ICollection<CandidateClassification> CandidateClassificationCreatedByAccounts { get; set; } = new List<CandidateClassification>();
+
+    public virtual ICollection<CandidateClassification> CandidateClassificationReviewedByAccounts { get; set; } = new List<CandidateClassification>();
+
     public virtual ICollection<CandidateFeedback> CandidateFeedbacks { get; set; } = new List<CandidateFeedback>();
 
     public virtual ICollection<CandidatePresentation> CandidatePresentations { get; set; } = new List<CandidatePresentation>();
+
+    public virtual ICollection<ClassificationModelVersion> ClassificationModelVersions { get; set; } = new List<ClassificationModelVersion>();
 
     public virtual ICollection<DrynessRating> DrynessRatings { get; set; } = new List<DrynessRating>();
 

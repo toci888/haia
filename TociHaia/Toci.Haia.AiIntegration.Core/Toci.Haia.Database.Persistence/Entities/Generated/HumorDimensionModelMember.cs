@@ -21,6 +21,10 @@ public partial class HumorDimensionModelMember
 
     public DateTime CreatedAt { get; set; }
 
+    public virtual ICollection<ClassificationMeasureProjectionRule> ClassificationMeasureProjectionRules { get; set; } = new List<ClassificationMeasureProjectionRule>();
+
+    public virtual ICollection<ClassificationValueProjectionRule> ClassificationValueProjectionRules { get; set; } = new List<ClassificationValueProjectionRule>();
+
     public virtual HumorDimensionDefinition HumorDimensionDefinition { get; set; } = null!;
 
     public virtual HumorDimensionModelVersion HumorDimensionModelVersion { get; set; } = null!;

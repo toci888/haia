@@ -50,6 +50,12 @@ public partial class HaiaDbContext : DbContext
 
     public virtual DbSet<CandidateClassification> CandidateClassifications { get; set; }
 
+    public virtual DbSet<CandidateClassificationMeasure> CandidateClassificationMeasures { get; set; }
+
+    public virtual DbSet<CandidateClassificationSensitivity> CandidateClassificationSensitivities { get; set; }
+
+    public virtual DbSet<CandidateClassificationValue> CandidateClassificationValues { get; set; }
+
     public virtual DbSet<CandidateFeedback> CandidateFeedbacks { get; set; }
 
     public virtual DbSet<CandidatePerformanceSnapshot> CandidatePerformanceSnapshots { get; set; }
@@ -57,6 +63,22 @@ public partial class HaiaDbContext : DbContext
     public virtual DbSet<CandidatePresentation> CandidatePresentations { get; set; }
 
     public virtual DbSet<CandidateVersionMedium> CandidateVersionMedia { get; set; }
+
+    public virtual DbSet<ClassificationAxis> ClassificationAxes { get; set; }
+
+    public virtual DbSet<ClassificationMeasureProjectionRule> ClassificationMeasureProjectionRules { get; set; }
+
+    public virtual DbSet<ClassificationModelAxis> ClassificationModelAxes { get; set; }
+
+    public virtual DbSet<ClassificationModelValue> ClassificationModelValues { get; set; }
+
+    public virtual DbSet<ClassificationModelVersion> ClassificationModelVersions { get; set; }
+
+    public virtual DbSet<ClassificationProjectionModelVersion> ClassificationProjectionModelVersions { get; set; }
+
+    public virtual DbSet<ClassificationValue> ClassificationValues { get; set; }
+
+    public virtual DbSet<ClassificationValueProjectionRule> ClassificationValueProjectionRules { get; set; }
 
     public virtual DbSet<CohortCandidatePerformanceSnapshot> CohortCandidatePerformanceSnapshots { get; set; }
 
@@ -171,6 +193,8 @@ public partial class HaiaDbContext : DbContext
     public virtual DbSet<SelectionDecision> SelectionDecisions { get; set; }
 
     public virtual DbSet<SelectionDecisionAlternative> SelectionDecisionAlternatives { get; set; }
+
+    public virtual DbSet<SensitivityCategory> SensitivityCategories { get; set; }
 
     public virtual DbSet<StudioComment> StudioComments { get; set; }
 
@@ -795,38 +819,253 @@ public partial class HaiaDbContext : DbContext
 
             entity.ToTable("candidate_classification", "onboarding");
 
-            entity.HasIndex(e => e.OnboardingCandidateVersionId, "candidate_classification_onboarding_candidate_version_id_key").IsUnique();
+            entity.HasIndex(e => e.AiOperationExecutionId, "ix_candidate_classification_ai_execution").HasFilter("(ai_operation_execution_id IS NOT NULL)");
+
+            entity.HasIndex(e => new { e.OnboardingCandidateVersionId, e.ClassificationStatus, e.RevisionNo }, "ix_candidate_classification_candidate_status").IsDescending(false, false, true);
+
+            entity.HasIndex(e => new { e.ClassificationModelVersionId, e.ClassificationStatus, e.CreatedAt }, "ix_candidate_classification_model_status").IsDescending(false, false, true);
+
+            entity.HasIndex(e => new { e.OnboardingCandidateVersionId, e.RevisionNo }, "ux_candidate_classification_candidate_revision").IsUnique();
+
+            entity.HasIndex(e => new { e.CandidateClassificationId, e.ClassificationModelVersionId }, "ux_candidate_classification_id_model").IsUnique();
+
+            entity.HasIndex(e => e.OnboardingCandidateVersionId, "ux_candidate_classification_one_published_per_candidate_version")
+                .IsUnique()
+                .HasFilter("(classification_status = 'published'::text)");
 
             entity.Property(e => e.CandidateClassificationId)
                 .HasDefaultValueSql("gen_random_uuid()")
                 .HasColumnName("candidate_classification_id");
             entity.Property(e => e.AdditionalTags)
+                .HasComment("Pozostaje dla rzadkich/eksperymentalnych metadanych (nie kanoniczna taksonomia).")
                 .HasColumnType("jsonb")
                 .HasColumnName("additional_tags");
             entity.Property(e => e.AgeHintStrength)
                 .HasPrecision(6, 5)
+                .HasComment("LEGACY: hint kontekstowy, nie jest observed evidence i nie powinien potwierdzać Humor DNA.")
                 .HasColumnName("age_hint_strength");
-            entity.Property(e => e.Complexity).HasColumnName("complexity");
-            entity.Property(e => e.Dryness).HasColumnName("dryness");
+            entity.Property(e => e.AiOperationExecutionId).HasColumnName("ai_operation_execution_id");
+            entity.Property(e => e.ClassificationModelVersionId).HasColumnName("classification_model_version_id");
+            entity.Property(e => e.ClassificationStatus).HasColumnName("classification_status");
+            entity.Property(e => e.Complexity)
+                .HasComment("LEGACY: zastępowane przez onboarding.candidate_classification_measure (axis=complexity).")
+                .HasColumnName("complexity");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.CreatedByAccountId).HasColumnName("created_by_account_id");
+            entity.Property(e => e.Dryness)
+                .HasComment("LEGACY/DEPRECATED: zastępowane przez predicted_dryness_scale_level_id + predicted_dryness_confidence.")
+                .HasColumnName("dryness");
+            entity.Property(e => e.EditorialNote).HasColumnName("editorial_note");
             entity.Property(e => e.FormatKey).HasColumnName("format_key");
-            entity.Property(e => e.Intensity).HasColumnName("intensity");
+            entity.Property(e => e.Intensity)
+                .HasComment("LEGACY: zastępowane przez onboarding.candidate_classification_measure (axis=intensity).")
+                .HasColumnName("intensity");
             entity.Property(e => e.OnboardingCandidateVersionId).HasColumnName("onboarding_candidate_version_id");
+            entity.Property(e => e.OverallConfidence)
+                .HasPrecision(6, 5)
+                .HasColumnName("overall_confidence");
+            entity.Property(e => e.PredictedDrynessConfidence)
+                .HasPrecision(6, 5)
+                .HasColumnName("predicted_dryness_confidence");
+            entity.Property(e => e.PredictedDrynessScaleLevelId)
+                .HasComment("Predykcja poziomu Sucharka dla materiału (nie mylić z realną oceną usera w humor.dryness_rating).")
+                .HasColumnName("predicted_dryness_scale_level_id");
             entity.Property(e => e.ProfessionHintStrength)
                 .HasPrecision(6, 5)
+                .HasComment("LEGACY: hint kontekstowy, nie jest observed evidence i nie powinien potwierdzać Humor DNA.")
                 .HasColumnName("profession_hint_strength");
+            entity.Property(e => e.PublishedAt).HasColumnName("published_at");
             entity.Property(e => e.ReactionRescuePotential)
                 .HasPrecision(6, 5)
+                .HasComment("LEGACY: zastępowane przez onboarding.candidate_classification_measure (axis=rescue_potential).")
                 .HasColumnName("reaction_rescue_potential");
+            entity.Property(e => e.ReviewedAt).HasColumnName("reviewed_at");
+            entity.Property(e => e.ReviewedByAccountId).HasColumnName("reviewed_by_account_id");
+            entity.Property(e => e.RevisionNo).HasColumnName("revision_no");
             entity.Property(e => e.SafetyFlags)
+                .HasComment("LEGACY/raw AI payload. Kanoniczny safety model jest relacyjny w candidate_classification_sensitivity.")
                 .HasColumnType("jsonb")
                 .HasColumnName("safety_flags");
+            entity.Property(e => e.SourceType).HasColumnName("source_type");
+            entity.Property(e => e.SupersededAt).HasColumnName("superseded_at");
+            entity.Property(e => e.SupersedesCandidateClassificationId).HasColumnName("supersedes_candidate_classification_id");
             entity.Property(e => e.UniversalityScore)
                 .HasPrecision(6, 5)
+                .HasComment("LEGACY: zastępowane przez onboarding.candidate_classification_measure (axis=universality).")
                 .HasColumnName("universality_score");
+
+            entity.HasOne(d => d.AiOperationExecution).WithMany(p => p.CandidateClassifications)
+                .HasForeignKey(d => d.AiOperationExecutionId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("fk_candidate_classification_ai_execution");
+
+            entity.HasOne(d => d.ClassificationModelVersion).WithMany(p => p.CandidateClassifications)
+                .HasForeignKey(d => d.ClassificationModelVersionId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("fk_candidate_classification_model_version");
+
+            entity.HasOne(d => d.CreatedByAccount).WithMany(p => p.CandidateClassificationCreatedByAccounts)
+                .HasForeignKey(d => d.CreatedByAccountId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("fk_candidate_classification_created_by");
 
             entity.HasOne(d => d.OnboardingCandidateVersion).WithOne(p => p.CandidateClassification)
                 .HasForeignKey<CandidateClassification>(d => d.OnboardingCandidateVersionId)
                 .HasConstraintName("candidate_classification_onboarding_candidate_version_id_fkey");
+
+            entity.HasOne(d => d.PredictedDrynessScaleLevel).WithMany(p => p.CandidateClassifications)
+                .HasForeignKey(d => d.PredictedDrynessScaleLevelId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("fk_candidate_classification_predicted_dryness");
+
+            entity.HasOne(d => d.ReviewedByAccount).WithMany(p => p.CandidateClassificationReviewedByAccounts)
+                .HasForeignKey(d => d.ReviewedByAccountId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("fk_candidate_classification_reviewed_by");
+
+            entity.HasOne(d => d.SupersedesCandidateClassification).WithMany(p => p.InverseSupersedesCandidateClassification)
+                .HasForeignKey(d => d.SupersedesCandidateClassificationId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("fk_candidate_classification_supersedes");
+        });
+
+        modelBuilder.Entity<CandidateClassificationMeasure>(entity =>
+        {
+            entity.HasKey(e => e.CandidateClassificationMeasureId).HasName("candidate_classification_measure_pkey");
+
+            entity.ToTable("candidate_classification_measure", "onboarding");
+
+            entity.HasIndex(e => new { e.ClassificationModelAxisId, e.NormalizedValue }, "ix_candidate_classification_measure_axis_value");
+
+            entity.HasIndex(e => new { e.CandidateClassificationId, e.ClassificationModelAxisId }, "ix_candidate_classification_measure_classification");
+
+            entity.HasIndex(e => new { e.CandidateClassificationId, e.ClassificationModelAxisId }, "uq_candidate_classification_measure_axis").IsUnique();
+
+            entity.Property(e => e.CandidateClassificationMeasureId)
+                .HasDefaultValueSql("gen_random_uuid()")
+                .HasColumnName("candidate_classification_measure_id");
+            entity.Property(e => e.CandidateClassificationId).HasColumnName("candidate_classification_id");
+            entity.Property(e => e.ClassificationModelAxisId).HasColumnName("classification_model_axis_id");
+            entity.Property(e => e.ClassificationModelVersionId).HasColumnName("classification_model_version_id");
+            entity.Property(e => e.Confidence)
+                .HasPrecision(6, 5)
+                .HasColumnName("confidence");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("now()")
+                .HasColumnName("created_at");
+            entity.Property(e => e.EditorialNote).HasColumnName("editorial_note");
+            entity.Property(e => e.MeasurementSource).HasColumnName("measurement_source");
+            entity.Property(e => e.NormalizedValue)
+                .HasPrecision(6, 5)
+                .HasColumnName("normalized_value");
+
+            entity.HasOne(d => d.CandidateClassification).WithMany(p => p.CandidateClassificationMeasures)
+                .HasPrincipalKey(p => new { p.CandidateClassificationId, p.ClassificationModelVersionId })
+                .HasForeignKey(d => new { d.CandidateClassificationId, d.ClassificationModelVersionId })
+                .HasConstraintName("fk_ccm_parent_classification_model");
+
+            entity.HasOne(d => d.ClassificationModelAxis).WithMany(p => p.CandidateClassificationMeasures)
+                .HasPrincipalKey(p => new { p.ClassificationModelAxisId, p.ClassificationModelVersionId })
+                .HasForeignKey(d => new { d.ClassificationModelAxisId, d.ClassificationModelVersionId })
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("fk_ccm_model_axis");
+        });
+
+        modelBuilder.Entity<CandidateClassificationSensitivity>(entity =>
+        {
+            entity.HasKey(e => e.CandidateClassificationSensitivityId).HasName("candidate_classification_sensitivity_pkey");
+
+            entity.ToTable("candidate_classification_sensitivity", "onboarding");
+
+            entity.HasIndex(e => new { e.CandidateClassificationId, e.SeverityLevel }, "ix_candidate_classification_sensitivity_classification").IsDescending(false, true);
+
+            entity.HasIndex(e => new { e.SeverityLevel, e.ModerationRelevance }, "ix_candidate_classification_sensitivity_moderation")
+                .IsDescending(true, false)
+                .HasFilter("(moderation_relevance = true)");
+
+            entity.HasIndex(e => new { e.CandidateClassificationId, e.SensitivityCategoryId }, "uq_candidate_classification_sensitivity").IsUnique();
+
+            entity.Property(e => e.CandidateClassificationSensitivityId)
+                .HasDefaultValueSql("gen_random_uuid()")
+                .HasColumnName("candidate_classification_sensitivity_id");
+            entity.Property(e => e.AssignmentSource).HasColumnName("assignment_source");
+            entity.Property(e => e.CandidateClassificationId).HasColumnName("candidate_classification_id");
+            entity.Property(e => e.Confidence)
+                .HasPrecision(6, 5)
+                .HasColumnName("confidence");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("now()")
+                .HasColumnName("created_at");
+            entity.Property(e => e.EditorialNote).HasColumnName("editorial_note");
+            entity.Property(e => e.ModerationRelevance)
+                .HasDefaultValue(true)
+                .HasColumnName("moderation_relevance");
+            entity.Property(e => e.SensitivityCategoryId).HasColumnName("sensitivity_category_id");
+            entity.Property(e => e.SeverityLevel).HasColumnName("severity_level");
+
+            entity.HasOne(d => d.CandidateClassification).WithMany(p => p.CandidateClassificationSensitivities)
+                .HasForeignKey(d => d.CandidateClassificationId)
+                .HasConstraintName("candidate_classification_sensi_candidate_classification_id_fkey");
+
+            entity.HasOne(d => d.SensitivityCategory).WithMany(p => p.CandidateClassificationSensitivities)
+                .HasForeignKey(d => d.SensitivityCategoryId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("candidate_classification_sensitivi_sensitivity_category_id_fkey");
+        });
+
+        modelBuilder.Entity<CandidateClassificationValue>(entity =>
+        {
+            entity.HasKey(e => e.CandidateClassificationValueId).HasName("candidate_classification_value_pkey");
+
+            entity.ToTable("candidate_classification_value", "onboarding");
+
+            entity.HasIndex(e => new { e.CandidateClassificationId, e.ClassificationModelAxisId, e.RelevanceScore }, "ix_candidate_classification_value_classification").IsDescending(false, false, true);
+
+            entity.HasIndex(e => new { e.ClassificationModelValueId, e.RelevanceScore, e.Confidence }, "ix_candidate_classification_value_model_value").IsDescending(false, true, true);
+
+            entity.HasIndex(e => new { e.CandidateClassificationId, e.ClassificationModelValueId }, "uq_candidate_classification_value_value").IsUnique();
+
+            entity.HasIndex(e => new { e.CandidateClassificationId, e.ClassificationModelAxisId }, "ux_candidate_classification_value_primary_per_axis")
+                .IsUnique()
+                .HasFilter("(is_primary = true)");
+
+            entity.Property(e => e.CandidateClassificationValueId)
+                .HasDefaultValueSql("gen_random_uuid()")
+                .HasColumnName("candidate_classification_value_id");
+            entity.Property(e => e.AssignmentSource).HasColumnName("assignment_source");
+            entity.Property(e => e.CandidateClassificationId).HasColumnName("candidate_classification_id");
+            entity.Property(e => e.ClassificationModelAxisId).HasColumnName("classification_model_axis_id");
+            entity.Property(e => e.ClassificationModelValueId).HasColumnName("classification_model_value_id");
+            entity.Property(e => e.ClassificationModelVersionId).HasColumnName("classification_model_version_id");
+            entity.Property(e => e.Confidence)
+                .HasPrecision(6, 5)
+                .HasColumnName("confidence");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("now()")
+                .HasColumnName("created_at");
+            entity.Property(e => e.EditorialNote).HasColumnName("editorial_note");
+            entity.Property(e => e.IsPrimary).HasColumnName("is_primary");
+            entity.Property(e => e.RankNo).HasColumnName("rank_no");
+            entity.Property(e => e.RelevanceScore)
+                .HasPrecision(6, 5)
+                .HasColumnName("relevance_score");
+
+            entity.HasOne(d => d.CandidateClassification).WithMany(p => p.CandidateClassificationValues)
+                .HasPrincipalKey(p => new { p.CandidateClassificationId, p.ClassificationModelVersionId })
+                .HasForeignKey(d => new { d.CandidateClassificationId, d.ClassificationModelVersionId })
+                .HasConstraintName("fk_ccv_parent_classification_model");
+
+            entity.HasOne(d => d.ClassificationModelAxis).WithMany(p => p.CandidateClassificationValues)
+                .HasPrincipalKey(p => new { p.ClassificationModelAxisId, p.ClassificationModelVersionId })
+                .HasForeignKey(d => new { d.ClassificationModelAxisId, d.ClassificationModelVersionId })
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("fk_ccv_model_axis");
+
+            entity.HasOne(d => d.ClassificationModelValue).WithMany(p => p.CandidateClassificationValues)
+                .HasPrincipalKey(p => new { p.ClassificationModelValueId, p.ClassificationModelVersionId, p.ClassificationModelAxisId })
+                .HasForeignKey(d => new { d.ClassificationModelValueId, d.ClassificationModelVersionId, d.ClassificationModelAxisId })
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("fk_ccv_model_value");
         });
 
         modelBuilder.Entity<CandidateFeedback>(entity =>
@@ -1033,6 +1272,393 @@ public partial class HaiaDbContext : DbContext
             entity.HasOne(d => d.OnboardingCandidateVersion).WithMany(p => p.CandidateVersionMedia)
                 .HasForeignKey(d => d.OnboardingCandidateVersionId)
                 .HasConstraintName("candidate_version_media_onboarding_candidate_version_id_fkey");
+        });
+
+        modelBuilder.Entity<ClassificationAxis>(entity =>
+        {
+            entity.HasKey(e => e.ClassificationAxisId).HasName("classification_axis_pkey");
+
+            entity.ToTable("classification_axis", "humor", tb => tb.HasComment("Słownik osi klasyfikacji humoru dla materiału (meme/joke)."));
+
+            entity.HasIndex(e => e.AxisKey, "ix_classification_axis_key_active").HasFilter("(is_active = true)");
+
+            entity.HasIndex(e => e.AxisKey, "uq_classification_axis_axis_key").IsUnique();
+
+            entity.Property(e => e.ClassificationAxisId)
+                .HasDefaultValueSql("gen_random_uuid()")
+                .HasColumnName("classification_axis_id");
+            entity.Property(e => e.AxisKey)
+                .HasComment("Stabilny klucz techniczny osi (EN), używany w integracjach i seedach.")
+                .HasColumnName("axis_key");
+            entity.Property(e => e.AxisRole)
+                .HasComment("Rola osi w modelu: affinity/context/routing/gating/analytics.")
+                .HasColumnName("axis_role");
+            entity.Property(e => e.AxisType)
+                .HasComment("Typ sygnału osi: categorical/ordinal/scalar.")
+                .HasColumnName("axis_type");
+            entity.Property(e => e.Cardinality)
+                .HasComment("Dopuszczalna liczba przypisań: single lub multi.")
+                .HasColumnName("cardinality");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("now()")
+                .HasColumnName("created_at");
+            entity.Property(e => e.Description).HasColumnName("description");
+            entity.Property(e => e.DisplayName)
+                .HasComment("Nazwa prezentacyjna osi (PL).")
+                .HasColumnName("display_name");
+            entity.Property(e => e.IsActive)
+                .HasDefaultValue(true)
+                .HasColumnName("is_active");
+            entity.Property(e => e.SortOrder)
+                .HasDefaultValue(100)
+                .HasColumnName("sort_order");
+            entity.Property(e => e.UpdatedAt)
+                .HasDefaultValueSql("now()")
+                .HasColumnName("updated_at");
+        });
+
+        modelBuilder.Entity<ClassificationMeasureProjectionRule>(entity =>
+        {
+            entity.HasKey(e => e.ClassificationMeasureProjectionRuleId).HasName("classification_measure_projection_rule_pkey");
+
+            entity.ToTable("classification_measure_projection_rule", "humor");
+
+            entity.HasIndex(e => new { e.ClassificationProjectionModelVersionId, e.IsEnabled }, "ix_classification_measure_projection_enabled").HasFilter("(is_enabled = true)");
+
+            entity.HasIndex(e => new { e.ClassificationModelAxisId, e.IsEnabled }, "ix_projection_rule_measure_lookup").HasFilter("(is_enabled = true)");
+
+            entity.HasIndex(e => new { e.ClassificationProjectionModelVersionId, e.ClassificationModelAxisId, e.HumorDimensionModelMemberId }, "uq_classification_measure_projection_rule").IsUnique();
+
+            entity.Property(e => e.ClassificationMeasureProjectionRuleId)
+                .HasDefaultValueSql("gen_random_uuid()")
+                .HasColumnName("classification_measure_projection_rule_id");
+            entity.Property(e => e.CenterValue)
+                .HasPrecision(6, 5)
+                .HasColumnName("center_value");
+            entity.Property(e => e.ClassificationModelAxisId).HasColumnName("classification_model_axis_id");
+            entity.Property(e => e.ClassificationModelVersionId).HasColumnName("classification_model_version_id");
+            entity.Property(e => e.ClassificationProjectionModelVersionId).HasColumnName("classification_projection_model_version_id");
+            entity.Property(e => e.Confidence)
+                .HasPrecision(6, 5)
+                .HasColumnName("confidence");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("now()")
+                .HasColumnName("created_at");
+            entity.Property(e => e.EffectWeight)
+                .HasPrecision(7, 6)
+                .HasColumnName("effect_weight");
+            entity.Property(e => e.HumorDimensionModelMemberId).HasColumnName("humor_dimension_model_member_id");
+            entity.Property(e => e.HumorDimensionModelVersionId).HasColumnName("humor_dimension_model_version_id");
+            entity.Property(e => e.IsEnabled)
+                .HasDefaultValue(true)
+                .HasColumnName("is_enabled");
+            entity.Property(e => e.MappingMode).HasColumnName("mapping_mode");
+
+            entity.HasOne(d => d.ClassificationModelAxis).WithMany(p => p.ClassificationMeasureProjectionRules)
+                .HasPrincipalKey(p => new { p.ClassificationModelAxisId, p.ClassificationModelVersionId })
+                .HasForeignKey(d => new { d.ClassificationModelAxisId, d.ClassificationModelVersionId })
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("fk_classification_measure_projection_model_axis");
+
+            entity.HasOne(d => d.HumorDimensionModelMember).WithMany(p => p.ClassificationMeasureProjectionRules)
+                .HasPrincipalKey(p => new { p.HumorDimensionModelMemberId, p.HumorDimensionModelVersionId })
+                .HasForeignKey(d => new { d.HumorDimensionModelMemberId, d.HumorDimensionModelVersionId })
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("fk_classification_measure_projection_dimension_member");
+
+            entity.HasOne(d => d.ClassificationProjectionModelVersion).WithMany(p => p.ClassificationMeasureProjectionRules)
+                .HasPrincipalKey(p => new { p.ClassificationProjectionModelVersionId, p.ClassificationModelVersionId, p.HumorDimensionModelVersionId })
+                .HasForeignKey(d => new { d.ClassificationProjectionModelVersionId, d.ClassificationModelVersionId, d.HumorDimensionModelVersionId })
+                .HasConstraintName("fk_classification_measure_projection_model_triplet");
+        });
+
+        modelBuilder.Entity<ClassificationModelAxis>(entity =>
+        {
+            entity.HasKey(e => e.ClassificationModelAxisId).HasName("classification_model_axis_pkey");
+
+            entity.ToTable("classification_model_axis", "humor", tb => tb.HasComment("Członkostwo osi w konkretnej wersji modelu wraz z wagą osi."));
+
+            entity.HasIndex(e => new { e.ClassificationModelVersionId, e.MemberStatus, e.ClassificationAxisId }, "ix_classification_model_axis_model");
+
+            entity.HasIndex(e => new { e.ClassificationModelVersionId, e.ClassificationAxisId }, "uq_classification_model_axis").IsUnique();
+
+            entity.HasIndex(e => new { e.ClassificationModelAxisId, e.ClassificationModelVersionId }, "uq_classification_model_axis_id_model").IsUnique();
+
+            entity.HasIndex(e => new { e.ClassificationModelAxisId, e.ClassificationModelVersionId, e.ClassificationAxisId }, "uq_classification_model_axis_triplet").IsUnique();
+
+            entity.Property(e => e.ClassificationModelAxisId)
+                .HasDefaultValueSql("gen_random_uuid()")
+                .HasColumnName("classification_model_axis_id");
+            entity.Property(e => e.AxisWeight)
+                .HasPrecision(8, 6)
+                .HasDefaultValue(1.0m)
+                .HasComment("Waga osi na poziomie wersji modelu (globalna ważność sygnału).")
+                .HasColumnName("axis_weight");
+            entity.Property(e => e.ClassificationAxisId).HasColumnName("classification_axis_id");
+            entity.Property(e => e.ClassificationModelVersionId).HasColumnName("classification_model_version_id");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("now()")
+                .HasColumnName("created_at");
+            entity.Property(e => e.IsRequired).HasColumnName("is_required");
+            entity.Property(e => e.MaximumAssignments).HasColumnName("maximum_assignments");
+            entity.Property(e => e.MemberStatus)
+                .HasDefaultValueSql("'active'::text")
+                .HasColumnName("member_status");
+            entity.Property(e => e.MinimumAssignments).HasColumnName("minimum_assignments");
+            entity.Property(e => e.NormalizationMethod)
+                .HasDefaultValueSql("'none'::text")
+                .HasComment("Metoda normalizacji agregacji przypisań osi.")
+                .HasColumnName("normalization_method");
+
+            entity.HasOne(d => d.ClassificationAxis).WithMany(p => p.ClassificationModelAxes)
+                .HasForeignKey(d => d.ClassificationAxisId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("classification_model_axis_classification_axis_id_fkey");
+
+            entity.HasOne(d => d.ClassificationModelVersion).WithMany(p => p.ClassificationModelAxes)
+                .HasForeignKey(d => d.ClassificationModelVersionId)
+                .HasConstraintName("classification_model_axis_classification_model_version_id_fkey");
+        });
+
+        modelBuilder.Entity<ClassificationModelValue>(entity =>
+        {
+            entity.HasKey(e => e.ClassificationModelValueId).HasName("classification_model_value_pkey");
+
+            entity.ToTable("classification_model_value", "humor", tb => tb.HasComment("Aktywacja wartości słownikowej w wersji modelu wraz z wagą domyślną wartości."));
+
+            entity.HasIndex(e => new { e.ClassificationModelValueId, e.ClassificationModelVersionId }, "ix_classification_model_value_lookup");
+
+            entity.HasIndex(e => new { e.ClassificationModelVersionId, e.ClassificationModelAxisId }, "ix_classification_model_value_model_axis").HasFilter("(is_enabled = true)");
+
+            entity.HasIndex(e => new { e.ClassificationModelValueId, e.ClassificationModelVersionId }, "uq_classification_model_value_id_model").IsUnique();
+
+            entity.HasIndex(e => new { e.ClassificationModelValueId, e.ClassificationModelVersionId, e.ClassificationModelAxisId }, "uq_classification_model_value_id_model_axis").IsUnique();
+
+            entity.HasIndex(e => new { e.ClassificationModelVersionId, e.ClassificationValueId }, "uq_classification_model_value_model_value").IsUnique();
+
+            entity.Property(e => e.ClassificationModelValueId)
+                .HasDefaultValueSql("gen_random_uuid()")
+                .HasColumnName("classification_model_value_id");
+            entity.Property(e => e.ClassificationAxisId).HasColumnName("classification_axis_id");
+            entity.Property(e => e.ClassificationModelAxisId).HasColumnName("classification_model_axis_id");
+            entity.Property(e => e.ClassificationModelVersionId).HasColumnName("classification_model_version_id");
+            entity.Property(e => e.ClassificationValueId).HasColumnName("classification_value_id");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("now()")
+                .HasColumnName("created_at");
+            entity.Property(e => e.DefaultWeight)
+                .HasPrecision(8, 6)
+                .HasDefaultValue(1.0m)
+                .HasComment("Domyślna waga wartości (odrębna od wagi osi, relevance i confidence).")
+                .HasColumnName("default_weight");
+            entity.Property(e => e.IsEnabled)
+                .HasDefaultValue(true)
+                .HasColumnName("is_enabled");
+
+            entity.HasOne(d => d.ClassificationValue).WithMany(p => p.ClassificationModelValues)
+                .HasPrincipalKey(p => new { p.ClassificationValueId, p.ClassificationAxisId })
+                .HasForeignKey(d => new { d.ClassificationValueId, d.ClassificationAxisId })
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("fk_classification_model_value_axis_value");
+
+            entity.HasOne(d => d.ClassificationModelAxis).WithMany(p => p.ClassificationModelValues)
+                .HasPrincipalKey(p => new { p.ClassificationModelAxisId, p.ClassificationModelVersionId, p.ClassificationAxisId })
+                .HasForeignKey(d => new { d.ClassificationModelAxisId, d.ClassificationModelVersionId, d.ClassificationAxisId })
+                .HasConstraintName("fk_classification_model_value_model_axis_triplet");
+        });
+
+        modelBuilder.Entity<ClassificationModelVersion>(entity =>
+        {
+            entity.HasKey(e => e.ClassificationModelVersionId).HasName("classification_model_version_pkey");
+
+            entity.ToTable("classification_model_version", "humor", tb => tb.HasComment("Wersjonowany model klasyfikacji humoru materiału."));
+
+            entity.HasIndex(e => new { e.ModelKey, e.Status, e.VersionNo }, "ix_classification_model_key_status").IsDescending(false, false, true);
+
+            entity.HasIndex(e => new { e.ModelKey, e.VersionNo }, "uq_classification_model_key_version").IsUnique();
+
+            entity.HasIndex(e => e.ModelKey, "ux_classification_model_one_active_per_key")
+                .IsUnique()
+                .HasFilter("(status = 'active'::text)");
+
+            entity.Property(e => e.ClassificationModelVersionId)
+                .HasDefaultValueSql("gen_random_uuid()")
+                .HasColumnName("classification_model_version_id");
+            entity.Property(e => e.ActivatedAt).HasColumnName("activated_at");
+            entity.Property(e => e.Config)
+                .HasDefaultValueSql("'{}'::jsonb")
+                .HasComment("Konfiguracja niestabilna/eksperymentalna modelu (JSONB).")
+                .HasColumnType("jsonb")
+                .HasColumnName("config");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("now()")
+                .HasColumnName("created_at");
+            entity.Property(e => e.CreatedByAccountId).HasColumnName("created_by_account_id");
+            entity.Property(e => e.Description).HasColumnName("description");
+            entity.Property(e => e.ModelKey).HasColumnName("model_key");
+            entity.Property(e => e.RetiredAt).HasColumnName("retired_at");
+            entity.Property(e => e.Status).HasColumnName("status");
+            entity.Property(e => e.VersionLabel).HasColumnName("version_label");
+            entity.Property(e => e.VersionNo).HasColumnName("version_no");
+
+            entity.HasOne(d => d.CreatedByAccount).WithMany(p => p.ClassificationModelVersions)
+                .HasForeignKey(d => d.CreatedByAccountId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("classification_model_version_created_by_account_id_fkey");
+        });
+
+        modelBuilder.Entity<ClassificationProjectionModelVersion>(entity =>
+        {
+            entity.HasKey(e => e.ClassificationProjectionModelVersionId).HasName("classification_projection_model_version_pkey");
+
+            entity.ToTable("classification_projection_model_version", "humor");
+
+            entity.HasIndex(e => new { e.ProjectionModelKey, e.Status, e.VersionNo }, "ix_classification_projection_lookup").IsDescending(false, false, true);
+
+            entity.HasIndex(e => new { e.ProjectionModelKey, e.VersionNo }, "uq_classification_projection_model_key_version").IsUnique();
+
+            entity.HasIndex(e => new { e.ClassificationProjectionModelVersionId, e.ClassificationModelVersionId, e.HumorDimensionModelVersionId }, "uq_classification_projection_model_version_triplet").IsUnique();
+
+            entity.HasIndex(e => e.ProjectionModelKey, "ux_classification_projection_one_active_per_key")
+                .IsUnique()
+                .HasFilter("(status = 'active'::text)");
+
+            entity.Property(e => e.ClassificationProjectionModelVersionId)
+                .HasDefaultValueSql("gen_random_uuid()")
+                .HasColumnName("classification_projection_model_version_id");
+            entity.Property(e => e.ActivatedAt).HasColumnName("activated_at");
+            entity.Property(e => e.ClassificationModelVersionId).HasColumnName("classification_model_version_id");
+            entity.Property(e => e.Config)
+                .HasDefaultValueSql("'{}'::jsonb")
+                .HasColumnType("jsonb")
+                .HasColumnName("config");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("now()")
+                .HasColumnName("created_at");
+            entity.Property(e => e.Description).HasColumnName("description");
+            entity.Property(e => e.HumorDimensionModelVersionId).HasColumnName("humor_dimension_model_version_id");
+            entity.Property(e => e.ProjectionModelKey).HasColumnName("projection_model_key");
+            entity.Property(e => e.RetiredAt).HasColumnName("retired_at");
+            entity.Property(e => e.Status).HasColumnName("status");
+            entity.Property(e => e.VersionNo).HasColumnName("version_no");
+
+            entity.HasOne(d => d.ClassificationModelVersion).WithMany(p => p.ClassificationProjectionModelVersions)
+                .HasForeignKey(d => d.ClassificationModelVersionId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("classification_projection_mod_classification_model_version_fkey");
+
+            entity.HasOne(d => d.HumorDimensionModelVersion).WithMany(p => p.ClassificationProjectionModelVersions)
+                .HasForeignKey(d => d.HumorDimensionModelVersionId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("classification_projection_mod_humor_dimension_model_versio_fkey");
+        });
+
+        modelBuilder.Entity<ClassificationValue>(entity =>
+        {
+            entity.HasKey(e => e.ClassificationValueId).HasName("classification_value_pkey");
+
+            entity.ToTable("classification_value", "humor", tb => tb.HasComment("Słownik wartości dla osi klasyfikacji humoru."));
+
+            entity.HasIndex(e => new { e.ClassificationAxisId, e.SortOrder, e.ValueKey }, "ix_classification_value_axis_sort").HasFilter("(is_active = true)");
+
+            entity.HasIndex(e => e.ValueKey, "ix_classification_value_key");
+
+            entity.HasIndex(e => new { e.ClassificationAxisId, e.ValueKey }, "uq_classification_value_axis_value_key").IsUnique();
+
+            entity.HasIndex(e => new { e.ClassificationValueId, e.ClassificationAxisId }, "uq_classification_value_id_axis").IsUnique();
+
+            entity.Property(e => e.ClassificationValueId)
+                .HasDefaultValueSql("gen_random_uuid()")
+                .HasColumnName("classification_value_id");
+            entity.Property(e => e.AiDescription)
+                .HasComment("Krótka wskazówka semantyczna dla pipeline AI.")
+                .HasColumnName("ai_description");
+            entity.Property(e => e.ClassificationAxisId).HasColumnName("classification_axis_id");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("now()")
+                .HasColumnName("created_at");
+            entity.Property(e => e.Description).HasColumnName("description");
+            entity.Property(e => e.DisplayName).HasColumnName("display_name");
+            entity.Property(e => e.EditorialGuidance)
+                .HasComment("Krótka wskazówka redakcyjna do review klasyfikacji.")
+                .HasColumnName("editorial_guidance");
+            entity.Property(e => e.IsActive)
+                .HasDefaultValue(true)
+                .HasColumnName("is_active");
+            entity.Property(e => e.ParentClassificationValueId)
+                .HasComment("Opcjonalna hierarchia wartości (parent-child).")
+                .HasColumnName("parent_classification_value_id");
+            entity.Property(e => e.SortOrder)
+                .HasDefaultValue(100)
+                .HasColumnName("sort_order");
+            entity.Property(e => e.UpdatedAt)
+                .HasDefaultValueSql("now()")
+                .HasColumnName("updated_at");
+            entity.Property(e => e.ValueKey)
+                .HasComment("Stabilny klucz techniczny wartości (EN).")
+                .HasColumnName("value_key");
+
+            entity.HasOne(d => d.ClassificationAxis).WithMany(p => p.ClassificationValues)
+                .HasForeignKey(d => d.ClassificationAxisId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("classification_value_classification_axis_id_fkey");
+
+            entity.HasOne(d => d.ClassificationValueNavigation).WithMany(p => p.InverseClassificationValueNavigation)
+                .HasPrincipalKey(p => new { p.ClassificationValueId, p.ClassificationAxisId })
+                .HasForeignKey(d => new { d.ParentClassificationValueId, d.ClassificationAxisId })
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("fk_classification_value_parent_same_axis");
+        });
+
+        modelBuilder.Entity<ClassificationValueProjectionRule>(entity =>
+        {
+            entity.HasKey(e => e.ClassificationValueProjectionRuleId).HasName("classification_value_projection_rule_pkey");
+
+            entity.ToTable("classification_value_projection_rule", "humor");
+
+            entity.HasIndex(e => new { e.ClassificationProjectionModelVersionId, e.IsEnabled }, "ix_classification_value_projection_enabled").HasFilter("(is_enabled = true)");
+
+            entity.HasIndex(e => new { e.ClassificationModelValueId, e.IsEnabled }, "ix_projection_rule_value_lookup").HasFilter("(is_enabled = true)");
+
+            entity.HasIndex(e => new { e.ClassificationProjectionModelVersionId, e.ClassificationModelValueId, e.HumorDimensionModelMemberId }, "uq_classification_value_projection_rule").IsUnique();
+
+            entity.Property(e => e.ClassificationValueProjectionRuleId)
+                .HasDefaultValueSql("gen_random_uuid()")
+                .HasColumnName("classification_value_projection_rule_id");
+            entity.Property(e => e.ClassificationModelValueId).HasColumnName("classification_model_value_id");
+            entity.Property(e => e.ClassificationModelVersionId).HasColumnName("classification_model_version_id");
+            entity.Property(e => e.ClassificationProjectionModelVersionId).HasColumnName("classification_projection_model_version_id");
+            entity.Property(e => e.Confidence)
+                .HasPrecision(6, 5)
+                .HasColumnName("confidence");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("now()")
+                .HasColumnName("created_at");
+            entity.Property(e => e.EffectWeight)
+                .HasPrecision(7, 6)
+                .HasColumnName("effect_weight");
+            entity.Property(e => e.HumorDimensionModelMemberId).HasColumnName("humor_dimension_model_member_id");
+            entity.Property(e => e.HumorDimensionModelVersionId).HasColumnName("humor_dimension_model_version_id");
+            entity.Property(e => e.IsEnabled)
+                .HasDefaultValue(true)
+                .HasColumnName("is_enabled");
+
+            entity.HasOne(d => d.ClassificationModelValue).WithMany(p => p.ClassificationValueProjectionRules)
+                .HasPrincipalKey(p => new { p.ClassificationModelValueId, p.ClassificationModelVersionId })
+                .HasForeignKey(d => new { d.ClassificationModelValueId, d.ClassificationModelVersionId })
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("fk_classification_value_projection_model_value");
+
+            entity.HasOne(d => d.HumorDimensionModelMember).WithMany(p => p.ClassificationValueProjectionRules)
+                .HasPrincipalKey(p => new { p.HumorDimensionModelMemberId, p.HumorDimensionModelVersionId })
+                .HasForeignKey(d => new { d.HumorDimensionModelMemberId, d.HumorDimensionModelVersionId })
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("fk_classification_value_projection_dimension_member");
+
+            entity.HasOne(d => d.ClassificationProjectionModelVersion).WithMany(p => p.ClassificationValueProjectionRules)
+                .HasPrincipalKey(p => new { p.ClassificationProjectionModelVersionId, p.ClassificationModelVersionId, p.HumorDimensionModelVersionId })
+                .HasForeignKey(d => new { d.ClassificationProjectionModelVersionId, d.ClassificationModelVersionId, d.HumorDimensionModelVersionId })
+                .HasConstraintName("fk_classification_value_projection_model_triplet");
         });
 
         modelBuilder.Entity<CohortCandidatePerformanceSnapshot>(entity =>
@@ -3076,6 +3702,35 @@ public partial class HaiaDbContext : DbContext
             entity.HasOne(d => d.SelectionDecision).WithMany(p => p.SelectionDecisionAlternatives)
                 .HasForeignKey(d => d.SelectionDecisionId)
                 .HasConstraintName("selection_decision_alternative_selection_decision_id_fkey");
+        });
+
+        modelBuilder.Entity<SensitivityCategory>(entity =>
+        {
+            entity.HasKey(e => e.SensitivityCategoryId).HasName("sensitivity_category_pkey");
+
+            entity.ToTable("sensitivity_category", "humor", tb => tb.HasComment("Słownik kategorii wrażliwości/safety dla materiału."));
+
+            entity.HasIndex(e => e.CategoryKey, "ix_sensitivity_category_active").HasFilter("(is_active = true)");
+
+            entity.HasIndex(e => e.CategoryKey, "sensitivity_category_category_key_key").IsUnique();
+
+            entity.Property(e => e.SensitivityCategoryId)
+                .HasDefaultValueSql("gen_random_uuid()")
+                .HasColumnName("sensitivity_category_id");
+            entity.Property(e => e.CategoryKey)
+                .HasComment("Stabilny klucz kategorii safety (EN).")
+                .HasColumnName("category_key");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("now()")
+                .HasColumnName("created_at");
+            entity.Property(e => e.Description).HasColumnName("description");
+            entity.Property(e => e.DisplayName).HasColumnName("display_name");
+            entity.Property(e => e.IsActive)
+                .HasDefaultValue(true)
+                .HasColumnName("is_active");
+            entity.Property(e => e.SortOrder)
+                .HasDefaultValue(100)
+                .HasColumnName("sort_order");
         });
 
         modelBuilder.Entity<StudioComment>(entity =>

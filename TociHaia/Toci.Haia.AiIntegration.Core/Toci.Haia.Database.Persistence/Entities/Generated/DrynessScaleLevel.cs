@@ -15,6 +15,8 @@ public partial class DrynessScaleLevel
 
     public DateTime CreatedAt { get; set; }
 
+    public virtual ICollection<CandidateClassification> CandidateClassifications { get; set; } = new List<CandidateClassification>();
+
     public virtual ICollection<DrynessRating> DrynessRatings { get; set; } = new List<DrynessRating>();
 
     public virtual DrynessScaleVersion DrynessScaleVersion { get; set; } = null!;

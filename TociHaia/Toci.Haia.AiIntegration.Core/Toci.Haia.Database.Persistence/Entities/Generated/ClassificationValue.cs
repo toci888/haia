@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Toci.Haia.Database.Persistence.Entities.Generated;
+namespace Toci.Haia.Database.Persistence.Entities;
 
 /// <summary>
 /// Słownik wartości dla osi klasyfikacji humoru.

@@ -49,6 +49,8 @@ public partial class AiOperationExecution
 
     public virtual AiPromptTemplateVersion? AiPromptTemplateVersion { get; set; }
 
+    public virtual ICollection<CandidateClassification> CandidateClassifications { get; set; } = new List<CandidateClassification>();
+
     public virtual ICollection<HumorVerdict> HumorVerdicts { get; set; } = new List<HumorVerdict>();
 
     public virtual ICollection<MemeCalibrationVariant> MemeCalibrationVariants { get; set; } = new List<MemeCalibrationVariant>();

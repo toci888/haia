@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Toci.Haia.Database.Persistence.Entities.Generated;
+namespace Toci.Haia.Database.Persistence.Entities;
 
 /// <summary>
 /// Aktywacja wartości słownikowej w wersji modelu wraz z wagą domyślną wartości.
