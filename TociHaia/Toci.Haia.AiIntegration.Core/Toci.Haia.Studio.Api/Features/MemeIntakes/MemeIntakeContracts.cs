@@ -57,7 +57,13 @@ public sealed record GetMemeIntakeResponse(
     string Status,
     MemeAssetDto Asset,
     MemeEvaluationResultDto? Evaluation,
-    string? WorkingTitle);
+    string? WorkingTitle,
+    string? EvaluationStatus = null,
+    string? LastExecutionStatus = null,
+    bool RetryAllowed = false,
+    string? LastFailureSummary = null,
+    string? CorrelationId = null,
+    DateTimeOffset? LastAttemptAtUtc = null);
 
 public sealed record MemeAssetDto(
     string FileName,

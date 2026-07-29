@@ -51,6 +51,7 @@ public sealed class MemeIntakesController(
     [HttpPost("{intakeId:guid}/evaluate")]
     [ProducesResponseType(typeof(EvaluateMemeIntakeResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
     public async Task<ActionResult<EvaluateMemeIntakeResponse>> Evaluate(Guid intakeId, CancellationToken cancellationToken)
     {
         await ValidateCsrfAsync();

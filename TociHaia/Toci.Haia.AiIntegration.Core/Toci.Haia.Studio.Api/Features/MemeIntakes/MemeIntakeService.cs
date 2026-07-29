@@ -135,14 +135,34 @@ public sealed class MemeIntakeService(
         var intake = await store.GetByIntakeIdAsync(intakeId, cancellationToken)
             ?? throw NotFound();
 
+        if (string.Equals(intake.Status, "ai_analysis_ready", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(intake.Status, "ready_for_review", StringComparison.OrdinalIgnoreCase))
+        {
+            var current = await GetAsync(intakeId, cancellationToken);
+            if (current.Evaluation is not null)
+            {
+                return new EvaluateMemeIntakeResponse(intakeId, "ready_for_review", current.Evaluation);
+            }
+        }
+
         if (!string.Equals(intake.Status, "uploaded", StringComparison.OrdinalIgnoreCase)
             && !string.Equals(intake.Status, "awaiting_ai_analysis", StringComparison.OrdinalIgnoreCase))
         {
+            if (string.Equals(intake.Status, "draft", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(intake.Status, "creating_draft", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new StudioProblemDetailsException(
+                    System.Net.HttpStatusCode.BadRequest,
+                    ErrorCodes.IntakeNotUploaded,
+                    "Upload not finalized",
+                    "Finalize upload before running AI evaluation.");
+            }
+
             throw new StudioProblemDetailsException(
                 System.Net.HttpStatusCode.BadRequest,
-                ErrorCodes.IntakeNotUploaded,
-                "Upload not finalized",
-                "Finalize upload before running AI evaluation.");
+                ErrorCodes.EvaluationRetryNotAllowed,
+                "Evaluation retry not allowed",
+                "Current intake status does not allow AI evaluation retry.");
         }
 
         var taxonomy = await store.GetActiveTaxonomyAsync(cancellationToken);

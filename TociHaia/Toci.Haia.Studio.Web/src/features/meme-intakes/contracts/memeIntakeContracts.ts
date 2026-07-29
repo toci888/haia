@@ -23,6 +23,8 @@ export type FinalizeMemeIntakeResponse = {
 	contentType: string
 	sizeBytes: number
 	sha256Hash: string
+	isDuplicate?: boolean
+	message?: string | null
 }
 
 export type MemeClassification = {
@@ -116,6 +118,12 @@ export type GetMemeIntakeResponse = {
 	intakeId: string
 	status: string
 	workingTitle?: string | null
+	evaluationStatus?: string | null
+	lastExecutionStatus?: string | null
+	retryAllowed?: boolean
+	lastFailureSummary?: string | null
+	correlationId?: string | null
+	lastAttemptAtUtc?: string | null
 	asset: {
 		fileName: string
 		contentType: string

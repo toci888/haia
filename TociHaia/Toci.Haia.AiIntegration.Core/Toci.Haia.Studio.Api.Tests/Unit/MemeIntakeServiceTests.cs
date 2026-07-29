@@ -6,6 +6,23 @@ namespace Toci.Haia.Studio.Api.Tests.Unit;
 
 public sealed class MemeIntakeServiceTests
 {
+    private static CandidateClassification BuildExistingClassification()
+    {
+        return new CandidateClassification
+        {
+            CandidateClassificationId = Guid.NewGuid(),
+            OnboardingCandidateVersionId = Guid.NewGuid(),
+            ClassificationModelVersionId = Guid.NewGuid(),
+            SourceType = "ai",
+            ClassificationStatus = "awaiting_review",
+            RevisionNo = 1,
+            CreatedAt = DateTime.UtcNow,
+            CandidateClassificationValues = [],
+            CandidateClassificationMeasures = [],
+            CandidateClassificationSensitivities = [],
+        };
+    }
+
     [Fact]
     public async Task CreateAsync_ShouldRejectUnsupportedContentType()
     {
@@ -103,6 +120,31 @@ public sealed class MemeIntakeServiceTests
         var ex = await Assert.ThrowsAsync<StudioProblemDetailsException>(() => service.EvaluateAsync(intakeId, "corr-1", CancellationToken.None));
 
         Assert.Equal(ErrorCodes.IntakeNotUploaded, ex.Code);
+    }
+
+
+    [Fact]
+    public async Task EvaluateAsync_RetryAfterFailure_ShouldUseSameIntakeWithoutUploadFlow()
+    {
+        var intakeId = Guid.NewGuid();
+        var store = new FakeStore
+        {
+            Intake = new MemeIntakeAggregate(intakeId, "awaiting_ai_analysis", "meme.png", "image/png", 1024, "key", "Draft", null, null, null),
+        };
+
+        var storage = new FakeStorage();
+        var service = CreateService(store, storage, new FakeEvaluationService());
+
+        var response = await service.EvaluateAsync(intakeId, "corr-retry", CancellationToken.None);
+
+        Assert.Equal(intakeId, response.IntakeId);
+        Assert.True(store.SaveEvaluationCalled);
+        Assert.True(store.SaveClassificationCalled);
+        Assert.False(store.MarkUploadedCalled);
+        Assert.Equal(0, storage.CreateUploadIntentCallCount);
+        Assert.Equal(0, storage.GetObjectMetadataCallCount);
+        Assert.Equal(0, storage.ReadObjectPrefixCallCount);
+        Assert.Equal(1, storage.ReadObjectBytesCallCount);
     }
 
     [Fact]
@@ -562,6 +604,14 @@ public sealed class MemeIntakeServiceTests
 
     private sealed class FakeStorage : IMediaObjectStorage
     {
+        public int CreateUploadIntentCallCount { get; private set; }
+
+        public int GetObjectMetadataCallCount { get; private set; }
+
+        public int ReadObjectPrefixCallCount { get; private set; }
+
+        public int ReadObjectBytesCallCount { get; private set; }
+
         public MediaObjectMetadata Metadata { get; set; } = new(true, "image/png", 1024, "etag");
 
         public byte[] Prefix { get; set; } = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A];
@@ -569,16 +619,28 @@ public sealed class MemeIntakeServiceTests
         public byte[] ObjectBytes { get; set; } = [0x89, 0x50, 0x4E, 0x47];
 
         public Task<MediaUploadIntent> CreateUploadIntentAsync(string objectKey, string contentType, DateTimeOffset expiresAtUtc, CancellationToken cancellationToken)
-            => Task.FromResult(new MediaUploadIntent("https://private-r2/upload", new Dictionary<string, string> { ["Content-Type"] = contentType }, expiresAtUtc));
+        {
+            CreateUploadIntentCallCount++;
+            return Task.FromResult(new MediaUploadIntent("https://private-r2/upload", new Dictionary<string, string> { ["Content-Type"] = contentType }, expiresAtUtc));
+        }
 
         public Task<MediaObjectMetadata> GetObjectMetadataAsync(string objectKey, CancellationToken cancellationToken)
-            => Task.FromResult(Metadata);
+        {
+            GetObjectMetadataCallCount++;
+            return Task.FromResult(Metadata);
+        }
 
         public Task<byte[]> ReadObjectPrefixAsync(string objectKey, int maxBytes, CancellationToken cancellationToken)
-            => Task.FromResult(Prefix);
+        {
+            ReadObjectPrefixCallCount++;
+            return Task.FromResult(Prefix);
+        }
 
         public Task<byte[]> ReadObjectBytesAsync(string objectKey, long maxBytes, CancellationToken cancellationToken)
-            => Task.FromResult(ObjectBytes);
+        {
+            ReadObjectBytesCallCount++;
+            return Task.FromResult(ObjectBytes);
+        }
     }
 
     private sealed class FakeEvaluationService : IMemeEvaluationService

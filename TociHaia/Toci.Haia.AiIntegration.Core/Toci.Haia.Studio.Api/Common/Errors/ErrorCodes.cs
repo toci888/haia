@@ -14,6 +14,9 @@ public static class ErrorCodes
     public const string UploadObjectInvalid = "upload_object_invalid";
     public const string UploadObjectDuplicate = "upload_object_duplicate";
     public const string IntakeNotUploaded = "meme_intake_not_uploaded";
+    public const string EvaluationAlreadyRunning = "meme_evaluation_already_running";
+    public const string EvaluationAlreadyCompleted = "meme_evaluation_already_completed";
+    public const string EvaluationRetryNotAllowed = "meme_evaluation_retry_not_allowed";
     public const string IntakeNotReadyForReview = "meme_intake_not_ready_for_review";
     public const string AiEvaluationFailed = "ai_evaluation_failed";
     public const string TaxonomyMismatch = "taxonomy_mismatch";
